@@ -1,2 +1,3 @@
-# rlhf-handbook
+# The RLHF Handbook
+
 Robust recipes for RLHF
