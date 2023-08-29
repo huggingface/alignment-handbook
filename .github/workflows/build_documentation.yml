@@ -13,7 +13,7 @@ jobs:
       package: rlhf-handbook
 #      package_name: rlhf-handbook # commented from audio-course
       path_to_docs: rlhf-handbook/chapters/
-#      additional_args: --not_python_module
+      additional_args: --not_python_module
       languages: en
     secrets:
       token: ${{ secrets.HUGGINGFACE_PUSH }}
