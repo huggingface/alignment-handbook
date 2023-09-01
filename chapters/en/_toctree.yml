@@ -1,0 +1,4 @@
+- title: Unit 0. Welcome to the course!
+  sections:
+  - local: chapter0/introduction
+    title: What to expect from the course
