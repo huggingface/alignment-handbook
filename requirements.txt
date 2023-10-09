@@ -1,3 +1,0 @@
-hf-doc-builder>=0.4.0
-black>=23.3.0
-watchdog>=3.0.0

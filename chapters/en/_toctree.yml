@@ -1,4 +1,4 @@
-- title: Unit 0. Welcome to the course!
+- title: Unit 0. Welcome to the RLHF Handbook!
   sections:
   - local: chapter0/introduction
-    title: What to expect from the course
+    title: What is this about?
