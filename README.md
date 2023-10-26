@@ -19,6 +19,35 @@ The initial release of the handbook will focus on the following techniques:
 * **Rejection sampling:** a simple, but powerful technique to boost the performance of your SFT model.
 * **Direct preference optimisation (DPO):** a powerful and promising alternative to PPO.
 
+## Getting started
+
+To run the code in this project, first create a Python virtual environment using e.g. Conda:
+
+```shell
+conda create -n handbook python=3.10 && conda activate handbook
+```
+
+Next, install PyTorch v2.1.0. Since this hardware-dependent, we
+direct you to the [PyTorch Installation Page](https://pytorch.org/get-started/locally/).
+
+Once PyTorch is installed, you can install the remaining package dependencies as follows:
+
+```shell
+pip install .
+```
+
+Next, log into your Hugging Face account as follows:
+
+```shell
+huggingface-cli login
+```
+
+Finally, install Git LFS so that you can push models to the Hugging Face Hub:
+
+```shell
+sudo apt-get install git-lfs
+```
+
 ## Citation
 
 If you find the content of this repo useful in your work, please cite it as follows:
