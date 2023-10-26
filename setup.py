@@ -62,8 +62,8 @@ _deps = [
     "safetensors==0.3.3",
     "tensorboard",
     "torch==2.0.1",
-    "transformers @ git+https://github.com/huggingface/transformers.git@b3961f7291307ee877ef1a4d057949597d805220",
-    "trl @ git+https://github.com/huggingface/trl.git@1e56ff0f166888973d69cd9d56be60a9f8edfedb",  # TODO bump to next release, added for NEFTune
+    "transformers",
+    "trl",  # TODO bump to next release, added for NEFTune
     "tqdm>=4.64.1",
 ]
 
@@ -105,6 +105,7 @@ install_requires = [
     deps["tensorboard"],
     deps["tqdm"],  # progress bars in model download and training scripts
     deps["transformers"],
+    deps["trl"]
 ]
 
 setup(
