@@ -49,6 +49,7 @@ _deps = [
     "einops==0.6.1",
     "evaluate==0.4.0",
     "flake8>=6.0.0",
+    "hf-doc-builder>=0.4.0",
     "huggingface-hub>=0.14.1,<1.0",
     "isort>=5.12.0",
     "ninja==1.11.1",
@@ -83,7 +84,8 @@ extras = {}
 extras["tests"] = deps_list("pytest", "parameterized")
 extras["torch"] = deps_list("torch")
 extras["quality"] = deps_list("black", "isort", "flake8")
-extras["dev"] = extras["quality"] + extras["tests"]
+extras["docs"] = deps_list("hf-doc-builder")
+extras["dev"] = extras["docs"] + extras["quality"] + extras["tests"]
 
 # core dependencies shared across the whole project - keep this to a bare minimum :)
 install_requires = [
