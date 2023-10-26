@@ -10,6 +10,11 @@ However, we know from the [InstructGPT](https://huggingface.co/papers/2203.02155
 
 The Alignment Handbook aims to fill that gap by providing the community with a series of robust training recipes that span the whole pipeline.
 
+## Links 🔗
+
+* [Zephyr 7B models, datasets, and demos](https://huggingface.co/collections/HuggingFaceH4/zephyr-7b-6538c6d6d5ddd1cbb1744a66)
+
+
 ## Contents
 
 The initial release of the handbook will focus on the following techniques:
@@ -54,7 +59,7 @@ If you find the content of this repo useful in your work, please cite it as foll
 
 ```bibtex
 @misc{alignment_handbook2023,
-  author = {Lewis Tunstall and Edward Beeching and Nathan Lambert and Nazneen Rajani and Sasha Rush and Thomas Wolf},
+  author = {Lewis Tunstall and Edward Beeching and Nathan Lambert and Nazneen Rajani and Alexander M. Rush and Thomas Wolf},
   title = {The Alignment Handbook},
   year = {2023},
   publisher = {GitHub},
