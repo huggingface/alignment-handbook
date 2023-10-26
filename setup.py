@@ -109,7 +109,7 @@ install_requires = [
 ]
 
 setup(
-    name="alignment",
+    name="alignment-handbook",
     version="0.1.0",  # expected format is one of x.y.z.dev0, or x.y.z.rc1 or x.y.z (no to dashes, yes to dots)
     author="The Hugging Face team (past and future)",
     author_email="lewis@huggingface.co",
@@ -118,7 +118,7 @@ setup(
     long_description_content_type="text/markdown",
     keywords="nlp deep learning rlhf llm",
     license="Apache",
-    url="https://github.com/huggingface/alignment",
+    url="https://github.com/huggingface/alignment-handbook",
     package_dir={"": "src"},
     packages=find_packages("src"),
     zip_safe=False,
