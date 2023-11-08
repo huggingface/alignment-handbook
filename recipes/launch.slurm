@@ -69,7 +69,8 @@ export NCCL_ASYNC_ERROR_HANDLING=1
 # export NCCL_NSOCKS_PERTHREAD=1
 # export CUDA_LAUNCH_BLOCKING=1
 
-# Specific configuration for the Hugging Face Compute Cluster - be warned this may not work on other clusters!
+# Specific configuration for the Hugging Face Compute Cluster
+# Be ye warned this may not work on other clusters!
 export NCCL_PROTO=simple
 export RDMAV_FORK_SAFE=1
 export FI_EFA_FORK_SAFE=1
