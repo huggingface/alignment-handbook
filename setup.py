@@ -44,7 +44,7 @@ _deps = [
     "accelerate==0.23.0",
     "bitsandbytes==0.41.1",
     "black==23.1.0",
-    "datasets==2.12.0",
+    "datasets==2.14.6",
     "deepspeed==0.12.2",
     "einops>=0.6.1",
     "evaluate==0.4.0",
@@ -60,8 +60,8 @@ _deps = [
     "protobuf<=3.20.2",  # Needed to avoid conflicts with `transformers`
     "pytest",
     "safetensors>=0.3.3",
+    "scipy",
     "tensorboard",
-    "torch==2.0.1",
     "transformers==4.35.0",
     "trl==0.7.4",  # TODO bump to next release, added for NEFTune
     "tqdm>=4.64.1",
@@ -82,7 +82,6 @@ def deps_list(*pkgs):
 
 extras = {}
 extras["tests"] = deps_list("pytest", "parameterized")
-extras["torch"] = deps_list("torch")
 extras["quality"] = deps_list("black", "isort", "flake8")
 extras["docs"] = deps_list("hf-doc-builder")
 extras["dev"] = extras["docs"] + extras["quality"] + extras["tests"]
@@ -102,6 +101,7 @@ install_requires = [
     deps["peft"],
     deps["protobuf"],
     deps["safetensors"],
+    deps["scipy"],
     deps["tensorboard"],
     deps["tqdm"],  # progress bars in model download and training scripts
     deps["transformers"],

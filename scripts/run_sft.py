@@ -18,7 +18,6 @@ Supervised fine-tuning script for decoder language models.
 """
 
 import logging
-import math
 import random
 import sys
 
@@ -52,6 +51,7 @@ def main():
 
     # Set seed for reproducibility
     set_seed(training_args.seed)
+
     accelerator = Accelerator()
 
     ###############
@@ -72,7 +72,7 @@ def main():
     # Log on each process a small summary
     logger.warning(
         f"Process rank: {training_args.local_rank}, device: {training_args.device}, n_gpu: {training_args.n_gpu}"
-        + f" distributed training: {bool(training_args.local_rank != -1)}, 16-bits training: {training_args.bf16}"
+        + f" distributed training: {bool(training_args.local_rank != -1)}, 16-bits training: {training_args.fp16}"
     )
     logger.info(f"Model parameters {model_args}")
     logger.info(f"Data parameters {data_args}")
@@ -132,8 +132,8 @@ def main():
         model=model_args.model_name_or_path,
         model_init_kwargs=model_kwargs,
         args=training_args,
-        train_dataset=raw_datasets["train"] if training_args.do_train else None,
-        eval_dataset=raw_datasets["test"] if training_args.do_eval else None,
+        train_dataset=train_dataset,
+        eval_dataset=eval_dataset,
         dataset_text_field="text",
         max_seq_length=training_args.max_seq_length,
         tokenizer=tokenizer,
@@ -144,17 +144,14 @@ def main():
     ###############
     # Training loop
     ###############
-    if training_args.do_train:
-        logger.info("*** Train ***")
-        train_result = trainer.train()
-        metrics = train_result.metrics
-        max_train_samples = (
-            data_args.max_train_samples if data_args.max_train_samples is not None else len(train_dataset)
-        )
-        metrics["train_samples"] = min(max_train_samples, len(train_dataset))
-        trainer.log_metrics("train", metrics)
-        trainer.save_metrics("train", metrics)
-        trainer.save_state()
+    logger.info("*** Train ***")
+    train_result = trainer.train()
+    metrics = train_result.metrics
+    max_train_samples = data_args.max_train_samples if data_args.max_train_samples is not None else len(train_dataset)
+    metrics["train_samples"] = min(max_train_samples, len(train_dataset))
+    trainer.log_metrics("train", metrics)
+    trainer.save_metrics("train", metrics)
+    trainer.save_state()
 
     ##########
     # Evaluate
@@ -164,11 +161,6 @@ def main():
         metrics = trainer.evaluate()
         max_eval_samples = data_args.max_eval_samples if data_args.max_eval_samples is not None else len(eval_dataset)
         metrics["eval_samples"] = min(max_eval_samples, len(eval_dataset))
-        try:
-            perplexity = math.exp(metrics["eval_loss"])
-        except OverflowError:
-            perplexity = float("inf")
-        metrics["perplexity"] = perplexity
         trainer.log_metrics("eval", metrics)
         trainer.save_metrics("eval", metrics)
 
@@ -181,14 +173,18 @@ def main():
 
     # Save everything else on main process
     if accelerator.is_main_process:
-        kwargs = {"finetuned_from": model_args.model_name_or_path, "tasks": "text-generation"}
-        kwargs["dataset"] = list(data_args.dataset_mixer.keys())
+        kwargs = {
+            "finetuned_from": model_args.model_name_or_path,
+            "dataset": list(data_args.dataset_mixer.keys()),
+            "tags": ["alignment-handbook"],
+        }
         trainer.create_model_card(**kwargs)
         # Restore k,v cache for fast inference
         trainer.model.config.use_cache = True
         trainer.model.config.save_pretrained(training_args.output_dir)
 
-        if training_args.push_to_hub:
+        if training_args.push_to_hub is True:
+            logger.info("Pushing to hub...")
             trainer.push_to_hub()
 
     accelerator.wait_for_everyone()

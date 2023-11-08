@@ -32,13 +32,19 @@ To run the code in this project, first create a Python virtual environment using
 conda create -n handbook python=3.10 && conda activate handbook
 ```
 
-Next, install PyTorch v2.1.0. Since this hardware-dependent, we
-direct you to the [PyTorch Installation Page](https://pytorch.org/get-started/locally/).
+Next, install PyTorch `v2.0.1` - the precise version is important for reproducibility! Since this hardware-dependent, we
+direct you to the [PyTorch Installation Page](https://pytorch.org/get-started/previous-versions/#v201).
 
-Once PyTorch is installed, you can install the remaining package dependencies as follows:
+You can then install the remaining package dependencies as follows:
 
 ```shell
-pip install .
+python -m pip install .
+```
+
+You will also need Flash Attention 2 installed, which can be done by running:
+
+```shell
+python -m pip install flash-attn==2.3.0 --no-build-isolation
 ```
 
 Next, log into your Hugging Face account as follows:
