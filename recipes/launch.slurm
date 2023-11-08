@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --ntasks-per-node=1 # crucial - only 1 task per dist per node!
+#SBATCH --ntasks-per-node=1
 #SBATCH --exclusive
 #SBATCH --gres=gpu:8
 #SBATCH --partition=production-cluster
@@ -14,7 +14,7 @@ echo "START TIME: $(date)"
 
 MODEL=$1
 TASK=$2
-VERSION=$3
+PRECISION=$3
 ACCELERATOR=$4
 OPTIONAL_ARGS=$5
 
@@ -23,7 +23,7 @@ NUM_NODES=$SLURM_NNODES
 GPUS_PER_NODE=8
 WORLD_SIZE=$(($NUM_NODES*$GPUS_PER_NODE))
 # Due to conflicts between Accelerate's DeepSpeed configs and Transformers' TrainingArguments, we need to parse the gradient accumulation steps from the config file to ensure they match
-CONFIG_FILE=recipes/$MODEL/$TASK/config_$VERSION.yaml
+CONFIG_FILE=recipes/$MODEL/$TASK/config_$PRECISION.yaml
 GRAD_ACC_STEPS=$(yq -r .gradient_accumulation_steps $CONFIG_FILE)
 
 # Split the string into individual arguments
@@ -69,7 +69,7 @@ export NCCL_ASYNC_ERROR_HANDLING=1
 # export NCCL_NSOCKS_PERTHREAD=1
 # export CUDA_LAUNCH_BLOCKING=1
 
-# AWS specific
+# Specific configuration for the Hugging Face Compute Cluster - be warned this may not work on other clusters!
 export NCCL_PROTO=simple
 export RDMAV_FORK_SAFE=1
 export FI_EFA_FORK_SAFE=1

@@ -14,31 +14,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import logging
-import random
-import subprocess
 import sys
-from datetime import timedelta
 
 import torch
 import transformers
 from transformers import set_seed
 
-import wandb
-from accelerate import Accelerator, InitProcessGroupKwargs
-from h4.data import get_datasets
-from h4.training import DataArguments, DPOTrainingArguments, ModelArguments, init_wandb_training
-from h4.utils import (
+from accelerate import Accelerator
+from alignment import (
+    DataArguments,
+    DPOConfig,
     H4ArgumentParser,
+    ModelArguments,
     apply_chat_template,
-    convert_to_safetensors,
+    get_datasets,
     get_kbit_device_map,
     get_peft_config,
     get_quantization_config,
     get_tokenizer,
-    hf_login,
-    is_slurm_available,
-    push_to_hub_revision,
-    run_mt_bench_job,
 )
 from trl import DPOTrainer
 
@@ -47,7 +40,7 @@ logger = logging.getLogger(__name__)
 
 
 def main():
-    parser = H4ArgumentParser((ModelArguments, DataArguments, DPOTrainingArguments))
+    parser = H4ArgumentParser((ModelArguments, DataArguments, DPOConfig))
     model_args, data_args, training_args = parser.parse()
 
     #######
@@ -69,18 +62,11 @@ def main():
     logger.info(f"Data parameters {data_args}")
     logger.info(f"Training/evaluation parameters {training_args}")
 
-    # Setup WandB
-    if training_args.wandb_enabled:
-        init_wandb_training(training_args)
-
-    # Login to HuggingFace Hub if needed
-    hf_login()
-
     # Set seed for reproducibility
     set_seed(training_args.seed)
 
     # Increase distributed timeout to 3h to enable push to Hub to complete
-    accelerator = Accelerator(kwargs_handlers=[InitProcessGroupKwargs(timeout=timedelta(seconds=6 * 1800))])
+    accelerator = Accelerator()
 
     ###############
     # Load datasets
@@ -114,12 +100,6 @@ def main():
             {"text_prompt": "prompt", "text_chosen": "chosen", "text_rejected": "rejected"}
         )
 
-    # Log a few random samples from the training set:
-    for index in random.sample(range(len(raw_datasets["train"])), 3):
-        logger.info(f"Prompt sample {index} of the raw training set:\n\n{raw_datasets['train'][index]['prompt']}")
-        logger.info(f"Chosen sample {index} of the raw training set:\n\n{raw_datasets['train'][index]['chosen']}")
-        logger.info(f"Rejected sample {index} of the raw training set:\n\n{raw_datasets['train'][index]['rejected']}")
-
     torch_dtype = (
         model_args.torch_dtype if model_args.torch_dtype in ["auto", None] else getattr(torch, model_args.torch_dtype)
     )
@@ -136,7 +116,7 @@ def main():
     ref_model = model_args.model_name_or_path
     ref_model_kwargs = model_kwargs
 
-    if model_args.use_peft:
+    if model_args.use_peft is True:
         ref_model = None
         ref_model_kwargs = None
 
@@ -153,7 +133,7 @@ def main():
         train_dataset=raw_datasets["train"],
         eval_dataset=raw_datasets["test"],
         tokenizer=tokenizer,
-        max_length=training_args.max_seq_length,
+        max_length=training_args.max_length,
         max_prompt_length=training_args.max_prompt_length,
         peft_config=get_peft_config(model_args),
     )
@@ -178,7 +158,7 @@ def main():
     ##########
     if training_args.do_eval:
         logger.info("*** Evaluate ***")
-        metrics = dpo_trainer.evaluate(eval_dataset=raw_datasets["test"])
+        metrics = dpo_trainer.evaluate()
         max_eval_samples = (
             data_args.max_eval_samples if data_args.max_eval_samples is not None else len(raw_datasets["test"])
         )
@@ -190,43 +170,23 @@ def main():
     # Save model and create model card
     ##################################
     dpo_trainer.save_model(training_args.output_dir)
-
     # Save everything else on main process
     if accelerator.is_main_process:
-        kwargs = {"finetuned_from": model_args.model_name_or_path, "tasks": "text-generation"}
-        kwargs["dataset"] = list(data_args.dataset_mixer.keys())
+        kwargs = {
+            "finetuned_from": model_args.model_name_or_path,
+            "dataset": list(data_args.dataset_mixer.keys()),
+            "tags": ["alignment-handbook"],
+        }
         dpo_trainer.create_model_card(**kwargs)
         # Restore k,v cache for fast inference
         dpo_trainer.model.config.use_cache = True
-        # Fix custom code paths
-        if model_args.trust_remote_code is True:
-            auto_map = dpo_trainer.model.config.auto_map
-            dpo_trainer.model.config.auto_map = {k: v.split("--")[-1] for k, v in auto_map.items()}
         dpo_trainer.model.config.save_pretrained(training_args.output_dir)
-        # FSDP/DeepSpeed save the model as a single `pytorch_model.bin` file, so we need to shard it.
-        # We run this in a subprocess to avoid interference from the accelerators.
-        subprocess.run(
-            [
-                "python",
-                "scripts/training/shard_checkpoint.py",
-                f"--output_dir={training_args.output_dir}",
-                f"--trust_remote_code={model_args.trust_remote_code}",
-            ],
-            check=True,
-        )
-        # Convert torch weights to safetensors for deployment with TGI
-        convert_to_safetensors(training_args.output_dir)
-        if training_args.push_to_hub_revision:
-            is_model_on_hub = push_to_hub_revision(training_args, model_args)
-            # Run automatic evaluation once the model is pushed to the Hub
-            if is_slurm_available() and is_model_on_hub is True and training_args.do_eval is True:
-                logger.info("*** Launching MT Bench ***")
-                run_mt_bench_job(training_args, model_args)
+        if training_args.push_to_hub is True:
+            dpo_trainer.push_to_hub()
 
     # Ensure we don't timeout on model save / push to Hub
     logger.info("*** Waiting for all processes to finish ***")
     accelerator.wait_for_everyone()
-    wandb.finish()
 
     logger.info("*** Run complete! ***")
 
