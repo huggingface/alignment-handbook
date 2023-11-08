@@ -45,25 +45,25 @@ _deps = [
     "bitsandbytes==0.41.1",
     "black==23.1.0",
     "datasets==2.12.0",
-    "deepspeed==0.9.5",
-    "einops==0.6.1",
+    "deepspeed==0.12.2",
+    "einops>=0.6.1",
     "evaluate==0.4.0",
     "flake8>=6.0.0",
     "hf-doc-builder>=0.4.0",
     "huggingface-hub>=0.14.1,<1.0",
     "isort>=5.12.0",
-    "ninja==1.11.1",
+    "ninja>=1.11.1",
     "numpy>=1.24.2",
     "packaging>=23.0",
     "parameterized>=0.9.0",
-    "peft==0.5.0",
+    "peft==0.6.0",
     "protobuf<=3.20.2",  # Needed to avoid conflicts with `transformers`
     "pytest",
-    "safetensors==0.3.3",
+    "safetensors>=0.3.3",
     "tensorboard",
     "torch==2.0.1",
-    "transformers @ git+https://github.com/huggingface/transformers.git@b3961f7291307ee877ef1a4d057949597d805220",
-    "trl @ git+https://github.com/huggingface/trl.git@1e56ff0f166888973d69cd9d56be60a9f8edfedb",  # TODO bump to next release, added for NEFTune
+    "transformers==4.35.0",
+    "trl==0.7.4",  # TODO bump to next release, added for NEFTune
     "tqdm>=4.64.1",
 ]
 
