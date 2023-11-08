@@ -90,9 +90,9 @@ def main():
         for index in random.sample(range(len(raw_datasets["train"])), 3):
             logger.info(f"Sample {index} of the raw training set:\n\n{raw_datasets['train'][index]['messages']}")
 
-    #####################################
-    # Load tokenizer and process datasets
-    #####################################
+    ################
+    # Load tokenizer
+    ################
     tokenizer = get_tokenizer(model_args, data_args)
 
     #####################
