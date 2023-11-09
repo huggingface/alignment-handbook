@@ -3,8 +3,8 @@
 #SBATCH --exclusive
 #SBATCH --gres=gpu:8
 #SBATCH --partition=production-cluster
-#SBATCH --output=/fsx/h4/logs/%x-%j.out
-#SBATCH --err=/fsx/h4/logs/%x-%j.err
+#SBATCH --output=/fsx/h4/logs/%x-%j.out # Adjust this to your cluster
+#SBATCH --err=/fsx/h4/logs/%x-%j.err    # Adjust this to your cluster
 
 set -x -e
 

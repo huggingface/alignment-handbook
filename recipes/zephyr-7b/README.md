@@ -1,5 +1,6 @@
 
 # Instructions
+
 In the handbook, for each training step we provide two sets of recipes:
 - Full training on a multi-GPU machine (tested on a 8xA100 node), using slurm to queue jobs.
 - LORA taining on a single consumer 24GB GPU (tested on a RTX 4090)
@@ -21,6 +22,7 @@ sbatch --job-name=handbook_sft --nodes=1 recipes/launch.slurm zephyr-7b sft full
 ```
 
 ## LORA training examples
+
 ### SFT
 ```shell
 # locally on 1 gpu
@@ -33,6 +35,7 @@ sbatch --job-name=handbook_sft_lora --nodes=1 recipes/launch.slurm zephyr-7b sft
 ```
 
 ### SFT
+
 ```shell
 # locally on 1 gpu
 accelerate launch scripts/run_dpo.py recipes/zephyr-7b/dpo/config_lora.yaml

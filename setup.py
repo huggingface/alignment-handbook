@@ -63,7 +63,7 @@ _deps = [
     "scipy",
     "tensorboard",
     "transformers==4.35.0",
-    "trl==0.7.4",  # TODO bump to next release, added for NEFTune
+    "trl==0.7.4",
     "tqdm>=4.64.1",
 ]
 
