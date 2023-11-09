@@ -10,6 +10,10 @@ However, we know from the [InstructGPT](https://huggingface.co/papers/2203.02155
 
 The Alignment Handbook aims to fill that gap by providing the community with a series of robust training recipes that span the whole pipeline.
 
+## News 🗞️
+
+* November 10, 2023: We release all the training code to replicate Zephyr 7B 🪁!
+
 ## Links 🔗
 
 * [Zephyr 7B models, datasets, and demos](https://huggingface.co/collections/HuggingFaceH4/zephyr-7b-6538c6d6d5ddd1cbb1744a66)
@@ -57,6 +61,21 @@ Finally, install Git LFS so that you can push models to the Hugging Face Hub:
 
 ```shell
 sudo apt-get install git-lfs
+```
+
+## Project structure
+
+```
+├── LICENSE
+├── Makefile                    <- Makefile with commands like `make style`
+├── README.md                   <- The top-level README for developers using this project
+├── chapters                    <- Educational content to render on hf.co/learn
+├── recipes                     <- Recipe configs, accelerate configs, slurm scripts
+├── scripts                     <- Scripts to train and evaluate chat models
+├── setup.cfg                   <- Installation config (mostly used for configuring code quality & tests)
+├── setup.py                    <- Makes project pip installable (pip install -e .) so `alignment` can be imported
+├── src                         <- Source code for use in this project
+└── tests                       <- Unit tests
 ```
 
 ## Citation
