@@ -3,8 +3,8 @@
 
 As described in the Zephyr [technical report](https://huggingface.co/papers/2310.16944), training this model proceeds in two steps:
 
-1. Apply SFT to fine-tune Mistral 7B on the UltraChat dataset.
-2. Align the SFT model to AI feedback via DPO on the UltraFeedback dataset.
+1. Apply SFT to fine-tune Mistral 7B on a filtered version of the UltraChat dataset ([link](https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k)).
+2. Align the SFT model to AI feedback via DPO on a preprocessed version of the UltraFeedback dataset ([link](https://huggingface.co/datasets/HuggingFaceH4/ultrafeedback_binarized)).
 
 See below for commands to train these models using either DeepSpeed ZeRO-3 or LoRA.
 
