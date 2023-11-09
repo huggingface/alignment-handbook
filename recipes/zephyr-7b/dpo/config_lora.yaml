@@ -1,8 +1,21 @@
 # Model arguments
-model_name_or_path: lewtun/zephyr-7b-sft
+model_name_or_path: HuggingFaceH4/mistral-7b-ift
+model_revision: v14.0
+torch_dtype: auto
+
+# LORA
+use_peft: true
+lora_r: 64
+lora_alpha: 16
+lora_dropout: 0.1
+lora_target_modules:
+- q_proj
+- k_proj
+- v_proj
+- o_proj
 
 # Data training arguments
-# For definitions, see: src/h4/training/config.py
+
 dataset_mixer:
   HuggingFaceH4/ultrafeedback_binarized: 1.0
 dataset_splits:
@@ -14,11 +27,14 @@ preprocessing_num_workers: 12
 bf16: true
 beta: 0.1
 do_eval: true
-evaluation_strategy: steps
+ddp_find_unused_parameters: true
+evaluation_strategy: epoch
 eval_steps: 100
-gradient_accumulation_steps: 1
+gradient_accumulation_steps: 16
 gradient_checkpointing: true
-hub_model_id: zephyr-7b-dpo-full
+gradient_checkpointing_kwargs:
+  use_reentrant: False
+hub_model_id: zephyr-7b-dpo-lora
 learning_rate: 5.0e-7
 log_level: info
 logging_steps: 10
@@ -27,8 +43,8 @@ max_length: 1024
 max_prompt_length: 512
 num_train_epochs: 3
 optim: rmsprop
-output_dir: data/zephyr-7b-dpo-full
-per_device_train_batch_size: 4
+output_dir: data/zephyr-7b-dpo-lora # It is handy to append `hub_model_revision` to keep track of your local experiments
+per_device_train_batch_size: 2
 per_device_eval_batch_size: 4
 push_to_hub: true
 save_strategy: "no"
