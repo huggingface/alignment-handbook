@@ -2,9 +2,9 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --exclusive
 #SBATCH --gres=gpu:8
-#SBATCH --partition=production-cluster
-#SBATCH --output=/fsx/h4/logs/%x-%j.out # Adjust this to your cluster
-#SBATCH --err=/fsx/h4/logs/%x-%j.err    # Adjust this to your cluster
+#SBATCH --partition=production-cluster  # Adjust this for your cluster
+#SBATCH --output=/fsx/h4/logs/%x-%j.out # Adjust this for your cluster
+#SBATCH --err=/fsx/h4/logs/%x-%j.err    # Adjust this for your cluster
 
 set -x -e
 
@@ -44,7 +44,7 @@ MASTER_ADDR=$(scontrol show hostnames $SLURM_JOB_NODELIST | head -n 1)
 MASTER_PORT=6000
 
 export CMD=" \
-    scripts/run_$TASK.py $CONFIG_FILE
+    scripts/run_$TASK.py $CONFIG_FILE $OPTIONAL_ARGS
     "
 
 export LAUNCHER="ACCELERATE_LOG_LEVEL=info accelerate launch \
@@ -69,7 +69,7 @@ export NCCL_ASYNC_ERROR_HANDLING=1
 # export NCCL_NSOCKS_PERTHREAD=1
 # export CUDA_LAUNCH_BLOCKING=1
 
-# Specific configuration for the Hugging Face Compute Cluster
+# Specific configuration optimized for the Hugging Face Compute Cluster
 # Be ye warned this may not work on other clusters!
 export NCCL_PROTO=simple
 export RDMAV_FORK_SAFE=1

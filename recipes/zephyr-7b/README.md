@@ -1,47 +1,29 @@
 
-# Instructions
+# Instructions to Replicate Zephyr 7B
 
-In the handbook, for each training step we provide two sets of recipes:
-- Full training on a multi-GPU machine (tested on a 8xA100 node), using slurm to queue jobs.
-- LORA taining on a single consumer 24GB GPU (tested on a RTX 4090)
+As described in the Zephyr [technical report](https://huggingface.co/papers/2310.16944), training this model proceeds in two steps:
 
-The full training jobs will scale to a multi-node setting, by adjusting `--nodes=1`, we advise adjusting the gradient accumulation steps and/or batch size if you want to replicate our results.
+1. Apply SFT to fine-tune Mistral 7B on the UltraChat dataset.
+2. Align the SFT model to AI feedback via DPO on the UltraFeedback dataset.
 
+See below for commands to train these models using either DeepSpeed ZeRO-3 or LoRA.
 
 ## Full training examples 
 
-### SFT
-
 ```shell
-sbatch --job-name=handbook_sft --nodes=1 recipes/launch.slurm zephyr-7b sft full deepspeed_zero3
+# Step 1 - SFT
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/deepspeed_zero3.yaml scripts/run_sft.py recipes/zephyr-7b/sft/config_full.yaml
+
+# Step 2 - DPO
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/deepspeed_zero3.yaml scripts/run_dpo.py recipes/zephyr-7b/dpo/config_full.yaml
 ```
 
-## DPO
-```shell
-sbatch --job-name=handbook_sft --nodes=1 recipes/launch.slurm zephyr-7b sft full deepspeed_zero3
-```
-
-## LORA training examples
-
-### SFT
-```shell
-# locally on 1 gpu
-accelerate launch scripts/run_sft.py recipes/zephyr-7b/sft/config_lora.yaml
-```
+## LoRA training examples
 
 ```shell
-# on a cluster
-sbatch --job-name=handbook_sft_lora --nodes=1 recipes/launch.slurm zephyr-7b sft lora multi_gpu "--gradient_accumulation_steps=16"
-```
+# Step 1 - SFT
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/multi_gpu.yaml --num_processes=1 scripts/run_sft.py recipes/zephyr-7b/sft/config_lora.yaml
 
-### SFT
-
-```shell
-# locally on 1 gpu
-accelerate launch scripts/run_dpo.py recipes/zephyr-7b/dpo/config_lora.yaml
-```
-
-```shell
-# on a cluster
-sbatch --job-name=handbook_dpo_lora --nodes=1 recipes/launch.slurm zephyr-7b dpo lora multi_gpu "--gradient_accumulation_steps=8"
+# Step 2 - DPO
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/multi_gpu.yaml --num_processes=1 scripts/run_dpo.py recipes/zephyr-7b/dpo/config_lora.yaml
 ```
