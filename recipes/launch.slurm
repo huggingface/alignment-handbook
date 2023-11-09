@@ -24,7 +24,7 @@ GPUS_PER_NODE=8
 WORLD_SIZE=$(($NUM_NODES*$GPUS_PER_NODE))
 # Due to conflicts between Accelerate's DeepSpeed configs and Transformers' TrainingArguments, we need to parse the gradient accumulation steps from the config file to ensure they match
 CONFIG_FILE=recipes/$MODEL/$TASK/config_$PRECISION.yaml
-GRAD_ACC_STEPS=$(yq -r .gradient_accumulation_steps $CONFIG_FILE)
+GRAD_ACC_STEPS=$(grep 'gradient_accumulation_steps' $CONFIG_FILE | awk '{print $2}')
 
 # Split the string into individual arguments
 IFS=' ' read -ra ARGS <<< "$OPTIONAL_ARGS"
