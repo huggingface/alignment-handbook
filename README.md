@@ -10,6 +10,10 @@ However, we know from the [InstructGPT](https://huggingface.co/papers/2203.02155
 
 The Alignment Handbook aims to fill that gap by providing the community with a series of robust training recipes that span the whole pipeline.
 
+## News 🗞️
+
+* November 10, 2023: We release all the training code to replicate Zephyr-7b-β 🪁!
+
 ## Links 🔗
 
 * [Zephyr 7B models, datasets, and demos](https://huggingface.co/collections/HuggingFaceH4/zephyr-7b-6538c6d6d5ddd1cbb1744a66)
@@ -32,13 +36,20 @@ To run the code in this project, first create a Python virtual environment using
 conda create -n handbook python=3.10 && conda activate handbook
 ```
 
-Next, install PyTorch v2.1.0. Since this hardware-dependent, we
+Next, install PyTorch `v2.1.0` - the precise version is important for reproducibility! Since this is hardware-dependent, we
 direct you to the [PyTorch Installation Page](https://pytorch.org/get-started/locally/).
 
-Once PyTorch is installed, you can install the remaining package dependencies as follows:
+You can then install the remaining package dependencies as follows:
 
 ```shell
-pip install .
+python -m pip install .
+```
+
+You will also need Flash Attention 2 installed, which can be done by running:
+_Note: If your machine has less than 96GB of RAM and many CPU cores, reduce the MAX_JOBS., e.g. `MAX_JOBS=4 pip install flash-attn --no-build-isolation` _
+
+```shell
+python -m pip install flash-attn --no-build-isolation
 ```
 
 Next, log into your Hugging Face account as follows:
@@ -51,6 +62,23 @@ Finally, install Git LFS so that you can push models to the Hugging Face Hub:
 
 ```shell
 sudo apt-get install git-lfs
+```
+
+You can now checkout the `scripts` and `recipes` directories for instructions on how to train some models 🪁!
+
+## Project structure
+
+```
+├── LICENSE
+├── Makefile                    <- Makefile with commands like `make style`
+├── README.md                   <- The top-level README for developers using this project
+├── chapters                    <- Educational content to render on hf.co/learn
+├── recipes                     <- Recipe configs, accelerate configs, slurm scripts
+├── scripts                     <- Scripts to train and evaluate chat models
+├── setup.cfg                   <- Installation config (mostly used for configuring code quality & tests)
+├── setup.py                    <- Makes project pip installable (pip install -e .) so `alignment` can be imported
+├── src                         <- Source code for use in this project
+└── tests                       <- Unit tests
 ```
 
 ## Citation
