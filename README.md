@@ -46,6 +46,7 @@ python -m pip install .
 ```
 
 You will also need Flash Attention 2 installed, which can be done by running:
+_Note: If your machine has less than 96GB of RAM and many CPU cores, reduce the MAX_JOBS., e.g. `MAX_JOBS=4 pip install flash-attn --no-build-isolation` _
 
 ```shell
 python -m pip install flash-attn --no-build-isolation
