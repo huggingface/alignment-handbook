@@ -36,7 +36,7 @@ To run the code in this project, first create a Python virtual environment using
 conda create -n handbook python=3.10 && conda activate handbook
 ```
 
-Next, install PyTorch `v2.1.0` - the precise version is important for reproducibility! Since this hardware-dependent, we
+Next, install PyTorch `v2.1.0` - the precise version is important for reproducibility! Since this is hardware-dependent, we
 direct you to the [PyTorch Installation Page](https://pytorch.org/get-started/locally/).
 
 You can then install the remaining package dependencies as follows:
@@ -62,6 +62,8 @@ Finally, install Git LFS so that you can push models to the Hugging Face Hub:
 ```shell
 sudo apt-get install git-lfs
 ```
+
+You can now checkout the `scripts` and `recipes` directories for instructions on how to train some models 🪁!
 
 ## Project structure
 

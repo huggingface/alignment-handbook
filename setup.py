@@ -62,6 +62,7 @@ _deps = [
     "safetensors>=0.3.3",
     "scipy",
     "tensorboard",
+    "torch==2.1.0",
     "transformers==4.35.0",
     "trl==0.7.4",
     "tqdm>=4.64.1",
@@ -82,6 +83,7 @@ def deps_list(*pkgs):
 
 extras = {}
 extras["tests"] = deps_list("pytest", "parameterized")
+extras["torch"] = deps_list("torch")
 extras["quality"] = deps_list("black", "isort", "flake8")
 extras["docs"] = deps_list("hf-doc-builder")
 extras["dev"] = extras["docs"] + extras["quality"] + extras["tests"]
