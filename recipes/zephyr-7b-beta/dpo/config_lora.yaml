@@ -26,7 +26,6 @@ preprocessing_num_workers: 12
 bf16: true
 beta: 0.1
 do_eval: true
-ddp_find_unused_parameters: true
 evaluation_strategy: epoch
 eval_steps: 100
 gradient_accumulation_steps: 32

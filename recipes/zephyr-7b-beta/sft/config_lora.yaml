@@ -3,7 +3,7 @@ model_name_or_path: mistralai/Mistral-7B-v0.1
 torch_dtype: auto
 use_flash_attention_2: true
 
-# LORA
+# LoRA arguments
 use_peft: true
 lora_r: 64
 lora_alpha: 16
@@ -27,7 +27,6 @@ bf16: true
 do_eval: true
 evaluation_strategy: epoch
 gradient_accumulation_steps: 128
-ddp_find_unused_parameters: true
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: False
@@ -51,4 +50,3 @@ report_to:
 save_strategy: "no"
 save_total_limit: null
 seed: 42
-tf32: true
