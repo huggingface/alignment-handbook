@@ -12,7 +12,7 @@ The Alignment Handbook aims to fill that gap by providing the community with a s
 
 ## News 🗞️
 
-* November 10, 2023: We release all the training code to replicate Zephyr 7B 🪁!
+* November 10, 2023: We release all the training code to replicate Zephyr-7b-β 🪁!
 
 ## Links 🔗
 

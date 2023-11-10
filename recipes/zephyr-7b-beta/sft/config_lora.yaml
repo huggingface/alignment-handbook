@@ -44,7 +44,7 @@ output_dir: data/zephyr-7b-sft-lora
 overwrite_output_dir: true
 per_device_eval_batch_size: 8
 per_device_train_batch_size: 4
-push_to_hub: True
+push_to_hub: true
 report_to:
 - tensorboard
 save_strategy: "no"

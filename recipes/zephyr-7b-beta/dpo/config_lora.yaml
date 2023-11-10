@@ -2,7 +2,7 @@
 model_name_or_path: alignment-handbook/zephyr-7b-sft-lora
 torch_dtype: auto
 
-# LORA
+# LoRA arguments
 use_peft: true
 lora_r: 64
 lora_alpha: 16
