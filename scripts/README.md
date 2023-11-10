@@ -6,7 +6,7 @@
 In the handbook, we provide three main ways to align LLMs for chat:
 
 - Full fine-tuning on a multi-GPU machine with DeepSpeed ZeRO-3 (tested on an 8 x A100 (80GB) node).
-- LoRA or QLoRA fine-tuning on a single consumer 24GB GPU (tested on a RTX 4090).
+- LoRA fine-tuning on a single consumer 24GB GPU (tested on a RTX 4090).
 - LoRA fine-tuning on a multi-GPU machine with DeepSpeed ZeRO-3 (tested on a 2 x A100s (80GB)).
 
 In practice, we find comparable performance for both full and LoRA fine-tuning, with the latter having the advantage of producing small adapter weights that are fast to upload and download from the Hugging Face Hub. Here's the two general commands to fine-tune your models:
