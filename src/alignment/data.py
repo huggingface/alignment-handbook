@@ -1,5 +1,5 @@
 import re
-from typing import List, Literal, Optional, Union
+from typing import List, Literal, Optional
 
 from datasets import DatasetDict, concatenate_datasets, load_dataset
 
@@ -67,7 +67,7 @@ def apply_chat_template(
 
 
 def get_datasets(
-    data_config: Union[DataArguments, dict],
+    data_config: DataArguments | dict,
     splits: List[str] = ["train", "test"],
     shuffle: bool = True,
 ) -> DatasetDict:

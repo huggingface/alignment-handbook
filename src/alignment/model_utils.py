@@ -1,4 +1,4 @@
-from typing import Dict, Union
+from typing import Dict
 
 import torch
 from transformers import AutoTokenizer, BitsAndBytesConfig, PreTrainedTokenizer
@@ -62,7 +62,7 @@ def get_tokenizer(model_args: ModelArguments, data_args: DataArguments) -> PreTr
     return tokenizer
 
 
-def get_peft_config(model_args: ModelArguments) -> Union[PeftConfig, None]:
+def get_peft_config(model_args: ModelArguments) -> PeftConfig | None:
     if model_args.use_peft is False:
         return None
 
