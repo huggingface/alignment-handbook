@@ -98,6 +98,7 @@ install_requires = [
     deps["datasets"],
     deps["deepspeed"],
     deps["huggingface-hub"],
+    deps["jinja2"],
     deps["ninja"],
     deps["numpy"],
     deps["packaging"],  # utilities from PyPA to e.g., compare versions
