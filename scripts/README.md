@@ -1,7 +1,7 @@
 
-## Scripts to Train and Evaluate Chat Models
+# Scripts to Train and Evaluate Chat Models
 
-### Fine-tuning
+## Fine-tuning
 
 In the handbook, we provide three main ways to align LLMs for chat:
 
@@ -47,7 +47,7 @@ By default all training metrics are logged with TensorBoard. If you have a [Weig
 ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/deepspeed_zero3.yaml scripts/run_{task}.py recipes/{model_name}/{task}/config_full.yaml --report_to=wandb
 ```
 
-### Launching jobs on a Slurm cluster
+## Launching jobs on a Slurm cluster
 
 If you have access to a Slurm cluster, we provide a `recipes/launch.slurm` script that will automatically queue training jobs for you. Here's how you can use it:
 
@@ -64,3 +64,38 @@ sbatch --job-name=handbook_sft --nodes=1 recipes/launch.slurm zephyr-7b-beta sft
 You can scale the number of nodes by increasing the `--nodes` flag.
 
 **⚠️ Note:** the configuration in `recipes/launch.slurm` is optimised for the Hugging Face Compute Cluster and may require tweaking to be adapted to your own compute nodes.
+
+## Fine-tuning on custom datasets
+
+Under the hood, each training script uses the `get_datasets()` function which allows one to easily combing multiple datasets with varying proportions. For instance, this is how one can specify multiple datasets and which splits to combine in one of the YAML configs:
+
+```yaml
+datasets_mixer:
+    dataset_1: 0.5  # Use 50% of the training examples
+    dataset_2: 0.66 # Use 66% of the training examples
+    dataset_3: 0.10 # Use 10% of the training examples
+dataset_splits:
+- train_x           # Samples from each train split
+- test_x            # Test splits aren't sampled
+```
+
+If you want to fine-tune on your own datasets, the main thing to keep in mind is how the chat templates are applied to the dataset blend. Since each task (SFT, DPO, etc), requires a different format, we assume the datasets have the following columns:
+
+**SFT**
+
+* `messages`: A list of `dicts` in the form `{"role": "{role}", "content": {content}}`. 
+* See [ultrachat_200k](https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k) for an example.
+
+**DPO**
+
+* `chosen`: A list of `dicts` in the form `{"role": "{role}", "content": {content}}` corresponding to the preferred dialogue.
+* `rejected`: A list of `dicts` in the form `{"role": "{role}", "content": {content}}` corresponding to the dispreferred dialogue.
+* See [ultrafeedback_binarized](https://huggingface.co/datasets/HuggingFaceH4/ultrafeedback_binarized) for an example.
+
+We also find it useful to include dedicated splits per task in our datasets, so e.g. we have:
+
+* `{train,test}_sft`: Splits for SFT training.
+* `{train,test}_gen`: Splits for generation ranking like rejection sampling or PPO.
+* `{train,test}_prefs`: Splits for preference modelling, like reward modelling or DPO.
+
+If you format your dataset in the same way, our training scripts should work out of the box!

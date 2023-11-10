@@ -18,7 +18,7 @@ import sys
 
 import torch
 import transformers
-from transformers import set_seed
+from transformers import AutoModelForCausalLM, set_seed
 
 from accelerate import Accelerator
 from alignment import (
@@ -32,11 +32,11 @@ from alignment import (
     get_peft_config,
     get_quantization_config,
     get_tokenizer,
+    is_adapter_model,
 )
-from trl import DPOTrainer
-from transformers import AutoModelForCausalLM
-from alignment.model_utils import is_adapter_model
 from peft import PeftConfig, PeftModel
+from trl import DPOTrainer
+
 
 logger = logging.getLogger(__name__)
 
@@ -114,15 +114,15 @@ def main():
         device_map=get_kbit_device_map(),
         quantization_config=get_quantization_config(model_args),
     )
-    
+
     model = model_args.model_name_or_path
     if is_adapter_model(model, model_args.model_revision):
         # load the model, merge the adapter weights and unload the adapter
         # Note: to run QLora, you will need to merge the based model separately as the merged model in 16bit
         logger.info(f"Merging peft adapters for {model_args.model_name_or_path=}")
-        
+
         peft_config = PeftConfig.from_pretrained(model_args.model_name_or_path, revision=model_args.model_revision)
-        
+
         model_kwargs = dict(
             revision=model_args.base_model_revision,
             trust_remote_code=model_args.trust_remote_code,
@@ -131,9 +131,12 @@ def main():
             use_cache=False if training_args.gradient_checkpointing else True,
         )
         base_model = AutoModelForCausalLM.from_pretrained(
-            peft_config.base_model_name_or_path, **model_kwargs,
+            peft_config.base_model_name_or_path,
+            **model_kwargs,
         )
-        model = PeftModel.from_pretrained(base_model, model_args.model_name_or_path, revision=model_args.model_revision)
+        model = PeftModel.from_pretrained(
+            base_model, model_args.model_name_or_path, revision=model_args.model_revision
+        )
         model.eval()
         model = model.merge_and_unload()
         model_kwargs = None

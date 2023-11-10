@@ -29,7 +29,7 @@ evaluation_strategy: epoch
 gradient_accumulation_steps: 128
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
-  use_reentrant: False
+  use_reentrant: false
 hub_model_id: zephyr-7b-sft-lora
 hub_strategy: every_save
 learning_rate: 2.0e-05

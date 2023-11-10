@@ -31,7 +31,7 @@ eval_steps: 100
 gradient_accumulation_steps: 32
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
-  use_reentrant: False
+  use_reentrant: false
 hub_model_id: zephyr-7b-dpo-lora
 learning_rate: 5.0e-7
 log_level: info
