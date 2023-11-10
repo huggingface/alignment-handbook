@@ -5,7 +5,7 @@ from transformers import AutoTokenizer, BitsAndBytesConfig, PreTrainedTokenizer
 
 from accelerate import Accelerator
 from peft import LoraConfig, PeftConfig
-
+from huggingface_hub import list_repo_files
 from .configs import DataArguments, ModelArguments
 from .data import DEFAULT_CHAT_TEMPLATE
 
@@ -77,3 +77,7 @@ def get_peft_config(model_args: ModelArguments) -> PeftConfig | None:
     )
 
     return peft_config
+
+def is_adapter_model(model_name_or_path: str, revision: str = "main") -> bool:
+    repo_files = list_repo_files(model_name_or_path, revision=revision)
+    return "adapter_model.safetensors" in repo_files or "adapter_model.bin" in repo_files
