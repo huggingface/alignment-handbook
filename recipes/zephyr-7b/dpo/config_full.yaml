@@ -1,5 +1,5 @@
 # Model arguments
-model_name_or_path: lewtun/zephyr-7b-sft
+model_name_or_path: alignment-handbook/zephyr-7b-sft-full
 
 # Data training arguments
 # For definitions, see: src/h4/training/config.py

@@ -24,6 +24,7 @@ preprocessing_num_workers: 12
 
 # SFT trainer config
 bf16: true
+do_eval: true
 evaluation_strategy: epoch
 gradient_accumulation_steps: 128
 ddp_find_unused_parameters: true

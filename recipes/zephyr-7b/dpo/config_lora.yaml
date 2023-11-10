@@ -1,6 +1,5 @@
 # Model arguments
-model_name_or_path: HuggingFaceH4/mistral-7b-ift
-model_revision: v14.0
+model_name_or_path: alignment-handbook/zephyr-7b-sft-lora
 torch_dtype: auto
 
 # LORA
