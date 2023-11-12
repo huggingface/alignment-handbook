@@ -1,3 +1,9 @@
+<img src="https://raw.githubusercontent.com/huggingface/alignment-handbook/main/assets/handbook.png">
+
+<p align="center">
+    🤗 <a href="https://huggingface.co/collections/alignment-handbook/handbook-v01-models-and-datasets-654e424d22e6880da5ebc015" target="_blank">Models & Datasets</a> | 📃 <a href="https://arxiv.org/abs/2310.16944" target="_blank">Technical Report</a>
+</p>
+
 # The Alignment Handbook
 
 Robust recipes to align language models with human and AI preferences.
@@ -12,11 +18,25 @@ The Alignment Handbook aims to fill that gap by providing the community with a s
 
 ## News 🗞️
 
-* November 10, 2023: We release all the training code to replicate Zephyr-7b-β 🪁!
+* **November 10, 2023:** We release all the training code to replicate Zephyr-7b-β 🪁! We also release [No Robots](https://huggingface.co/datasets/HuggingFaceH4/no_robots), a brand new dataset of 10,000 instructions and demonstrations written entirely by skilled human annotators.
 
 ## Links 🔗
 
 * [Zephyr 7B models, datasets, and demos](https://huggingface.co/collections/HuggingFaceH4/zephyr-7b-6538c6d6d5ddd1cbb1744a66)
+
+## How to navigate this project 🧭
+
+This project is simple by design and mostly consists of:
+
+* [`scripts`](./scripts/) to train and evaluate chat models. Each script supports distributed training of the full model weights with DeepSpeed ZeRO-3, or LoRA/QLoRA for parameter-efficient fine-tuning.
+* [`recipes`](./recipes/) to reproduce models like Zephyr 7B. Each recipe takes the form of a YAML file which contains all the parameters associated with a single training run.
+
+We are also working on a series of guides to explain how methods like direct preference optimization (DPO) work, along with lessons learned from gathering human preferences in practice. To get started, we recommend the following:
+
+1. Follow the [installation instructions](#installation-instructions) to set up your environment etc.
+2. Replicate Zephyr-7b-β by following the [recipe instructions](./recipes/zephyr-7b-beta/README.md).
+
+If you would like to train chat models on your own datasets, we recommend following the dataset formatting instructions [here](./scripts/README.md#fine-tuning-on-your-datasets).
 
 
 ## Contents
@@ -28,7 +48,7 @@ The initial release of the handbook will focus on the following techniques:
 * **Rejection sampling:** a simple, but powerful technique to boost the performance of your SFT model.
 * **Direct preference optimisation (DPO):** a powerful and promising alternative to PPO.
 
-## Getting started
+## Installation instructions
 
 To run the code in this project, first, create a Python virtual environment using e.g. Conda:
 
