@@ -6,10 +6,10 @@
 In the handbook, we provide three main ways to align LLMs for chat:
 
 - Full fine-tuning on a multi-GPU machine with DeepSpeed ZeRO-3 (tested on an 8 x A100 (80GB) node).
-- LoRA or QLoRA fine-tuning on a single consumer 24GB GPU (tested on a RTX 4090).
+- LoRA or QLoRA fine-tuning on a single consumer 24GB GPU (tested on an RTX 4090).
 - LoRA fine-tuning on a multi-GPU machine with DeepSpeed ZeRO-3 (tested on a 2 x A100s (80GB)).
 
-In practice, we find comparable performance for both full and LoRA fine-tuning, with the latter having the advantage of producing small adapter weights that are fast to upload and download from the Hugging Face Hub. Here's the two general commands to fine-tune your models:
+In practice, we find comparable performance for both full and LoRA fine-tuning, with the latter having the advantage of producing small adapter weights that are fast to upload and download from the Hugging Face Hub. Here are the two general commands to fine-tune your models:
 
 ```shell
 # Full training with ZeRO-3 on 8 GPUs
@@ -25,7 +25,7 @@ ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_con
 ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/deepspeed_zero3.yaml --num_processes={num_gpus} scripts/run_{task}.py recipes/{model_name}/{task}/config_lora.yaml
 ```
 
-Here `{task}` refers to type of training you wish to run (SFT, DPO, etc), while `{model_name}` refers to the choice of recipe in the `recipes` directory. For example, to replicate Zephyr-7B-β you can run:
+Here `{task}` refers to the type of training you wish to run (SFT, DPO, etc), while `{model_name}` refers to the choice of a recipe in the `recipes` directory. For example, to replicate Zephyr-7B-β you can run:
 
 ```shell
 # Step 1 - train SFT policy
@@ -71,7 +71,7 @@ You can scale the number of nodes by increasing the `--nodes` flag.
 
 ## Fine-tuning on your datasets
 
-Under the hood, each training script uses the `get_datasets()` function which allows one to easily combing multiple datasets with varying proportions. For instance, this is how one can specify multiple datasets and which splits to combine in one of the YAML configs:
+Under the hood, each training script uses the `get_datasets()` function which allows one to easily combine multiple datasets with varying proportions. For instance, this is how one can specify multiple datasets and which splits to combine in one of the YAML configs:
 
 ```yaml
 datasets_mixer:
@@ -83,7 +83,7 @@ dataset_splits:
 - test_xxx          # The test splits to mix
 ```
 
-If you want to fine-tune on your own datasets, the main thing to keep in mind is how the chat templates are applied to the dataset blend. Since each task (SFT, DPO, etc), requires a different format, we assume the datasets have the following columns:
+If you want to fine-tune on your datasets, the main thing to keep in mind is how the chat templates are applied to the dataset blend. Since each task (SFT, DPO, etc), requires a different format, we assume the datasets have the following columns:
 
 **SFT**
 
