@@ -30,7 +30,7 @@ The initial release of the handbook will focus on the following techniques:
 
 ## Getting started
 
-To run the code in this project, first create a Python virtual environment using e.g. Conda:
+To run the code in this project, first, create a Python virtual environment using e.g. Conda:
 
 ```shell
 conda create -n handbook python=3.10 && conda activate handbook
@@ -64,7 +64,7 @@ Finally, install Git LFS so that you can push models to the Hugging Face Hub:
 sudo apt-get install git-lfs
 ```
 
-You can now checkout the `scripts` and `recipes` directories for instructions on how to train some models 🪁!
+You can now check out the `scripts` and `recipes` directories for instructions on how to train some models 🪁!
 
 ## Project structure
 
