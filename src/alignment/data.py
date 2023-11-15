@@ -78,7 +78,9 @@ def apply_chat_template(
                 f"Could not format example as dialogue for `dpo` task! Require `[chosen, rejected]` keys but found {list(example.keys())}"
             )
     else:
-        raise ValueError(f"Task {task} not supported, please ensure that the provided task is one of {['sft', 'generation', 'rm', 'dpo']}")
+        raise ValueError(
+            f"Task {task} not supported, please ensure that the provided task is one of {['sft', 'generation', 'rm', 'dpo']}"
+        )
     return example
 
 
