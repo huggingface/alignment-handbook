@@ -72,13 +72,14 @@ def apply_chat_template(
             example["text_prompt"] = tokenizer.apply_chat_template(
                 prompt_messages, tokenize=False, add_generation_prompt=True
             )
-
-        example["text_chosen"] = _strip_prefix(example["text_chosen"], assistant_prefix)
-        example["text_rejected"] = _strip_prefix(example["text_rejected"], assistant_prefix)
+            example["text_chosen"] = _strip_prefix(example["text_chosen"], assistant_prefix)
+            example["text_rejected"] = _strip_prefix(example["text_rejected"], assistant_prefix)
+        else:
+            raise ValueError(
+                f"Could not format example as dialogue for `dpo` task! Require `[chosen, rejected]` keys but found {list(example.keys())}"
+            )
     else:
-        raise ValueError(
-            f"Could not format example as dialogue for `dpo` task! Require `[chosen, rejected]` keys but found {list(example.keys())}"
-        )
+        raise ValueError(f"Task {task} not supported, please ensure that the provided task is one of {['sft', 'generation', 'rm', 'dpo']}")
     return example
 
 
