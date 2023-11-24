@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import os
 from typing import Dict
 
 import torch
@@ -96,5 +96,11 @@ def get_peft_config(model_args: ModelArguments) -> PeftConfig | None:
 
 
 def is_adapter_model(model_name_or_path: str, revision: str = "main") -> bool:
-    repo_files = list_repo_files(model_name_or_path, revision=revision)
-    return "adapter_model.safetensors" in repo_files or "adapter_model.bin" in repo_files
+    try:
+        # Try first if its HF repo
+        repo_files = list_repo_files(model_name_or_path, revision=revision)
+        return "adapter_model.safetensors" in repo_files or "adapter_model.bin" in repo_files
+    except:
+        # If not try local repo
+        return os.path.isfile(os.path.join(model_name_or_path, "adapter_model.safetensors")) or os.path.isfile(os.path.join(model_name_or_path, "adapter_model.bin"))
+    
