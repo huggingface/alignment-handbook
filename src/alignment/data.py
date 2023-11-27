@@ -17,8 +17,7 @@ import re
 from typing import List, Literal, Optional
 
 from datasets import DatasetDict, concatenate_datasets, load_dataset, load_from_disk
-
-from huggingface_hub.utils import HFValidationError
+from datasets.builder import DatasetGenerationError
 
 from .configs import DataArguments
 
@@ -150,7 +149,7 @@ def mix_datasets(dataset_mixer: dict, splits: Optional[List[str]] = None, shuffl
             try:
                 # Try first if dataset on a Hub repo
                 dataset = load_dataset(ds, split=split)
-            except HFValidationError:
+            except DatasetGenerationError:
                 # If not, check local dataset
                 dataset = load_from_disk(os.path.join(ds, split))
 
