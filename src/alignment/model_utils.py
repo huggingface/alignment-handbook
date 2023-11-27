@@ -20,6 +20,7 @@ from transformers import AutoTokenizer, BitsAndBytesConfig, PreTrainedTokenizer
 
 from accelerate import Accelerator
 from huggingface_hub import list_repo_files
+from huggingface_hub.utils._validators import HFValidationError
 from peft import LoraConfig, PeftConfig
 
 from .configs import DataArguments, ModelArguments
@@ -97,10 +98,9 @@ def get_peft_config(model_args: ModelArguments) -> PeftConfig | None:
 
 def is_adapter_model(model_name_or_path: str, revision: str = "main") -> bool:
     try:
-        # Try first if its HF repo
+        # Try first if model on a Hub repo
         repo_files = list_repo_files(model_name_or_path, revision=revision)
-        return "adapter_model.safetensors" in repo_files or "adapter_model.bin" in repo_files
-    except:
-        # If not try local repo
-        return os.path.isfile(os.path.join(model_name_or_path, "adapter_model.safetensors")) or os.path.isfile(os.path.join(model_name_or_path, "adapter_model.bin"))
-    
+    except HFValidationError:
+        # If not, check local repo
+        repo_files = os.listdir(model_name_or_path)
+    return "adapter_model.safetensors" in repo_files or "adapter_model.bin" in repo_files
