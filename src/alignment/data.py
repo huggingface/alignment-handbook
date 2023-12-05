@@ -137,7 +137,7 @@ def mix_datasets(dataset_mixer: dict, splits: Optional[List[str]] = None, shuffl
         splits (Optional[List[str]], *optional*, defaults to `None`):
             Dataset splits to load and mix. Assumes the splits exist in all datasets and have a `train_` or `test_` prefix.
         shuffle (`bool`, *optional*, defaults to `True`):
-            Whether to shuffle the training data.
+            Whether to shuffle the training and testing/validation data.
     """
     raw_datasets = DatasetDict()
     raw_train_datasets = []
@@ -174,7 +174,10 @@ def mix_datasets(dataset_mixer: dict, splits: Optional[List[str]] = None, shuffl
             raw_datasets["train"] = concatenate_datasets(train_subsets)
     # No subsampling for test datasets to enable fair comparison across models
     if len(raw_val_datasets) > 0:
-        raw_datasets["test"] = concatenate_datasets(raw_val_datasets)
+        if shuffle:
+            raw_datasets["test"] = concatenate_datasets(raw_val_datasets).shuffle(seed=42)
+        else:
+            raw_datasets["test"] = concatenate_datasets(raw_val_datasets)
 
     if len(raw_datasets) == 0:
         raise ValueError(
