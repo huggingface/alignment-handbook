@@ -58,7 +58,7 @@ To run the code in this project, first, create a Python virtual environment usin
 conda create -n handbook python=3.10 && conda activate handbook
 ```
 
-Next, install PyTorch `v2.1.0` - the precise version is important for reproducibility! Since this is hardware-dependent, we
+Next, install PyTorch `v2.1.1` - the precise version is important for reproducibility! Since this is hardware-dependent, we
 direct you to the [PyTorch Installation Page](https://pytorch.org/get-started/locally/).
 
 You can then install the remaining package dependencies as follows:

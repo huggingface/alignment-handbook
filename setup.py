@@ -62,9 +62,9 @@ _deps = [
     "safetensors>=0.3.3",
     "scipy",
     "tensorboard",
-    "torch==2.1.0",
-    "transformers==4.35.0",
-    "trl==0.7.4",
+    "torch==2.1.1",
+    "transformers==4.36.2",
+    "trl @ git+https://github.com/huggingface/trl.git@f100ca34cca92e3a09a04b0f07950703b0aa7fd0", # Bump to official release
     "jinja2>=3.0.0",
     "tqdm>=4.64.1",
 ]
