@@ -79,6 +79,17 @@ class GetDatasetsTest(unittest.TestCase):
         self.assertEqual(len(datasets["test"]), 100)
         self.assertRaises(KeyError, lambda: datasets["train"])
 
+    def test_max_samples(self):
+        dataset_mixer = {
+            "HuggingFaceH4/testing_alpaca_small": 0.5,
+            "HuggingFaceH4/testing_self_instruct_small": 0.3,
+            "HuggingFaceH4/testing_codealpaca_small": 0.2,
+        }
+        data_args = DataArguments(dataset_mixer=dataset_mixer, max_train_samples=42, max_eval_samples=69)
+        datasets = get_datasets(data_args)
+        self.assertEqual(len(datasets["train"]), 42)
+        self.assertEqual(len(datasets["test"]), 69)
+
 
 class ApplyChatTemplateTest(unittest.TestCase):
     def setUp(self):

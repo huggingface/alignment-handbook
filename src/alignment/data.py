@@ -124,6 +124,13 @@ def get_datasets(
         raise ValueError(f"Data config {data_config} not recognized.")
 
     raw_datasets = mix_datasets(dataset_mixer, splits=splits, shuffle=shuffle)
+
+    if type(data_config) is DataArguments:
+        if data_config.max_train_samples is not None:
+            raw_datasets['train'] = raw_datasets['train'].select(range(data_config.max_train_samples))
+        if data_config.max_eval_samples is not None:
+            raw_datasets['test'] = raw_datasets['test'].select(range(data_config.max_eval_samples))
+
     return raw_datasets
 
 
