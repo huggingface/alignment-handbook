@@ -95,11 +95,13 @@ def main():
     #####################
     # Apply chat template
     #####################
-    raw_datasets = raw_datasets.map(apply_chat_template,
-                                    fn_kwargs={"tokenizer": tokenizer, "task": "sft"},
-                                    num_proc=data_args.preprocessing_num_workers,
-                                    remove_columns=column_names,
-                                    desc="Applying chat template",)
+    raw_datasets = raw_datasets.map(
+        apply_chat_template,
+        fn_kwargs={"tokenizer": tokenizer, "task": "sft"},
+        num_proc=data_args.preprocessing_num_workers,
+        remove_columns=column_names,
+        desc="Applying chat template",
+    )
     train_dataset = raw_datasets["train"]
     eval_dataset = raw_datasets["test"]
 
