@@ -32,7 +32,7 @@ beta: 0.01
 do_eval: true
 evaluation_strategy: steps
 eval_steps: 100
-gradient_accumulation_steps: 32
+gradient_accumulation_steps: 1
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: false
