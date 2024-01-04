@@ -85,6 +85,7 @@ def main():
     logger.info(
         f"Training on the following datasets and their proportions: {[split + ' : ' + str(dset.num_rows) for split, dset in raw_datasets.items()]}"
     )
+    column_names = list(raw_datasets["train"].features)
 
     ################
     # Load tokenizer
@@ -94,7 +95,13 @@ def main():
     #####################
     # Apply chat template
     #####################
-    raw_datasets = raw_datasets.map(apply_chat_template, fn_kwargs={"tokenizer": tokenizer, "task": "sft"})
+    raw_datasets = raw_datasets.map(
+        apply_chat_template,
+        fn_kwargs={"tokenizer": tokenizer, "task": "sft"},
+        num_proc=data_args.preprocessing_num_workers,
+        remove_columns=column_names,
+        desc="Applying chat template",
+    )
     train_dataset = raw_datasets["train"]
     eval_dataset = raw_datasets["test"]
 
