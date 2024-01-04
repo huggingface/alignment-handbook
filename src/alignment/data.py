@@ -26,12 +26,10 @@ DEFAULT_CHAT_TEMPLATE = "{% for message in messages %}\n{% if message['role'] ==
 
 
 def apply_chat_template(
-    example, tokenizer, task: Literal["sft", "generation", "rm", "dpo"] = "sft", assistant_prefix="<|assistant|>\n"
+    example,
+    tokenizer,
+    task: Literal["sft", "generation", "rm", "dpo"],
 ):
-    def _strip_prefix(s, pattern):
-        # Use re.escape to escape any special characters in the pattern
-        return re.sub(f"^{re.escape(pattern)}", "", s)
-
     if task in ["sft", "generation"]:
         messages = example["messages"]
         # We add an empty system message if there is none
@@ -57,23 +55,18 @@ def apply_chat_template(
             )
     elif task == "dpo":
         if all(k in example.keys() for k in ("chosen", "rejected")):
-            # Compared to reward modeling, we filter out the prompt, so the text is everything after the last assistant token
-            prompt_messages = [[msg for msg in example["chosen"] if msg["role"] == "user"][0]]
-            # Insert system message
+            # For DPO, the inputs are triples of (prompt, chosen, rejected), where `chosen` and `rejected` are the final turn of a dialogue
+            # We therefore need to extract the N-1 turns to form the prompt
+            prompt_messages = example["chosen"][:-1]
+            # Prepend a system message if the first message is not a system message
             if example["chosen"][0]["role"] != "system":
                 prompt_messages.insert(0, {"role": "system", "content": ""})
-            else:
-                prompt_messages.insert(0, example["chosen"][0])
-            # TODO: handle case where chosen/rejected also have system messages
-            chosen_messages = example["chosen"][1:]
-            rejected_messages = example["rejected"][1:]
+            # Now we extract the final turn to define chosen/rejected responses
+            chosen_messages = example["chosen"][-1:]
+            rejected_messages = example["rejected"][-1:]
             example["text_chosen"] = tokenizer.apply_chat_template(chosen_messages, tokenize=False)
             example["text_rejected"] = tokenizer.apply_chat_template(rejected_messages, tokenize=False)
-            example["text_prompt"] = tokenizer.apply_chat_template(
-                prompt_messages, tokenize=False, add_generation_prompt=True
-            )
-            example["text_chosen"] = _strip_prefix(example["text_chosen"], assistant_prefix)
-            example["text_rejected"] = _strip_prefix(example["text_rejected"], assistant_prefix)
+            example["text_prompt"] = tokenizer.apply_chat_template(prompt_messages, tokenize=False)
         else:
             raise ValueError(
                 f"Could not format example as dialogue for `dpo` task! Require `[chosen, rejected]` keys but found {list(example.keys())}"

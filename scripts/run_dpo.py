@@ -42,6 +42,8 @@ logger = logging.getLogger(__name__)
 
 
 def main():
+    accelerator = Accelerator()
+
     parser = H4ArgumentParser((ModelArguments, DataArguments, DPOConfig))
     model_args, data_args, training_args = parser.parse()
 
@@ -64,11 +66,13 @@ def main():
     logger.info(f"Data parameters {data_args}")
     logger.info(f"Training/evaluation parameters {training_args}")
 
+    # Check for last checkpoint
+    last_checkpoint = get_checkpoint(training_args)
+    if last_checkpoint is not None and training_args.resume_from_checkpoint is None:
+        logger.info(f"Checkpoint detected, resuming training at {last_checkpoint=}.")
+
     # Set seed for reproducibility
     set_seed(training_args.seed)
-
-    # Increase distributed timeout to 3h to enable push to Hub to complete
-    accelerator = Accelerator()
 
     ###############
     # Load datasets
