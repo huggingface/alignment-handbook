@@ -123,10 +123,10 @@ def main():
     )
 
     model = model_args.model_name_or_path
-    if is_adapter_model(model, model_args.model_revision):
-        # load the model, merge the adapter weights and unload the adapter
-        # Note: to run QLora, you will need to merge the based model separately as the merged model in 16bit
-        logger.info(f"Merging peft adapters for {model_args.model_name_or_path=}")
+    if is_adapter_model(model, model_args.model_revision) is True:
+        # Load the base model, merge the adapter weights and unload the adapter
+        # Note: to run QLoRA, you will need to merge the base model separately as the merged model in 16bit
+        logger.info(f"Merging PEFT adapters for {model_args.model_name_or_path=}")
 
         peft_config = PeftConfig.from_pretrained(model_args.model_name_or_path, revision=model_args.model_revision)
 
@@ -158,7 +158,7 @@ def main():
     #########################
     # Instantiate DPO trainer
     #########################
-    dpo_trainer = DPOTrainer(
+    trainer = DPOTrainer(
         model,
         ref_model,
         model_init_kwargs=model_kwargs,
@@ -171,20 +171,26 @@ def main():
         max_length=training_args.max_length,
         max_prompt_length=training_args.max_prompt_length,
         peft_config=get_peft_config(model_args),
+        loss_type=training_args.loss_type,
     )
 
     ###############
     # Training loop
     ###############
-    train_result = dpo_trainer.train()
+    checkpoint = None
+    if training_args.resume_from_checkpoint is not None:
+        checkpoint = training_args.resume_from_checkpoint
+    elif last_checkpoint is not None:
+        checkpoint = last_checkpoint
+    train_result = trainer.train(resume_from_checkpoint=checkpoint)
     metrics = train_result.metrics
     max_train_samples = (
         data_args.max_train_samples if data_args.max_train_samples is not None else len(raw_datasets["train"])
     )
     metrics["train_samples"] = min(max_train_samples, len(raw_datasets["train"]))
-    dpo_trainer.log_metrics("train", metrics)
-    dpo_trainer.save_metrics("train", metrics)
-    dpo_trainer.save_state()
+    trainer.log_metrics("train", metrics)
+    trainer.save_metrics("train", metrics)
+    trainer.save_state()
 
     logger.info("*** Training complete ***")
 
@@ -193,18 +199,18 @@ def main():
     ##########
     if training_args.do_eval:
         logger.info("*** Evaluate ***")
-        metrics = dpo_trainer.evaluate()
+        metrics = trainer.evaluate()
         max_eval_samples = (
             data_args.max_eval_samples if data_args.max_eval_samples is not None else len(raw_datasets["test"])
         )
         metrics["eval_samples"] = min(max_eval_samples, len(raw_datasets["test"]))
-        dpo_trainer.log_metrics("eval", metrics)
-        dpo_trainer.save_metrics("eval", metrics)
+        trainer.log_metrics("eval", metrics)
+        trainer.save_metrics("eval", metrics)
 
     ##################################
     # Save model and create model card
     ##################################
-    dpo_trainer.save_model(training_args.output_dir)
+    trainer.save_model(training_args.output_dir)
     # Save everything else on main process
     if accelerator.is_main_process:
         kwargs = {
@@ -213,12 +219,12 @@ def main():
             "dataset_tags": list(data_args.dataset_mixer.keys()),
             "tags": ["alignment-handbook"],
         }
-        dpo_trainer.create_model_card(**kwargs)
+        trainer.create_model_card(**kwargs)
         # Restore k,v cache for fast inference
-        dpo_trainer.model.config.use_cache = True
-        dpo_trainer.model.config.save_pretrained(training_args.output_dir)
+        trainer.model.config.use_cache = True
+        trainer.model.config.save_pretrained(training_args.output_dir)
         if training_args.push_to_hub is True:
-            dpo_trainer.push_to_hub()
+            trainer.push_to_hub()
 
     # Ensure we don't timeout on model save / push to Hub
     logger.info("*** Waiting for all processes to finish ***")

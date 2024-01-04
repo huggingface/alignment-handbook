@@ -33,12 +33,12 @@ from alignment import (
     ModelArguments,
     SFTConfig,
     apply_chat_template,
+    get_checkpoint,
     get_datasets,
     get_kbit_device_map,
     get_peft_config,
     get_quantization_config,
     get_tokenizer,
-    get_checkpoint
 )
 from trl import SFTTrainer
 
@@ -47,13 +47,13 @@ logger = logging.getLogger(__name__)
 
 
 def main():
+    accelerator = Accelerator()
+
     parser = H4ArgumentParser((ModelArguments, DataArguments, SFTConfig))
     model_args, data_args, training_args = parser.parse()
 
     # Set seed for reproducibility
     set_seed(training_args.seed)
-
-    accelerator = Accelerator()
 
     ###############
     # Setup logging
@@ -83,7 +83,6 @@ def main():
     last_checkpoint = get_checkpoint(training_args)
     if last_checkpoint is not None and training_args.resume_from_checkpoint is None:
         logger.info(f"Checkpoint detected, resuming training at {last_checkpoint=}.")
-
 
     ###############
     # Load datasets
@@ -149,7 +148,12 @@ def main():
     # Training loop
     ###############
     logger.info("*** Train ***")
-    train_result = trainer.train()
+    checkpoint = None
+    if training_args.resume_from_checkpoint is not None:
+        checkpoint = training_args.resume_from_checkpoint
+    elif last_checkpoint is not None:
+        checkpoint = last_checkpoint
+    train_result = trainer.train(resume_from_checkpoint=checkpoint)
     metrics = train_result.metrics
     max_train_samples = data_args.max_train_samples if data_args.max_train_samples is not None else len(train_dataset)
     metrics["train_samples"] = min(max_train_samples, len(train_dataset))
