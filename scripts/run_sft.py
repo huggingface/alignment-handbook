@@ -173,7 +173,7 @@ def main():
     if training_args.do_eval:
         logger.info("*** Evaluate ***")
         metrics = trainer.evaluate()
-        metrics["eval_samples"] = len(eval_dataset))
+        metrics["eval_samples"] = len(eval_dataset)
         trainer.log_metrics("eval", metrics)
         trainer.save_metrics("eval", metrics)
 
@@ -199,7 +199,7 @@ def main():
 
         if training_args.push_to_hub is True:
             logger.info("Pushing to hub...")
-            trainer.push_to_hub()
+            trainer.push_to_hub(**kwargs)
 
     accelerator.wait_for_everyone()
 

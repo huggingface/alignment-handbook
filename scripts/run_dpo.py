@@ -218,7 +218,7 @@ def main():
         trainer.model.config.use_cache = True
         trainer.model.config.save_pretrained(training_args.output_dir)
         if training_args.push_to_hub is True:
-            trainer.push_to_hub()
+            trainer.push_to_hub(**kwargs)
 
     # Ensure we don't timeout on model save / push to Hub
     logger.info("*** Waiting for all processes to finish ***")
