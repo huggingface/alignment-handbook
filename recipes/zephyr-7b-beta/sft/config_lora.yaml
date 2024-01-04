@@ -55,3 +55,4 @@ save_strategy: "steps"
 save_steps: 100
 save_total_limit: 1
 seed: 42
+warmup_ratio: 0.1
