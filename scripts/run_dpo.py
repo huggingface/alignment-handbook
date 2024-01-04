@@ -185,9 +185,9 @@ def main():
     train_result = trainer.train(resume_from_checkpoint=checkpoint)
     metrics = train_result.metrics
     metrics["train_samples"] = len(raw_datasets["train"])
-    trainer.log_metrics("train", metrics)
-    trainer.save_metrics("train", metrics)
-    trainer.save_state()
+    dpo_trainer.log_metrics("train", metrics)
+    dpo_trainer.save_metrics("train", metrics)
+    dpo_trainer.save_state()
 
     logger.info("*** Training complete ***")
 
@@ -196,10 +196,10 @@ def main():
     ##########
     if training_args.do_eval:
         logger.info("*** Evaluate ***")
-        metrics = trainer.evaluate()
+        metrics = dpo_trainer.evaluate()
         metrics["eval_samples"] = len(raw_datasets["test"])
-        trainer.log_metrics("eval", metrics)
-        trainer.save_metrics("eval", metrics)
+        dpo_trainer.log_metrics("eval", metrics)
+        dpo_trainer.save_metrics("eval", metrics)
 
     ##################################
     # Save model and create model card
