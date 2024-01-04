@@ -12,11 +12,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import os
 import re
 from typing import List, Literal, Optional
 
-from datasets import DatasetDict, concatenate_datasets, load_dataset
+from datasets import DatasetDict, concatenate_datasets, load_dataset, load_from_disk
+from datasets.builder import DatasetGenerationError
 
 from .configs import DataArguments
 
@@ -98,7 +99,7 @@ def get_datasets(
         splits (`List[str]`, *optional*, defaults to `['train', 'test']`):
             Dataset splits to load and mix. Assumes the splits exist in all datasets and have a `train_` or `test_` prefix.
         shuffle (`bool`, *optional*, defaults to `True`):
-            Whether to shuffle the training data.
+            Whether to shuffle the training and testing/validation data.
 
     Returns
         [`DatasetDict`]: The dataset dictionary containing the loaded datasets.
@@ -136,7 +137,7 @@ def mix_datasets(dataset_mixer: dict, splits: Optional[List[str]] = None, shuffl
         splits (Optional[List[str]], *optional*, defaults to `None`):
             Dataset splits to load and mix. Assumes the splits exist in all datasets and have a `train_` or `test_` prefix.
         shuffle (`bool`, *optional*, defaults to `True`):
-            Whether to shuffle the training data.
+            Whether to shuffle the training and testing/validation data.
     """
     raw_datasets = DatasetDict()
     raw_train_datasets = []
@@ -145,20 +146,17 @@ def mix_datasets(dataset_mixer: dict, splits: Optional[List[str]] = None, shuffl
     for ds, frac in dataset_mixer.items():
         fracs.append(frac)
         for split in splits:
+            try:
+                # Try first if dataset on a Hub repo
+                dataset = load_dataset(ds, split=split)
+            except DatasetGenerationError:
+                # If not, check local dataset
+                dataset = load_from_disk(os.path.join(ds, split))
+
             if "train" in split:
-                raw_train_datasets.append(
-                    load_dataset(
-                        ds,
-                        split=split,
-                    )
-                )
+                raw_train_datasets.append(dataset)
             elif "test" in split:
-                raw_val_datasets.append(
-                    load_dataset(
-                        ds,
-                        split=split,
-                    )
-                )
+                raw_val_datasets.append(dataset)
             else:
                 raise ValueError(f"Split type {split} not recognized as one of test or train.")
 
