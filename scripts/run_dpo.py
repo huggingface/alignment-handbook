@@ -197,10 +197,7 @@ def main():
     if training_args.do_eval:
         logger.info("*** Evaluate ***")
         metrics = trainer.evaluate()
-        max_eval_samples = (
-            data_args.max_eval_samples if data_args.max_eval_samples is not None else len(raw_datasets["test"])
-        )
-        metrics["eval_samples"] = min(max_eval_samples, len(raw_datasets["test"]))
+        metrics["eval_samples"] = len(raw_datasets["test"])
         trainer.log_metrics("eval", metrics)
         trainer.save_metrics("eval", metrics)
 
