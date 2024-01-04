@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
-import re
 from typing import List, Literal, Optional
 
 from datasets import DatasetDict, concatenate_datasets, load_dataset, load_from_disk
@@ -105,7 +104,7 @@ def get_datasets(
         #     - 'dataset2': 0.3
         #     - 'dataset3': 0.2
         dataset_mixer = data_config.dataset_mixer
-    elif type(data_config) is dict:
+    elif isinstance(data_config, dict):
         # Structure of the input is:
         #     dataset_mixer = {
         #             "dataset1": 0.5,

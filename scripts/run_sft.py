@@ -38,6 +38,7 @@ from alignment import (
     get_peft_config,
     get_quantization_config,
     get_tokenizer,
+    get_checkpoint
 )
 from trl import SFTTrainer
 
@@ -77,6 +78,12 @@ def main():
     logger.info(f"Model parameters {model_args}")
     logger.info(f"Data parameters {data_args}")
     logger.info(f"Training/evaluation parameters {training_args}")
+
+    # Check for last checkpoint
+    last_checkpoint = get_checkpoint(training_args)
+    if last_checkpoint is not None and training_args.resume_from_checkpoint is None:
+        logger.info(f"Checkpoint detected, resuming training at {last_checkpoint=}.")
+
 
     ###############
     # Load datasets

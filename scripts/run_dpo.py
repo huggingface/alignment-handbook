@@ -27,6 +27,7 @@ from alignment import (
     H4ArgumentParser,
     ModelArguments,
     apply_chat_template,
+    get_checkpoint,
     get_datasets,
     get_kbit_device_map,
     get_peft_config,

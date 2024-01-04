@@ -6,9 +6,9 @@ export PYTHONPATH = src
 check_dirs := src tests scripts
 
 style:
-	ruff --line-length 119 --target-version py310 check $(check_dirs) setup.py --fix
-	ruff --line-length 119 --target-version py310 format $(check_dirs) setup.py
-	
+	black --line-length 119 --target-version py310 $(check_dirs) setup.py
+	isort $(check_dirs) setup.py
+
 quality:
 	black --check --line-length 119 --target-version py310 $(check_dirs) setup.py
 	isort --check-only $(check_dirs) setup.py
