@@ -173,10 +173,7 @@ def main():
     ###############
     train_result = dpo_trainer.train()
     metrics = train_result.metrics
-    max_train_samples = (
-        data_args.max_train_samples if data_args.max_train_samples is not None else len(raw_datasets["train"])
-    )
-    metrics["train_samples"] = min(max_train_samples, len(raw_datasets["train"]))
+    metrics["train_samples"] = len(raw_datasets["train"])
     dpo_trainer.log_metrics("train", metrics)
     dpo_trainer.save_metrics("train", metrics)
     dpo_trainer.save_state()
@@ -189,10 +186,7 @@ def main():
     if training_args.do_eval:
         logger.info("*** Evaluate ***")
         metrics = dpo_trainer.evaluate()
-        max_eval_samples = (
-            data_args.max_eval_samples if data_args.max_eval_samples is not None else len(raw_datasets["test"])
-        )
-        metrics["eval_samples"] = min(max_eval_samples, len(raw_datasets["test"]))
+        metrics["eval_samples"] = len(raw_datasets["test"])
         dpo_trainer.log_metrics("eval", metrics)
         dpo_trainer.save_metrics("eval", metrics)
 

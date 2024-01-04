@@ -50,3 +50,4 @@ report_to:
 save_strategy: "no"
 save_total_limit: null
 seed: 42
+warmup_ratio: 0.1
