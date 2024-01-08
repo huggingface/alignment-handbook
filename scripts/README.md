@@ -44,6 +44,8 @@ By default, these scripts will push each model to your Hugging Face Hub username
 ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/deepspeed_zero3.yaml scripts/run_{task}.py recipes/{model_name}/{task}/config_full.yaml --per_device_train_batch_size=42 --num_train_epochs=5
 ```
 
+## Logging with Weights and Biases
+
 By default all training metrics are logged with TensorBoard. If you have a [Weights and Biases](https://wandb.ai/site) account and are logged in, you can view the training metrics by appending `--report_to=wandb`, e.g.
 
 ```shell
@@ -58,7 +60,7 @@ If you have access to a Slurm cluster, we provide a `recipes/launch.slurm` scrip
 sbatch --job-name=handbook_{task} --nodes=1 recipes/launch.slurm {model_name} {task} {precision} {accelerator}
 ```
 
-Here `{model_name}` and `{task}` are defined as above, while `{precision}` refers to the type of training (`full` vs `lora`) and `{accelerator}` refers to the choice of 🤗 Accelerate config in `recipes/accelerate_configs`. If you wish to override the default config parameters, you can provide them by appending a space-separated string like `'--arg1=value1 --arg2=value2'. Here's a concrete example to run SFT on 1 node of 8 GPUs:
+Here `{model_name}` and `{task}` are defined as above, while `{precision}` refers to the type of training (`full` vs `qlora`) and `{accelerator}` refers to the choice of 🤗 Accelerate config in `recipes/accelerate_configs`. If you wish to override the default config parameters, you can provide them by appending a space-separated string like `'--arg1=value1 --arg2=value2'. Here's a concrete example to run SFT on 1 node of 8 GPUs:
 
 ```shell
 # Launch on Slurm and override default hyperparameters

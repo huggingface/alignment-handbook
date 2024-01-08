@@ -4,7 +4,7 @@ model_name_or_path: alignment-handbook/zephyr-7b-sft-full
 # Data training arguments
 # For definitions, see: src/h4/training/config.py
 dataset_mixer:
-  HuggingFaceH4/ultrafeedback_binarized_fixed: 1.0
+  HuggingFaceH4/ultrafeedback_binarized: 1.0
 dataset_splits:
 - train_prefs
 - test_prefs

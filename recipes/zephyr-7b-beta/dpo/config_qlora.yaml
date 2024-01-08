@@ -20,7 +20,7 @@ lora_target_modules:
 # Data training arguments
 
 dataset_mixer:
-  HuggingFaceH4/ultrafeedback_binarized_fixed: 1.0
+  HuggingFaceH4/ultrafeedback_binarized: 1.0
 dataset_splits:
 - train_prefs
 - test_prefs
