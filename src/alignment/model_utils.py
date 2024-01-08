@@ -75,7 +75,7 @@ def get_tokenizer(model_args: ModelArguments, data_args: DataArguments) -> PreTr
 
     if data_args.chat_template is not None:
         tokenizer.chat_template = data_args.chat_template
-    elif tokenizer.chat_template is None:
+    elif tokenizer.chat_template is None and tokenizer.default_chat_template is None:
         tokenizer.chat_template = DEFAULT_CHAT_TEMPLATE
 
     return tokenizer
