@@ -1,5 +1,5 @@
 # Model arguments
-model_name_or_path: alignment-handbook/zephyr-7b-sft-lora
+model_name_or_path: alignment-handbook/zephyr-7b-sft-qlora
 torch_dtype: float16
 
 # LoRA arguments
@@ -36,7 +36,7 @@ gradient_accumulation_steps: 1
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: false
-hub_model_id: zephyr-7b-dpo-lora
+hub_model_id: zephyr-7b-dpo-qlora
 learning_rate: 5.0e-6
 log_level: info
 logging_steps: 10
