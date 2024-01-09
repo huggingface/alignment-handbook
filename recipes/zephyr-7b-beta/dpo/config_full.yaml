@@ -18,6 +18,8 @@ evaluation_strategy: steps
 eval_steps: 100
 gradient_accumulation_steps: 2
 gradient_checkpointing: true
+gradient_checkpointing_kwargs:
+  use_reentrant: False
 hub_model_id: zephyr-7b-dpo-full
 learning_rate: 5.0e-7
 log_level: info
