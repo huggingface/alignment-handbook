@@ -47,7 +47,7 @@ export CMD=" \
     scripts/run_$TASK.py $CONFIG_FILE $OPTIONAL_ARGS
     "
 
-export LAUNCHER="HF_HUB_ENABLE_HF_TRANSFER=1 ACCELERATE_LOG_LEVEL=info accelerate launch \
+export LAUNCHER="HF_HUB_ENABLE_HF_TRANSFER=1 ACCELERATE_LOG_LEVEL=info TRANSFORMERS_VERBOSITY=info accelerate launch \
     --config_file recipes/accelerate_configs/$ACCELERATOR.yaml  \
     --gradient_accumulation_steps $GRAD_ACC_STEPS \
     --num_machines $NUM_NODES \
