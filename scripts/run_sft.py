@@ -26,7 +26,6 @@ import torch
 import transformers
 from transformers import set_seed
 
-from accelerate import Accelerator
 from alignment import (
     DataArguments,
     H4ArgumentParser,
