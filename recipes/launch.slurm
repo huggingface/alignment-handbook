@@ -2,7 +2,7 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --exclusive
 #SBATCH --gres=gpu:8
-#SBATCH --partition=production-cluster  # Adjust this for your cluster
+#SBATCH --partition=hopper-prod  # Adjust this for your cluster
 #SBATCH --output=/fsx/h4/logs/%x-%j.out # Adjust this for your cluster
 #SBATCH --err=/fsx/h4/logs/%x-%j.err    # Adjust this for your cluster
 
@@ -47,7 +47,7 @@ export CMD=" \
     scripts/run_$TASK.py $CONFIG_FILE $OPTIONAL_ARGS
     "
 
-export LAUNCHER="ACCELERATE_LOG_LEVEL=info accelerate launch \
+export LAUNCHER="HF_HUB_ENABLE_HF_TRANSFER=1 ACCELERATE_LOG_LEVEL=info TRANSFORMERS_VERBOSITY=info accelerate launch \
     --config_file recipes/accelerate_configs/$ACCELERATOR.yaml  \
     --gradient_accumulation_steps $GRAD_ACC_STEPS \
     --num_machines $NUM_NODES \
@@ -71,14 +71,7 @@ export NCCL_ASYNC_ERROR_HANDLING=1
 
 # Specific configuration optimized for the Hugging Face Compute Cluster
 # Be ye warned this may not work on other clusters!
-export NCCL_PROTO=simple
-export RDMAV_FORK_SAFE=1
-export FI_EFA_FORK_SAFE=1
-export FI_EFA_USE_DEVICE_RDMA=1
-export FI_PROVIDER=efa
-export FI_LOG_LEVEL=1
-export NCCL_IB_DISABLE=1
-export NCCL_SOCKET_IFNAME=ens
+module load cuda/12.1
 
 # srun error handling:
 # --wait=60: wait 60 sec after the first task terminates before terminating all remaining tasks

@@ -88,9 +88,33 @@ class ApplyChatTemplateTest(unittest.TestCase):
         self.dataset = Dataset.from_dict(
             {
                 "prompt": ["Hello!"],
-                "messages": [[{"role": "user", "content": "Hello!"}, {"role": "assistant", "content": "Bonjour!"}]],
-                "chosen": [[{"role": "user", "content": "Hello!"}, {"role": "assistant", "content": "Bonjour!"}]],
-                "rejected": [[{"role": "user", "content": "Hello!"}, {"role": "assistant", "content": "Hola!"}]],
+                "messages": [
+                    [
+                        {"role": "system", "content": "You are a happy chatbot"},
+                        {"role": "user", "content": "Hello!"},
+                        {"role": "assistant", "content": "Bonjour!"},
+                        {"role": "user", "content": "How are you?"},
+                        {"role": "assistant", "content": "I am doing well, thanks!"},
+                    ]
+                ],
+                "chosen": [
+                    [
+                        {"role": "system", "content": "You are a happy chatbot"},
+                        {"role": "user", "content": "Hello!"},
+                        {"role": "assistant", "content": "Bonjour!"},
+                        {"role": "user", "content": "How are you?"},
+                        {"role": "assistant", "content": "I am doing well, thanks!"},
+                    ]
+                ],
+                "rejected": [
+                    [
+                        {"role": "system", "content": "You are a happy chatbot"},
+                        {"role": "user", "content": "Hello!"},
+                        {"role": "assistant", "content": "Bonjour!"},
+                        {"role": "user", "content": "How are you?"},
+                        {"role": "assistant", "content": "Not so good tbh"},
+                    ]
+                ],
             }
         )
 
@@ -102,7 +126,9 @@ class ApplyChatTemplateTest(unittest.TestCase):
         )
         self.assertDictEqual(
             dataset[0],
-            {"text": "<|system|>\n</s>\n<|user|>\nHello!</s>\n<|assistant|>\nBonjour!</s>\n"},
+            {
+                "text": "<|system|>\nYou are a happy chatbot</s>\n<|user|>\nHello!</s>\n<|assistant|>\nBonjour!</s>\n<|user|>\nHow are you?</s>\n<|assistant|>\nI am doing well, thanks!</s>\n"
+            },
         )
 
     def test_generation(self):
@@ -115,7 +141,9 @@ class ApplyChatTemplateTest(unittest.TestCase):
         )
         self.assertDictEqual(
             dataset[0],
-            {"text": "<|system|>\n</s>\n<|user|>\nHello!</s>\n<|assistant|>\n"},
+            {
+                "text": "<|system|>\nYou are a happy chatbot</s>\n<|user|>\nHello!</s>\n<|assistant|>\nBonjour!</s>\n<|user|>\nHow are you?</s>\n<|assistant|>\n"
+            },
         )
 
     def test_rm(self):
@@ -127,8 +155,8 @@ class ApplyChatTemplateTest(unittest.TestCase):
         self.assertDictEqual(
             dataset[0],
             {
-                "text_chosen": "<|system|>\n</s>\n<|user|>\nHello!</s>\n<|assistant|>\nBonjour!</s>\n",
-                "text_rejected": "<|system|>\n</s>\n<|user|>\nHello!</s>\n<|assistant|>\nHola!</s>\n",
+                "text_chosen": "<|system|>\nYou are a happy chatbot</s>\n<|user|>\nHello!</s>\n<|assistant|>\nBonjour!</s>\n<|user|>\nHow are you?</s>\n<|assistant|>\nI am doing well, thanks!</s>\n",
+                "text_rejected": "<|system|>\nYou are a happy chatbot</s>\n<|user|>\nHello!</s>\n<|assistant|>\nBonjour!</s>\n<|user|>\nHow are you?</s>\n<|assistant|>\nNot so good tbh</s>\n",
             },
         )
 
@@ -141,8 +169,8 @@ class ApplyChatTemplateTest(unittest.TestCase):
         self.assertDictEqual(
             dataset[0],
             {
-                "text_prompt": "<|system|>\n</s>\n<|user|>\nHello!</s>\n<|assistant|>\n",
-                "text_chosen": "Bonjour!</s>\n",
-                "text_rejected": "Hola!</s>\n",
+                "text_prompt": "<|system|>\nYou are a happy chatbot</s>\n<|user|>\nHello!</s>\n<|assistant|>\nBonjour!</s>\n<|user|>\nHow are you?</s>\n",
+                "text_chosen": "<|assistant|>\nI am doing well, thanks!</s>\n",
+                "text_rejected": "<|assistant|>\nNot so good tbh</s>\n",
             },
         )
