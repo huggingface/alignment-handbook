@@ -44,8 +44,6 @@ logger = logging.getLogger(__name__)
 
 
 def main():
-    accelerator = Accelerator()
-
     parser = H4ArgumentParser((ModelArguments, DataArguments, DPOConfig))
     model_args, data_args, training_args = parser.parse()
 
@@ -211,27 +209,28 @@ def main():
     ##################################
     # Save model and create model card
     ##################################
+    logger.info("*** Save model ***")
     trainer.save_model(training_args.output_dir)
+    logger.info(f"Model saved to {training_args.output_dir}")
+
     # Save everything else on main process
-    if accelerator.is_main_process:
-        kwargs = {
-            "finetuned_from": model_args.model_name_or_path,
-            "dataset": list(data_args.dataset_mixer.keys()),
-            "dataset_tags": list(data_args.dataset_mixer.keys()),
-            "tags": ["alignment-handbook"],
-        }
+    kwargs = {
+        "finetuned_from": model_args.model_name_or_path,
+        "dataset": list(data_args.dataset_mixer.keys()),
+        "dataset_tags": list(data_args.dataset_mixer.keys()),
+        "tags": ["alignment-handbook"],
+    }
+    if trainer.accelerator.is_main_process:
         trainer.create_model_card(**kwargs)
         # Restore k,v cache for fast inference
         trainer.model.config.use_cache = True
         trainer.model.config.save_pretrained(training_args.output_dir)
-        if training_args.push_to_hub is True:
-            trainer.push_to_hub(**kwargs)
 
-    # Ensure we don't timeout on model save / push to Hub
-    logger.info("*** Waiting for all processes to finish ***")
-    accelerator.wait_for_everyone()
+    if training_args.push_to_hub is True:
+        logger.info("Pushing to hub...")
+        trainer.push_to_hub(**kwargs)
 
-    logger.info("*** Run complete! ***")
+    logger.info("*** Training complete! ***")
 
 
 if __name__ == "__main__":
