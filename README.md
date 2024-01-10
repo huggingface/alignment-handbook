@@ -58,7 +58,7 @@ To run the code in this project, first, create a Python virtual environment usin
 conda create -n handbook python=3.10 && conda activate handbook
 ```
 
-Next, install PyTorch `v2.1.0` - the precise version is important for reproducibility! Since this is hardware-dependent, we
+Next, install PyTorch `v2.1.2` - the precise version is important for reproducibility! Since this is hardware-dependent, we
 direct you to the [PyTorch Installation Page](https://pytorch.org/get-started/locally/).
 
 You can then install the remaining package dependencies as follows:
@@ -71,12 +71,12 @@ python -m pip install .
 
 You will also need Flash Attention 2 installed, which can be done by running:
 
-> **Note**
-> If your machine has less than 96GB of RAM and many CPU cores, reduce the MAX_JOBS., e.g. `MAX_JOBS=4 pip install flash-attn --no-build-isolation`
-
 ```shell
-python -m pip install flash-attn --no-build-isolation
+python -m pip install flash-attn==2.3.6 --no-build-isolation
 ```
+
+> **Note**
+> If your machine has less than 96GB of RAM and many CPU cores, reduce the `MAX_JOBS` arguments, e.g. `MAX_JOBS=4 pip install flash-attn==2.3.6 --no-build-isolation`
 
 Next, log into your Hugging Face account as follows:
 

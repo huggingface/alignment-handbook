@@ -1,9 +1,24 @@
 # Model arguments
-model_name_or_path: alignment-handbook/zephyr-7b-sft-full
-torch_dtype: null
+model_name_or_path: alignment-handbook/zephyr-7b-sft-qlora
+torch_dtype: float16
+
+# LoRA arguments
+use_peft: true
+load_in_4bit: true
+lora_r: 16
+lora_alpha: 16
+lora_dropout: 0.05
+lora_target_modules:
+- q_proj
+- k_proj
+- v_proj
+- o_proj
+- gate_proj
+- up_proj
+- down_proj
 
 # Data training arguments
-# For definitions, see: src/h4/training/config.py
+
 dataset_mixer:
   HuggingFaceH4/ultrafeedback_binarized: 1.0
 dataset_splits:
@@ -20,18 +35,18 @@ eval_steps: 100
 gradient_accumulation_steps: 2
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
-  use_reentrant: False
-hub_model_id: zephyr-7b-dpo-full
-learning_rate: 5.0e-7
+  use_reentrant: false
+hub_model_id: zephyr-7b-dpo-qlora
+learning_rate: 5.0e-6
 log_level: info
 logging_steps: 10
 lr_scheduler_type: cosine
 max_length: 1024
 max_prompt_length: 512
 num_train_epochs: 1
-optim: adamw_torch
-output_dir: data/zephyr-7b-dpo-full
-per_device_train_batch_size: 8
+optim: paged_adamw_32bit
+output_dir: data/zephyr-7b-dpo-qlora # It is handy to append `hub_model_revision` to keep track of your local experiments
+per_device_train_batch_size: 4
 per_device_eval_batch_size: 8
 push_to_hub: true
 save_strategy: "steps"

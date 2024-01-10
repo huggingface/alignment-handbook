@@ -26,13 +26,13 @@ import torch
 import transformers
 from transformers import set_seed
 
-from accelerate import Accelerator
 from alignment import (
     DataArguments,
     H4ArgumentParser,
     ModelArguments,
     SFTConfig,
     apply_chat_template,
+    get_checkpoint,
     get_datasets,
     get_kbit_device_map,
     get_peft_config,
@@ -51,8 +51,6 @@ def main():
 
     # Set seed for reproducibility
     set_seed(training_args.seed)
-
-    accelerator = Accelerator()
 
     ###############
     # Setup logging
@@ -77,6 +75,11 @@ def main():
     logger.info(f"Model parameters {model_args}")
     logger.info(f"Data parameters {data_args}")
     logger.info(f"Training/evaluation parameters {training_args}")
+
+    # Check for last checkpoint
+    last_checkpoint = get_checkpoint(training_args)
+    if last_checkpoint is not None and training_args.resume_from_checkpoint is None:
+        logger.info(f"Checkpoint detected, resuming training at {last_checkpoint=}.")
 
     ###############
     # Load datasets
@@ -149,7 +152,12 @@ def main():
     # Training loop
     ###############
     logger.info("*** Train ***")
-    train_result = trainer.train()
+    checkpoint = None
+    if training_args.resume_from_checkpoint is not None:
+        checkpoint = training_args.resume_from_checkpoint
+    elif last_checkpoint is not None:
+        checkpoint = last_checkpoint
+    train_result = trainer.train(resume_from_checkpoint=checkpoint)
     metrics = train_result.metrics
     metrics["train_samples"] = len(train_dataset)
     trainer.log_metrics("train", metrics)
@@ -174,23 +182,23 @@ def main():
     logger.info(f"Model saved to {training_args.output_dir}")
 
     # Save everything else on main process
-    if accelerator.is_main_process:
-        kwargs = {
-            "finetuned_from": model_args.model_name_or_path,
-            "dataset": list(data_args.dataset_mixer.keys()),
-            "dataset_tags": list(data_args.dataset_mixer.keys()),
-            "tags": ["alignment-handbook"],
-        }
+    kwargs = {
+        "finetuned_from": model_args.model_name_or_path,
+        "dataset": list(data_args.dataset_mixer.keys()),
+        "dataset_tags": list(data_args.dataset_mixer.keys()),
+        "tags": ["alignment-handbook"],
+    }
+    if trainer.accelerator.is_main_process:
         trainer.create_model_card(**kwargs)
         # Restore k,v cache for fast inference
         trainer.model.config.use_cache = True
         trainer.model.config.save_pretrained(training_args.output_dir)
 
-        if training_args.push_to_hub is True:
-            logger.info("Pushing to hub...")
-            trainer.push_to_hub()
+    if training_args.push_to_hub is True:
+        logger.info("Pushing to hub...")
+        trainer.push_to_hub(**kwargs)
 
-    accelerator.wait_for_everyone()
+    logger.info("*** Training complete ***")
 
 
 if __name__ == "__main__":

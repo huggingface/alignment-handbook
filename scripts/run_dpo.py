@@ -14,19 +14,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import logging
+import random
 import sys
 
 import torch
 import transformers
 from transformers import AutoModelForCausalLM, set_seed
 
-from accelerate import Accelerator
 from alignment import (
     DataArguments,
     DPOConfig,
     H4ArgumentParser,
     ModelArguments,
     apply_chat_template,
+    get_checkpoint,
     get_datasets,
     get_kbit_device_map,
     get_peft_config,
@@ -64,11 +65,13 @@ def main():
     logger.info(f"Data parameters {data_args}")
     logger.info(f"Training/evaluation parameters {training_args}")
 
+    # Check for last checkpoint
+    last_checkpoint = get_checkpoint(training_args)
+    if last_checkpoint is not None and training_args.resume_from_checkpoint is None:
+        logger.info(f"Checkpoint detected, resuming training at {last_checkpoint=}.")
+
     # Set seed for reproducibility
     set_seed(training_args.seed)
-
-    # Increase distributed timeout to 3h to enable push to Hub to complete
-    accelerator = Accelerator()
 
     ###############
     # Load datasets
@@ -102,6 +105,12 @@ def main():
             {"text_prompt": "prompt", "text_chosen": "chosen", "text_rejected": "rejected"}
         )
 
+    # Log a few random samples from the training set:
+    for index in random.sample(range(len(raw_datasets["train"])), 3):
+        logger.info(f"Prompt sample {index} of the raw training set:\n\n{raw_datasets['train'][index]['prompt']}")
+        logger.info(f"Chosen sample {index} of the raw training set:\n\n{raw_datasets['train'][index]['chosen']}")
+        logger.info(f"Rejected sample {index} of the raw training set:\n\n{raw_datasets['train'][index]['rejected']}")
+
     torch_dtype = (
         model_args.torch_dtype if model_args.torch_dtype in ["auto", None] else getattr(torch, model_args.torch_dtype)
     )
@@ -118,10 +127,10 @@ def main():
     )
 
     model = model_args.model_name_or_path
-    if is_adapter_model(model, model_args.model_revision):
-        # load the model, merge the adapter weights and unload the adapter
-        # Note: to run QLora, you will need to merge the based model separately as the merged model in 16bit
-        logger.info(f"Merging peft adapters for {model_args.model_name_or_path=}")
+    if is_adapter_model(model, model_args.model_revision) is True:
+        # Load the base model, merge the adapter weights and unload the adapter
+        # Note: to run QLoRA, you will need to merge the base model separately as the merged model in 16bit
+        logger.info(f"Merging PEFT adapters for {model_args.model_name_or_path=}")
 
         peft_config = PeftConfig.from_pretrained(model_args.model_name_or_path, revision=model_args.model_revision)
 
@@ -153,7 +162,7 @@ def main():
     #########################
     # Instantiate DPO trainer
     #########################
-    dpo_trainer = DPOTrainer(
+    trainer = DPOTrainer(
         model,
         ref_model,
         model_init_kwargs=model_kwargs,
@@ -166,17 +175,23 @@ def main():
         max_length=training_args.max_length,
         max_prompt_length=training_args.max_prompt_length,
         peft_config=get_peft_config(model_args),
+        loss_type=training_args.loss_type,
     )
 
     ###############
     # Training loop
     ###############
-    train_result = dpo_trainer.train()
+    checkpoint = None
+    if training_args.resume_from_checkpoint is not None:
+        checkpoint = training_args.resume_from_checkpoint
+    elif last_checkpoint is not None:
+        checkpoint = last_checkpoint
+    train_result = trainer.train(resume_from_checkpoint=checkpoint)
     metrics = train_result.metrics
     metrics["train_samples"] = len(raw_datasets["train"])
-    dpo_trainer.log_metrics("train", metrics)
-    dpo_trainer.save_metrics("train", metrics)
-    dpo_trainer.save_state()
+    trainer.log_metrics("train", metrics)
+    trainer.save_metrics("train", metrics)
+    trainer.save_state()
 
     logger.info("*** Training complete ***")
 
@@ -185,35 +200,36 @@ def main():
     ##########
     if training_args.do_eval:
         logger.info("*** Evaluate ***")
-        metrics = dpo_trainer.evaluate()
+        metrics = trainer.evaluate()
         metrics["eval_samples"] = len(raw_datasets["test"])
-        dpo_trainer.log_metrics("eval", metrics)
-        dpo_trainer.save_metrics("eval", metrics)
+        trainer.log_metrics("eval", metrics)
+        trainer.save_metrics("eval", metrics)
 
     ##################################
     # Save model and create model card
     ##################################
-    dpo_trainer.save_model(training_args.output_dir)
+    logger.info("*** Save model ***")
+    trainer.save_model(training_args.output_dir)
+    logger.info(f"Model saved to {training_args.output_dir}")
+
     # Save everything else on main process
-    if accelerator.is_main_process:
-        kwargs = {
-            "finetuned_from": model_args.model_name_or_path,
-            "dataset": list(data_args.dataset_mixer.keys()),
-            "dataset_tags": list(data_args.dataset_mixer.keys()),
-            "tags": ["alignment-handbook"],
-        }
-        dpo_trainer.create_model_card(**kwargs)
+    kwargs = {
+        "finetuned_from": model_args.model_name_or_path,
+        "dataset": list(data_args.dataset_mixer.keys()),
+        "dataset_tags": list(data_args.dataset_mixer.keys()),
+        "tags": ["alignment-handbook"],
+    }
+    if trainer.accelerator.is_main_process:
+        trainer.create_model_card(**kwargs)
         # Restore k,v cache for fast inference
-        dpo_trainer.model.config.use_cache = True
-        dpo_trainer.model.config.save_pretrained(training_args.output_dir)
-        if training_args.push_to_hub is True:
-            dpo_trainer.push_to_hub()
+        trainer.model.config.use_cache = True
+        trainer.model.config.save_pretrained(training_args.output_dir)
 
-    # Ensure we don't timeout on model save / push to Hub
-    logger.info("*** Waiting for all processes to finish ***")
-    accelerator.wait_for_everyone()
+    if training_args.push_to_hub is True:
+        logger.info("Pushing to hub...")
+        trainer.push_to_hub(**kwargs)
 
-    logger.info("*** Run complete! ***")
+    logger.info("*** Training complete! ***")
 
 
 if __name__ == "__main__":
