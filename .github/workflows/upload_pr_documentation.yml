@@ -11,6 +11,7 @@ jobs:
     uses: huggingface/doc-builder/.github/workflows/upload_pr_documentation.yml@main
     with:
       package_name: alignment-handbook
+      hub_base_path: https://moon-ci-docs.huggingface.co
     secrets:
       hf_token: ${{ secrets.HF_DOC_BUILD_PUSH }}
       comment_bot_token: ${{ secrets.COMMENT_BOT_TOKEN }}
