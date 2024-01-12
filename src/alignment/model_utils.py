@@ -85,15 +85,29 @@ def get_peft_config(model_args: ModelArguments) -> PeftConfig | None:
     if model_args.use_peft is False:
         return None
 
-    peft_config = LoraConfig(
-        r=model_args.lora_r,
-        lora_alpha=model_args.lora_alpha,
-        lora_dropout=model_args.lora_dropout,
-        bias="none",
-        task_type="CAUSAL_LM",
-        target_modules=model_args.lora_target_modules,
-        modules_to_save=model_args.lora_modules_to_save,
-    )
+    if model_args.use_loftq:
+        peft_config = LoraConfig(
+            init_lora_weights="loftq",
+            loftq_config=LoftQConfig(loftq_bits=4),
+            r=model_args.lora_r,
+            lora_alpha=model_args.lora_alpha,
+            lora_dropout=model_args.lora_dropout,
+            bias="none",
+            task_type="CAUSAL_LM",
+            target_modules=model_args.lora_target_modules,
+            modules_to_save=model_args.lora_modules_to_save,
+        )
+        
+    else: 
+        peft_config = LoraConfig(
+            r=model_args.lora_r,
+            lora_alpha=model_args.lora_alpha,
+            lora_dropout=model_args.lora_dropout,
+            bias="none",
+            task_type="CAUSAL_LM",
+            target_modules=model_args.lora_target_modules,
+            modules_to_save=model_args.lora_modules_to_save,
+        )
 
     return peft_config
 
