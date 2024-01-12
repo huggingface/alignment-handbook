@@ -171,7 +171,8 @@ class ModelArguments:
     )
     load_in_8bit: bool = field(default=False, metadata={"help": "use 8 bit precision"})
     load_in_4bit: bool = field(default=False, metadata={"help": "use 4 bit precision"})
-
+    use_loftq: bool = field(default=False, metadata={"help": "use loftq"})
+    
     bnb_4bit_quant_type: Optional[str] = field(
         default="nf4", metadata={"help": "precise the quantization type (fp4 or nf4)"}
     )
