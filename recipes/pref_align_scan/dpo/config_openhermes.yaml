@@ -3,7 +3,6 @@ model_name_or_path: teknium/OpenHermes-2.5-Mistral-7B
 torch_dtype: null
 
 # Data training arguments
-# For definitions, see: src/h4/training/config.py
 dataset_mixer:
   HuggingFaceH4/orca_dpo_pairs: 1.0
 dataset_splits:
@@ -13,7 +12,6 @@ max_source_length: 1024
 preprocessing_num_workers: 12
 
 # Training arguments with sensible defaults
-# For definitions, see: src/h4/training/config.py
 bf16: true
 beta: 0.01
 loss_type: sigmoid
@@ -42,8 +40,4 @@ save_strategy: "steps"
 save_steps: 100
 save_total_limit: 1
 seed: 42
-wandb_run_group: mistral-7b-dpo # Name of the W&B group to collect all runs of this experiment under.
-wandb_run_id: null # Set this to a globally unique string if you want a descriptive name of your run
-wandb_tags: # Use tags to filter runs on WandB
- - dpo
 warmup_ratio: 0.1

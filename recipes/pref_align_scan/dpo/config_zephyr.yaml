@@ -3,7 +3,6 @@ model_name_or_path: alignment-handbook/zephyr-7b-sft-full
 torch_dtype: null
 
 # Data training arguments
-# For definitions, see: src/h4/training/config.py
 dataset_mixer:
   HuggingFaceH4/ultrafeedback_binarized: 1.0
 dataset_splits:
@@ -12,7 +11,6 @@ dataset_splits:
 preprocessing_num_workers: 12
 
 # Training arguments with sensible defaults
-# For definitions, see: src/h4/training/config.py
 bf16: true
 beta: 0.01
 loss_type: sigmoid
