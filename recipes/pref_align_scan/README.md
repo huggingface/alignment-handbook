@@ -5,7 +5,7 @@ This directory contains various ablations for three algorithms: DPO, IPO, and KT
 - zephyr-beta-sft and Ultrafeedback
 - OpenHermes-2.5 and the OpenOrca datasets 
 
-We release a collection containing the datasets and models used for these ablations, if you require the trained mdoels, we can release them on request.
+We release a collection containing the datasets and models used for these ablations, if you require the trained models, we can release them on request.
 
 ## Table of Contents
 - [Introduction](#introduction)

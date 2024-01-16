@@ -8,7 +8,6 @@ dataset_mixer:
 dataset_splits:
 - train_prefs
 - test_prefs
-max_source_length: 1024
 preprocessing_num_workers: 12
 
 # Training arguments with sensible defaults
