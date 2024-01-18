@@ -61,6 +61,7 @@ _deps = [
     "protobuf<=3.20.2",  # Needed to avoid conflicts with `transformers`
     "pytest",
     "safetensors>=0.3.3",
+    "sentencepiece>=0.1.99",
     "scipy",
     "tensorboard",
     "torch==2.1.2",
@@ -98,6 +99,7 @@ install_requires = [
     deps["evaluate"],
     deps["datasets"],
     deps["deepspeed"],
+    deps["hf_transfer"],
     deps["huggingface-hub"],
     deps["jinja2"],
     deps["ninja"],
@@ -106,6 +108,7 @@ install_requires = [
     deps["peft"],
     deps["protobuf"],
     deps["safetensors"],
+    deps["sentencepiece"],
     deps["scipy"],
     deps["tensorboard"],
     deps["tqdm"],  # progress bars in model download and training scripts
@@ -115,7 +118,7 @@ install_requires = [
 
 setup(
     name="alignment-handbook",
-    version="0.3.0.dev0",  # expected format is one of x.y.z.dev0, or x.y.z.rc1 or x.y.z (no to dashes, yes to dots)
+    version="0.4.0.dev0",  # expected format is one of x.y.z.dev0, or x.y.z.rc1 or x.y.z (no to dashes, yes to dots)
     author="The Hugging Face team (past and future)",
     author_email="lewis@huggingface.co",
     description="The Alignment Handbook",

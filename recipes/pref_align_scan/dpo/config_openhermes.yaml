@@ -34,7 +34,6 @@ optim: adamw_torch
 output_dir: data/openhermes-2.5-mistral-7b-dpo-v1.0
 per_device_train_batch_size: 8
 per_device_eval_batch_size: 8
-push_to_hub_revision: true
 save_strategy: "steps"
 save_steps: 100
 save_total_limit: 1
