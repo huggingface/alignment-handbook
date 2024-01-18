@@ -1,22 +1,12 @@
-# Ablating Preference Alignment Algorithms
-
-This directory contains various ablations for three algorithms: DPO, IPO, and KTO. Each algorithm has been subjected to different ablations to study their performance and behavior under different conditions. Two different models and datasets have been used to ablated the performance of each algorithm
+# Comparing Preference Alignment Algorithms
+This directory contains various comparisons for three algorithms: DPO, IPO, and KTO. Each algorithm has been run in different hyperparameter configurations to study their performance. Two different models and datasets have been used to compare the performance of each algorithm:
 
 - zephyr-beta-sft and Ultrafeedback
 - OpenHermes-2.5 and the OpenOrca datasets 
 
-We release a collection containing the datasets and models used for these ablations, if you require the trained models, we can release them on request.
-
-## Table of Contents
-- [Introduction](#introduction)
-- [Ablations](#ablations)
-- [Usage](#usage)
-
-
-## Introduction
-In this project, we explore the effects of ablating different components of the DPO, IPO, and KTO algorithms. Ablation refers to the process of systematically removing or disabling specific parts of an algorithm to understand their impact on performance, efficiency, or other metrics.
-
-## Ablations
+We release a collection containing the datasets and models used for these experiments, if you require the other trained models, we can release them on request.
+You can find a longer decription of there results in our [blogpost](TODO)
+## Comparisons
 For each algorithm, we aim to tune the beta parameter for a fixed learning rate. We vary beta from 0.1-0.9 in steps of 0.1, we have also found that in certain configurations a tiny value of beta, 0.01, can be effective. So we have included this smaller value in all our comparisons.
 
 ## Usage
