@@ -5,7 +5,7 @@ This directory contains various comparisons for three algorithms: DPO, IPO, and 
 - OpenHermes-2.5 and the OpenOrca datasets 
 
 We release a collection containing the datasets and models used for these experiments, if you require the other trained models, we can release them on request.
-You can find a longer decription of there results in our [blogpost](TODO)
+You can find a longer decription of there results in our [blogpost](https://huggingface.co/blog/pref-tuning)
 ## Comparisons
 For each algorithm, we aim to tune the beta parameter for a fixed learning rate. We vary beta from 0.1-0.9 in steps of 0.1, we have also found that in certain configurations a tiny value of beta, 0.01, can be effective. So we have included this smaller value in all our comparisons.
 
@@ -34,7 +34,7 @@ for config in "${configs[@]}"; do
             model_revision="${loss_type}-${beta}"
 
             # Submit the job
-            sbatch --job-name=${job_name} recipes/launch.slurm dpo pref_align_scan config_$config deepspeed_zero3 \
+            sbatch --job-name=${job_name} recipes/launch.slurm pref_align_scan dpo config_$config deepspeed_zero3 \
             "--beta=${beta} --loss_type=${loss_type} --output_dir=data/$config-7b-align-scan-${loss_type}-beta-${beta} --hub_model_revision=${model_revision}"
         done
     done
