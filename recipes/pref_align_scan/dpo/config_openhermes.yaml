@@ -1,0 +1,41 @@
+# Model arguments
+model_name_or_path: teknium/OpenHermes-2.5-Mistral-7B
+torch_dtype: null
+
+# Data training arguments
+dataset_mixer:
+  HuggingFaceH4/orca_dpo_pairs: 1.0
+dataset_splits:
+- train_prefs
+- test_prefs
+preprocessing_num_workers: 12
+
+# Training arguments with sensible defaults
+bf16: true
+beta: 0.01
+loss_type: sigmoid
+do_eval: true
+do_train: true
+evaluation_strategy: steps
+eval_steps: 100
+gradient_accumulation_steps: 2
+gradient_checkpointing: true
+gradient_checkpointing_kwargs:
+  use_reentrant: False
+hub_model_id: HuggingFaceH4/openhermes-2.5-mistral-7b-dpo
+hub_model_revision: v1.0
+
+learning_rate: 5.0e-7
+logging_steps: 10
+lr_scheduler_type: cosine
+max_prompt_length: 512
+num_train_epochs: 1
+optim: adamw_torch
+output_dir: data/openhermes-2.5-mistral-7b-dpo-v1.0
+per_device_train_batch_size: 8
+per_device_eval_batch_size: 8
+save_strategy: "steps"
+save_steps: 100
+save_total_limit: 1
+seed: 42
+warmup_ratio: 0.1
