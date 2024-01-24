@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
-from copy import deepcopy
 from typing import List, Literal, Optional
 
 from datasets import DatasetDict, concatenate_datasets, load_dataset, load_from_disk
@@ -26,9 +25,8 @@ DEFAULT_CHAT_TEMPLATE = "{% for message in messages %}\n{% if message['role'] ==
 
 
 def maybe_insert_system_message(messages, tokenizer):
-    messages = deepcopy(messages)  # deepcopy, avoid in-place issues
     if messages[0]["role"] == "system":
-        return messages
+        return
 
     # chat template can be one of two attributes, we check in order
     chat_template = tokenizer.chat_template
@@ -39,8 +37,6 @@ def maybe_insert_system_message(messages, tokenizer):
     if "system" in chat_template:
         messages.insert(0, {"role": "system", "content": ""})
 
-    return messages
-
 
 def apply_chat_template(
     example,
@@ -50,7 +46,7 @@ def apply_chat_template(
     if task in ["sft", "generation"]:
         messages = example["messages"]
         # We add an empty system message if there is none
-        messages = maybe_insert_system_message(messages, tokenizer)
+        maybe_insert_system_message(messages, tokenizer)
         example["text"] = tokenizer.apply_chat_template(
             messages, tokenize=False, add_generation_prompt=True if task == "generation" else False
         )
@@ -59,8 +55,8 @@ def apply_chat_template(
             chosen_messages = example["chosen"]
             rejected_messages = example["rejected"]
             # We add an empty system message if there is none
-            chosen_messages = maybe_insert_system_message(chosen_messages, tokenizer)
-            rejected_messages = maybe_insert_system_message(rejected_messages, tokenizer)
+            maybe_insert_system_message(chosen_messages, tokenizer)
+            maybe_insert_system_message(rejected_messages, tokenizer)
 
             example["text_chosen"] = tokenizer.apply_chat_template(chosen_messages, tokenize=False)
             example["text_rejected"] = tokenizer.apply_chat_template(rejected_messages, tokenize=False)

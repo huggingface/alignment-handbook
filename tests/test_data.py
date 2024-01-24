@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import unittest
+from copy import deepcopy
 
 import pytest
 from datasets import Dataset
@@ -127,8 +128,8 @@ class ApplyChatTemplateTest(unittest.TestCase):
         llama_tokenizer = AutoTokenizer.from_pretrained("codellama/CodeLlama-7b-hf")
         messages_sys_excl = [{"role": "user", "content": "Tell me a joke."}]
         messages_sys_incl = [{"role": "system", "content": ""}, {"role": "user", "content": "Tell me a joke."}]
-        mistral_output = maybe_insert_system_message(messages_sys_excl, mistral_tokenizer)
-        llama_output = maybe_insert_system_message(messages_sys_excl, llama_tokenizer)
+        mistral_output = maybe_insert_system_message(deepcopy(messages_sys_excl), mistral_tokenizer)
+        llama_output = maybe_insert_system_message(deepcopy(messages_sys_excl), llama_tokenizer)
 
         # output from mistral should not have a system message, output from llama should
         self.assertEqual(mistral_output, messages_sys_excl)
