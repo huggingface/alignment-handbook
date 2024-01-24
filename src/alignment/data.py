@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
+from copy import deepcopy
 from typing import List, Literal, Optional
 
 from datasets import DatasetDict, concatenate_datasets, load_dataset, load_from_disk
@@ -24,6 +25,23 @@ from .configs import DataArguments
 DEFAULT_CHAT_TEMPLATE = "{% for message in messages %}\n{% if message['role'] == 'user' %}\n{{ '<|user|>\n' + message['content'] + eos_token }}\n{% elif message['role'] == 'system' %}\n{{ '<|system|>\n' + message['content'] + eos_token }}\n{% elif message['role'] == 'assistant' %}\n{{ '<|assistant|>\n'  + message['content'] + eos_token }}\n{% endif %}\n{% if loop.last and add_generation_prompt %}\n{{ '<|assistant|>' }}\n{% endif %}\n{% endfor %}"
 
 
+def maybe_insert_system_message(messages, tokenizer):
+    messages = deepcopy(messages)  # deepcopy, avoid in-place issues
+    if messages[0]["role"] == "system":
+        return messages
+
+    # chat template can be one of two attributes, we check in order
+    chat_template = tokenizer.chat_template
+    if chat_template is None:
+        chat_template = tokenizer.default_chat_template
+
+    # confirm the jinja template refers to a system message before inserting
+    if "system" in chat_template:
+        messages.insert(0, {"role": "system", "content": ""})
+
+    return messages
+
+
 def apply_chat_template(
     example,
     tokenizer,
@@ -32,8 +50,7 @@ def apply_chat_template(
     if task in ["sft", "generation"]:
         messages = example["messages"]
         # We add an empty system message if there is none
-        if messages[0]["role"] != "system":
-            messages.insert(0, {"role": "system", "content": ""})
+        messages = maybe_insert_system_message(messages, tokenizer)
         example["text"] = tokenizer.apply_chat_template(
             messages, tokenize=False, add_generation_prompt=True if task == "generation" else False
         )
@@ -42,10 +59,9 @@ def apply_chat_template(
             chosen_messages = example["chosen"]
             rejected_messages = example["rejected"]
             # We add an empty system message if there is none
-            if chosen_messages[0]["role"] != "system":
-                chosen_messages.insert(0, {"role": "system", "content": ""})
-            if rejected_messages[0]["role"] != "system":
-                rejected_messages.insert(0, {"role": "system", "content": ""})
+            chosen_messages = maybe_insert_system_message(chosen_messages, tokenizer)
+            rejected_messages = maybe_insert_system_message(rejected_messages, tokenizer)
+
             example["text_chosen"] = tokenizer.apply_chat_template(chosen_messages, tokenize=False)
             example["text_rejected"] = tokenizer.apply_chat_template(rejected_messages, tokenize=False)
         else:
