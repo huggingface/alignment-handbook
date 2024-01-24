@@ -128,12 +128,15 @@ class ApplyChatTemplateTest(unittest.TestCase):
         llama_tokenizer = AutoTokenizer.from_pretrained("codellama/CodeLlama-7b-hf")
         messages_sys_excl = [{"role": "user", "content": "Tell me a joke."}]
         messages_sys_incl = [{"role": "system", "content": ""}, {"role": "user", "content": "Tell me a joke."}]
-        mistral_output = maybe_insert_system_message(deepcopy(messages_sys_excl), mistral_tokenizer)
-        llama_output = maybe_insert_system_message(deepcopy(messages_sys_excl), llama_tokenizer)
+
+        mistral_messages = deepcopy(messages_sys_excl)
+        llama_messages = deepcopy(messages_sys_excl)
+        maybe_insert_system_message(mistral_messages, mistral_tokenizer)
+        maybe_insert_system_message(llama_messages, llama_tokenizer)
 
         # output from mistral should not have a system message, output from llama should
-        self.assertEqual(mistral_output, messages_sys_excl)
-        self.assertEqual(llama_output, messages_sys_incl)
+        self.assertEqual(mistral_messages, messages_sys_excl)
+        self.assertEqual(llama_messages, messages_sys_incl)
 
     def test_sft(self):
         dataset = self.dataset.map(
