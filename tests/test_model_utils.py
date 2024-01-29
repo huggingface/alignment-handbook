@@ -17,7 +17,14 @@ import unittest
 import torch
 from transformers import AutoTokenizer
 
-from alignment import DataArguments, ModelArguments, get_peft_config, get_quantization_config, get_tokenizer, is_adapter_model
+from alignment import (
+    DataArguments,
+    ModelArguments,
+    get_peft_config,
+    get_quantization_config,
+    get_tokenizer,
+    is_adapter_model,
+)
 from alignment.data import DEFAULT_CHAT_TEMPLATE
 
 
@@ -92,6 +99,6 @@ class GetPeftConfigTest(unittest.TestCase):
 
 class IsAdapterModelTest(unittest.TestCase):
     def test_is_adapter_model_calls_listdir(self):
-        # Assert that for an invalid repo name it gets to the point where it calls os.listdir, 
+        # Assert that for an invalid repo name it gets to the point where it calls os.listdir,
         # which is expected to raise a FileNotFoundError
-        self.assertRaises(FileNotFoundError, is_adapter_model, "nonexistent/model")   
+        self.assertRaises(FileNotFoundError, is_adapter_model, "nonexistent/model")
