@@ -19,7 +19,8 @@ However, we know from the [InstructGPT](https://huggingface.co/papers/2203.02155
 The Alignment Handbook aims to fill that gap by providing the community with a series of robust training recipes that span the whole pipeline.
 
 ## News 🗞️
-* **January 18, 2024:** We release a suite of Evalutions of DPO vs KTO vs IPO, see the [recipe](recipes/pref_align_scan/README.md) and the [blogpost](https://huggingface.co/blog/pref-tuning)
+* **February 1, 2024:** We release a recipe to align open LLMs with Constitutional AI 📜! See the [recipe](https://github.com/huggingface/alignment-handbook/tree/main/recipes/constitutional-ai) and the [blog post](https://huggingface.co/blog/constitutional-ai) for details. 
+* **January 18, 2024:** We release a suite of evalutions of DPO vs KTO vs IPO, see the [recipe](recipes/pref_align_scan/README.md) and the [blog post](https://huggingface.co/blog/pref-tuning) for details.
 * **November 10, 2023:** We release all the training code to replicate Zephyr-7b-β 🪁! We also release [No Robots](https://huggingface.co/datasets/HuggingFaceH4/no_robots), a brand new dataset of 10,000 instructions and demonstrations written entirely by skilled human annotators.
 
 ## Links 🔗
@@ -113,7 +114,7 @@ If you find the content of this repo useful in your work, please cite it as foll
 
 ```bibtex
 @misc{alignment_handbook2023,
-  author = {Lewis Tunstall and Edward Beeching and Nathan Lambert and Nazneen Rajani and Alexander M. Rush and Thomas Wolf},
+  author = {Lewis Tunstall and Edward Beeching and Nathan Lambert and Nazneen Rajani and Shengyi Huang and Kashif Rasul and Alexander M. Rush and Thomas Wolf},
   title = {The Alignment Handbook},
   year = {2023},
   publisher = {GitHub},
