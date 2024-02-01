@@ -114,7 +114,7 @@ If you find the content of this repo useful in your work, please cite it as foll
 
 ```bibtex
 @misc{alignment_handbook2023,
-  author = {Lewis Tunstall and Edward Beeching and Nathan Lambert and Nazneen Rajani and Alexander M. Rush and Thomas Wolf},
+  author = {Lewis Tunstall and Edward Beeching and Nathan Lambert and Nazneen Rajani and Shengyi Huang and Kashif Rasul and Alexander M. Rush and Thomas Wolf},
   title = {The Alignment Handbook},
   year = {2023},
   publisher = {GitHub},
