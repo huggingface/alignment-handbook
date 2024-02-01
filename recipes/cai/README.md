@@ -1,6 +1,6 @@
 # Constitutional AI 
 
-This repo includes the recipe for training 
+This repo includes the recipe for training the following models:
 
 * https://huggingface.co/HuggingFaceH4/mistral-7b-anthropic
 * https://huggingface.co/HuggingFaceH4/mistral-7b-grok
