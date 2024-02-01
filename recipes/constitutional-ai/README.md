@@ -20,4 +20,4 @@ ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_con
 
 ## Advanced: generating you own dataset
 
-To generate the constitutional AI dataset, see https://github.com/huggingface/llm-swarm/tree/main/examples/hh for detailed instructions if you want build or customize the dataset. 
+To generate the constitutional AI dataset, see https://github.com/huggingface/llm-swarm/tree/main/examples/constitutional-ai for detailed instructions if you want build or customize the dataset. 
