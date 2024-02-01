@@ -2,7 +2,7 @@
 
 This repo includes the recipe for training 
 
-* https://huggingface.co/HuggingFaceH4/mistral-7b-cai-alpha
+* https://huggingface.co/HuggingFaceH4/mistral-7b-anthropic
 * https://huggingface.co/HuggingFaceH4/mistral-7b-grok-alpha
 
 
