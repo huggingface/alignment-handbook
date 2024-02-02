@@ -1,6 +1,6 @@
 ARG UBUNTU_VERSION=20.04
 ARG TORCH_VERSION=2.1.2
-ARG CUDA_VERSION=11.8
+ARG CUDA_VERSION=12.1
 ARG CUDA=cuda${CUDA_VERSION}
 ARG PYTHON_VERSION=3.10
 
@@ -47,7 +47,7 @@ RUN conda update -y conda
 
 
 # Creating a user
-ARG USER_NAME=juyoung
+ARG USER_NAME=seungone
 RUN adduser --disabled-password --gecos '' $USER_NAME && \
     echo "$USER_NAME ALL=(root) NOPASSWD:ALL" > /etc/sudoers.d/$USER_NAME && \
     chmod 0440 /etc/sudoers.d/$USER_NAME
@@ -58,13 +58,12 @@ RUN echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config && \
     echo "UsePAM no" >> /etc/ssh/sshd_config
 
 USER $USER_NAME
-
 WORKDIR /home/$USER_NAME
 
 # Project-Specific Dependencies (Environment Installation)
 SHELL ["/bin/bash", "-c"]
 ARG CONDA_ENV_NAME=handbook
-
+RUN conda init bash
 RUN conda create -n $CONDA_ENV_NAME python=3.10 -y
 ENV PATH /opt/conda/envs/$CONDA_ENV_NAME/bin:$PATH
 RUN echo "source activate ${CONDA_ENV_NAME}" >> ~/.bashrc
