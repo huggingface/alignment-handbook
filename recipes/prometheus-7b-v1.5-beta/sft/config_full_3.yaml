@@ -10,13 +10,13 @@ dataset_mixer:
   /home/juyoung/alignment-handbook/recipes/prometheus-7b-v1.5-beta/assets/feedback-collection: 1.0
   /home/juyoung/alignment-handbook/recipes/prometheus-7b-v1.5-beta/assets/preference-collection: 1.0
 dataset_splits:
-- train_sft
-- test_sft
-preprocessing_num_workers: 12
+- train
+- test
+preprocessing_num_workers: 64
 
 # SFT trainer config
 bf16: true
-do_eval: true
+do_eval: false
 evaluation_strategy: epoch
 gradient_accumulation_steps: 1
 gradient_checkpointing: true
@@ -29,12 +29,12 @@ log_level: info
 logging_steps: 5  
 logging_strategy: steps
 lr_scheduler_type: cosine
-max_seq_length: 2048
+max_seq_length: 4096
 max_steps: -1
 num_train_epochs: 1
-output_dir: /home/juyoung/data/prometheus-7b-v1.5-beta-3
+output_dir: /home/seungone_kim/data/prometheus-7b-v1.5-beta-3
 overwrite_output_dir: true
-per_device_eval_batch_size: 8
+per_device_eval_batch_size: 1
 per_device_train_batch_size: 16
 push_to_hub: true
 remove_unused_columns: true

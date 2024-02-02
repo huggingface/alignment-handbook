@@ -37,8 +37,8 @@ def prepare_dataset():
     dataset_2_full.save_to_disk('./assets/preference-collection/train')
     
     # Create test datasets with one row each
-    df_1_test = df_1.iloc[[0]]  # Select the first row for test set
-    df_2_test = df_2.iloc[[0]]  # Select the first row for test set
+    df_1_test = df_1.iloc[:32]  # Select the first row for test set
+    df_2_test = df_2.iloc[:32]  # Select the first row for test set
 
     dataset_1_test = Dataset.from_pandas(df_1_test)
     dataset_1_test.save_to_disk('./assets/feedback-collection/test')
@@ -48,7 +48,7 @@ def prepare_dataset():
 
 
 if __name__ == "__main__":
-    prepare_dataset()
-    #ndataset_1 = load_from_disk('./assets/feedback-collection')
-    # dataset_2 = load_dataset('./assets/preference-collection')
-    # import pdb; pdb.set_trace()
+    # prepare_dataset()
+    dataset_1 = load_from_disk('./assets/feedback-collection/train')
+    dataset_2 = load_from_disk('./assets/feedback-collection/test')
+    import pdb; pdb.set_trace()

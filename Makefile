@@ -42,3 +42,6 @@ pypi_upload:
 pypi_test_upload:
 	python -m pip install twine
 	twine upload dist/* -r pypitest --repository-url=https://test.pypi.org/legacy/
+
+train:
+	bash recipes/prometheus-7b-v1.5-beta/train.sh
