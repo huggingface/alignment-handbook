@@ -13,11 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import unittest
+from copy import deepcopy
 
 import pytest
 from datasets import Dataset
+from transformers import AutoTokenizer
 
 from alignment import DataArguments, ModelArguments, apply_chat_template, get_datasets, get_tokenizer
+from alignment.data import maybe_insert_system_message
 
 
 class GetDatasetsTest(unittest.TestCase):
@@ -117,6 +120,23 @@ class ApplyChatTemplateTest(unittest.TestCase):
                 ],
             }
         )
+
+    def test_maybe_insert_system_message(self):
+        # does not accept system prompt
+        mistral_tokenizer = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-Instruct-v0.2")
+        # accepts system prompt. use codellama since it has no HF token reqiurement
+        llama_tokenizer = AutoTokenizer.from_pretrained("codellama/CodeLlama-7b-hf")
+        messages_sys_excl = [{"role": "user", "content": "Tell me a joke."}]
+        messages_sys_incl = [{"role": "system", "content": ""}, {"role": "user", "content": "Tell me a joke."}]
+
+        mistral_messages = deepcopy(messages_sys_excl)
+        llama_messages = deepcopy(messages_sys_excl)
+        maybe_insert_system_message(mistral_messages, mistral_tokenizer)
+        maybe_insert_system_message(llama_messages, llama_tokenizer)
+
+        # output from mistral should not have a system message, output from llama should
+        self.assertEqual(mistral_messages, messages_sys_excl)
+        self.assertEqual(llama_messages, messages_sys_incl)
 
     def test_sft(self):
         dataset = self.dataset.map(
