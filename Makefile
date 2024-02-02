@@ -45,3 +45,6 @@ pypi_test_upload:
 
 train:
 	bash recipes/prometheus-7b-v1.5-beta/train.sh
+
+data:
+	python recipes/prometheus-7b-v1.5-beta/prepare_dataset.py
