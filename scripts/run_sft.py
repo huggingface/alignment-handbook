@@ -41,6 +41,8 @@ from alignment import (
 )
 from trl import SFTTrainer
 
+import warnings
+warnings.filterwarnings('ignore', category=FutureWarning)
 
 logger = logging.getLogger(__name__)
 
