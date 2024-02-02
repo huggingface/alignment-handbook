@@ -37,6 +37,7 @@ def prepare_dataset():
 
 if __name__ == "__main__":
     prepare_dataset()
-    dataset_1 = load_dataset('./assets/feedback-collection')
+    dataset_1 = load_from_disk('./assets/feedback-collection')
+    print("Hello, World!")
     # dataset_2 = load_dataset('./assets/preference-collection')
-    import pdb; pdb.set_trace()
+    # import pdb; pdb.set_trace()
