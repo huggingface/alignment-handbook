@@ -8,7 +8,6 @@ CONTAINER_NAME=mistral-prometheus-train
 MOUNT_VOLUME=/mnt/sda/juyoung/alignment-handbook
 TARGET_VOLUME=/home/juyoung/alignment-handbook
 
-# Build the Docker image with the specific tag
 docker build -t $IMAGE_TAG .
 
 # Check if the container already exists

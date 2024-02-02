@@ -1,6 +1,6 @@
 ARG UBUNTU_VERSION=20.04
 ARG TORCH_VERSION=2.1.2
-ARG CUDA_VERSION=12.1
+ARG CUDA_VERSION=11.8
 ARG CUDA=cuda${CUDA_VERSION}
 ARG PYTHON_VERSION=3.10
 
@@ -69,7 +69,7 @@ RUN conda create -n $CONDA_ENV_NAME python=3.10 -y
 ENV PATH /opt/conda/envs/$CONDA_ENV_NAME/bin:$PATH
 RUN echo "source activate ${CONDA_ENV_NAME}" >> ~/.bashrc
 
-RUN git clone https://github.com/scottsuk0306/alignment-handbook.git setup
-RUN conda run -n $CONDA_ENV_NAME python -m pip install ./setup
-RUN conda run -n $CONDA_ENV_NAME python -m pip install flash-attn==2.3.6 --no-build-isolation
+# RUN echo "Bypass cache at $(date +%s)" && git clone https://github.com/scottsuk0306/alignment-handbook.git setup
+# RUN conda run -n $CONDA_ENV_NAME python -m pip install ./setup
+# RUN conda run -n $CONDA_ENV_NAME python -m pip install flash-attn==2.3.6 --no-build-isolation
 CMD tail -f /dev/null
