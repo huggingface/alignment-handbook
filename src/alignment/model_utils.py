@@ -22,6 +22,7 @@ from transformers.trainer_utils import get_last_checkpoint
 
 from accelerate import Accelerator
 from huggingface_hub import list_repo_files
+from huggingface_hub.utils._errors import RepositoryNotFoundError
 from huggingface_hub.utils._validators import HFValidationError
 from peft import LoraConfig, PeftConfig
 
@@ -106,7 +107,7 @@ def is_adapter_model(model_name_or_path: str, revision: str = "main") -> bool:
     try:
         # Try first if model on a Hub repo
         repo_files = list_repo_files(model_name_or_path, revision=revision)
-    except HFValidationError:
+    except (HFValidationError, RepositoryNotFoundError):
         # If not, check local repo
         repo_files = os.listdir(model_name_or_path)
     return "adapter_model.safetensors" in repo_files or "adapter_model.bin" in repo_files
