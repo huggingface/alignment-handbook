@@ -9,9 +9,9 @@ chat_template: "{% for message in messages %}\n{% if message['role'] == 'user' %
 dataset_mixer:
   /home/seungone_kim/alignment-handbook/recipes/prometheus-7b-v1.5-beta/assets/feedback-collection: 1.0
 dataset_splits:
-- train_sft
-- test_sft
-preprocessing_num_workers: 12
+- train
+- test
+preprocessing_num_workers: 64
 
 # SFT trainer config
 bf16: true
@@ -21,7 +21,7 @@ gradient_accumulation_steps: 1
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: False
-hub_model_id: prometheus-7b-v1.5-beta-1
+hub_model_id: kaist-ai/prometheus-7b-v1.5-beta-1
 hub_strategy: every_save
 learning_rate: 2.0e-05
 log_level: info

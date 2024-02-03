@@ -48,3 +48,6 @@ train:
 
 data:
 	python recipes/prometheus-7b-v1.5-beta/prepare_dataset.py
+
+monitor:
+	watch -d -n 1 'nvidia-smi'
