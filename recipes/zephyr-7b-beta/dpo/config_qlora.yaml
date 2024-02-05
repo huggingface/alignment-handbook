@@ -1,12 +1,12 @@
 # Model arguments
 model_name_or_path: alignment-handbook/zephyr-7b-sft-qlora
-torch_dtype: float16
+torch_dtype: bfloat16
 
 # LoRA arguments
 use_peft: true
 load_in_4bit: true
-lora_r: 16
-lora_alpha: 16
+lora_r: 128
+lora_alpha: 128
 lora_dropout: 0.05
 lora_target_modules:
 - q_proj
@@ -32,7 +32,7 @@ beta: 0.01
 do_eval: true
 evaluation_strategy: steps
 eval_steps: 100
-gradient_accumulation_steps: 2
+gradient_accumulation_steps: 4
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: false
