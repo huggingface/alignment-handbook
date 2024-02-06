@@ -39,7 +39,7 @@ from alignment import (
     get_quantization_config,
     get_tokenizer,
 )
-from trl import SFTTrainer
+from trl import SFTTrainer, DataCollatorForCompletionOnlyLM
 
 import warnings
 warnings.filterwarnings('ignore', category=FutureWarning)
@@ -96,7 +96,7 @@ def main():
     # Load tokenizer
     ################
     tokenizer = get_tokenizer(model_args, data_args)
-    tokenizer.padding = 'right'
+    tokenizer.padding_side = 'right'
 
     #####################
     # Apply chat template
@@ -134,6 +134,16 @@ def main():
         quantization_config=quantization_config,
     )
     logger.info("*** Model loaded! ***")
+    
+    response_template = ""
+    data_collator = DataCollatorForCompletionOnlyLM(
+        response_template=response_template,
+        tokenizer=tokenizer,
+    )
+    
+    print(train_dataset["text"][0])
+    
+    import pdb; pdb.set_trace()
 
     ########################
     # Initialize the Trainer
@@ -147,7 +157,7 @@ def main():
         dataset_text_field="text",
         max_seq_length=training_args.max_seq_length,
         tokenizer=tokenizer,
-        packing=True,
+        packing=False,
         peft_config=get_peft_config(model_args),
     )
 

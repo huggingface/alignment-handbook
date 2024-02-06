@@ -35,7 +35,7 @@ num_train_epochs: 1
 output_dir: /home/seungone_kim/data/prometheus-7b-v1.5-beta-6
 overwrite_output_dir: true
 per_device_eval_batch_size: 1
-per_device_train_batch_size: 4
+per_device_train_batch_size: 2
 push_to_hub: true
 remove_unused_columns: true
 report_to:
