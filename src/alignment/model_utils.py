@@ -79,7 +79,7 @@ def get_tokenizer(model_args: ModelArguments, data_args: DataArguments) -> PreTr
         tokenizer.model_max_length = 8192
     
     # Hard code max length for now (Mistral, Mixtral models)
-    tokenizer.model_max_length = 4096
+    tokenizer.model_max_length = 8192
 
     if data_args.chat_template is not None:
         tokenizer.chat_template = data_args.chat_template

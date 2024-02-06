@@ -46,6 +46,16 @@ warnings.filterwarnings('ignore', category=FutureWarning)
 
 logger = logging.getLogger(__name__)
 
+def formatting_prompts_func(example):
+    output_texts = []
+    for i in range(len(example['prompt'])):
+        if not example['context'] or example['context'].isspace():
+            text = example['prompt']
+        else:
+            text = example['context'] + '\n' + example['prompt']
+        output_texts.append(text)
+    return output_texts
+
 
 def main():
     parser = H4ArgumentParser((ModelArguments, DataArguments, SFTConfig))
@@ -135,10 +145,13 @@ def main():
     )
     logger.info("*** Model loaded! ***")
     
-    response_template = "<|assistant|>\n"
+    instruction_template = "<|user|>"
+    response_template = "<|assistant|>"
     data_collator = DataCollatorForCompletionOnlyLM(
+        instruction_template=instruction_template,
         response_template=response_template,
         tokenizer=tokenizer,
+        mlm=False,
     )
 
     ########################
