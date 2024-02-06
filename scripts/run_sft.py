@@ -135,15 +135,11 @@ def main():
     )
     logger.info("*** Model loaded! ***")
     
-    response_template = ""
+    response_template = "<|assistant|>\n"
     data_collator = DataCollatorForCompletionOnlyLM(
         response_template=response_template,
         tokenizer=tokenizer,
     )
-    
-    print(train_dataset["text"][0])
-    
-    import pdb; pdb.set_trace()
 
     ########################
     # Initialize the Trainer
@@ -158,6 +154,7 @@ def main():
         max_seq_length=training_args.max_seq_length,
         tokenizer=tokenizer,
         packing=False,
+        data_collator=data_collator,
         peft_config=get_peft_config(model_args),
     )
 
