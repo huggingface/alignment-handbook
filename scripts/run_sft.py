@@ -106,7 +106,8 @@ def main():
     # Load tokenizer
     ################
     tokenizer = get_tokenizer(model_args, data_args)
-    tokenizer.padding_side = 'right'
+    tokenizer.padding_side = 'left'
+    tokenizer.pad_token = tokenizer.unk_token
 
     #####################
     # Apply chat template
@@ -145,8 +146,10 @@ def main():
     )
     logger.info("*** Model loaded! ***")
     
-    instruction_template = "<|user|>"
-    response_template = "<|assistant|>"
+    assert tokenizer.pad_token_id != tokenizer.eos_token_id, "The tokenizer's pad token id and eos token id should not be the same."
+    
+    instruction_template = "[INST]"
+    response_template = "[/INST]"
     data_collator = DataCollatorForCompletionOnlyLM(
         instruction_template=instruction_template,
         response_template=response_template,
