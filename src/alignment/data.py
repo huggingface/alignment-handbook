@@ -19,6 +19,7 @@ from datasets import DatasetDict, concatenate_datasets, load_dataset, load_from_
 from datasets.builder import DatasetGenerationError
 
 from .configs import DataArguments
+from .conversation import get_conv_template
 
 
 DEFAULT_CHAT_TEMPLATE = "{% for message in messages %}\n{% if message['role'] == 'user' %}\n{{ '<|user|>\n' + message['content'] + eos_token }}\n{% elif message['role'] == 'system' %}\n{{ '<|system|>\n' + message['content'] + eos_token }}\n{% elif message['role'] == 'assistant' %}\n{{ '<|assistant|>\n'  + message['content'] + eos_token }}\n{% endif %}\n{% if loop.last and add_generation_prompt %}\n{{ '<|assistant|>' }}\n{% endif %}\n{% endfor %}"
@@ -47,9 +48,11 @@ def apply_chat_template(
         messages = example["messages"]
         # We add an empty system message if there is none
         maybe_insert_system_message(messages, tokenizer)
-        example["text"] = tokenizer.apply_chat_template(
-            messages, tokenize=False, add_generation_prompt=True if task == "generation" else False
-        )
+        conv = get_conv_template("mistral")
+        conv.set_system_message(messages[0]["content"])
+        conv.append_message(conv.roles[0], messages[1]["content"])
+        conv.append_message(conv.roles[1], None)
+        example["text"] = conv.get_prompt()
     elif task == "rm":
         if all(k in example.keys() for k in ("chosen", "rejected")):
             chosen_messages = example["chosen"]
