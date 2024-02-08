@@ -71,11 +71,12 @@ def get_tokenizer(
         revision=model_args.model_revision,
         add_eos_token=True,
     )
-    if tokenizer.pad_token_id is None:
-        tokenizer.pad_token_id = tokenizer.eos_token_id
+    
+    # if tokenizer.pad_token_id is None:
+    #     tokenizer.pad_token_id = tokenizer.eos_token_id
 
-    if data_args.truncation_side is not None:
-        tokenizer.truncation_side = data_args.truncation_side
+    # if data_args.truncation_side is not None:
+    #     tokenizer.truncation_side = data_args.truncation_side
 
     # Set reasonable default for models without max length
     if tokenizer.model_max_length > 100_000:
@@ -84,10 +85,10 @@ def get_tokenizer(
     # Hard code max length for now (Mistral, Mixtral models)
     tokenizer.model_max_length = 8192
 
-    if data_args.chat_template is not None:
-        tokenizer.chat_template = data_args.chat_template
-    elif tokenizer.chat_template is None and tokenizer.default_chat_template is None:
-        tokenizer.chat_template = DEFAULT_CHAT_TEMPLATE
+    # if data_args.chat_template is not None:
+    #     tokenizer.chat_template = data_args.chat_template
+    # elif tokenizer.chat_template is None and tokenizer.default_chat_template is None:
+    #     tokenizer.chat_template = DEFAULT_CHAT_TEMPLATE
 
     return tokenizer
 

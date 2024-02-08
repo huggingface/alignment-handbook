@@ -27,7 +27,7 @@ import datasets
 import numpy as np
 import torch
 import transformers
-from transformers import set_seed
+from transformers import set_seed, DataCollatorForLanguageModeling
 
 from alignment import (
     DataArguments,
@@ -42,7 +42,7 @@ from alignment import (
     get_quantization_config,
     get_tokenizer,
 )
-from trl import DataCollatorForLanguageModeling, SFTTrainer
+from trl import SFTTrainer
 
 
 warnings.filterwarnings("ignore", category=FutureWarning)
@@ -280,7 +280,7 @@ def main():
         max_seq_length=training_args.max_seq_length,
         # Off tokenizer and dataset_text_field when using Data Collator
         # tokenizer=tokenizer,
-        # dataset_text_field="text",
+        dataset_text_field="text",
         packing=False,
         data_collator=data_collator,
         peft_config=get_peft_config(model_args),
