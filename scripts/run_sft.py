@@ -46,17 +46,6 @@ warnings.filterwarnings('ignore', category=FutureWarning)
 
 logger = logging.getLogger(__name__)
 
-def formatting_prompts_func(example):
-    output_texts = []
-    for i in range(len(example['prompt'])):
-        if not example['context'] or example['context'].isspace():
-            text = example['prompt']
-        else:
-            text = example['context'] + '\n' + example['prompt']
-        output_texts.append(text)
-    return output_texts
-
-
 def main():
     parser = H4ArgumentParser((ModelArguments, DataArguments, SFTConfig))
     model_args, data_args, training_args = parser.parse()
@@ -107,7 +96,6 @@ def main():
     ################
     tokenizer = get_tokenizer(model_args, data_args)
     tokenizer.padding_side = 'left'
-    tokenizer.pad_token = tokenizer.unk_token
 
     #####################
     # Apply chat template
@@ -149,10 +137,10 @@ def main():
     assert tokenizer.pad_token_id != tokenizer.eos_token_id, "The tokenizer's pad token id and eos token id should not be the same."
     
     instruction_template = "[INST]"
-    response_template = "[/INST]"
+    response_template_context = "[/INST]"
+    response_template_ids = tokenizer.encode(response_template_context, add_special_tokens=False)[2:]
     data_collator = DataCollatorForCompletionOnlyLM(
-        instruction_template=instruction_template,
-        response_template=response_template,
+        response_template=response_template_ids,
         tokenizer=tokenizer,
         mlm=False,
     )
@@ -166,9 +154,10 @@ def main():
         args=training_args,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
-        dataset_text_field="text",
         max_seq_length=training_args.max_seq_length,
-        tokenizer=tokenizer,
+        # Off tokenizer and dataset_text_field when using Data Collator
+        # tokenizer=tokenizer,
+        # dataset_text_field="text",
         packing=False,
         data_collator=data_collator,
         peft_config=get_peft_config(model_args),

@@ -47,12 +47,10 @@ def apply_chat_template(
     if task in ["sft", "generation"]:
         messages = example["messages"]
         # We add an empty system message if there is none
-        maybe_insert_system_message(messages, tokenizer)
-        conv = get_conv_template("mistral")
-        conv.set_system_message(messages[0]["content"])
-        conv.append_message(conv.roles[0], messages[1]["content"])
-        conv.append_message(conv.roles[1], None)
-        example["text"] = conv.get_prompt()
+        # maybe_insert_system_message(messages, tokenizer)
+        example["text"] = tokenizer.apply_chat_template(
+            messages, tokenize=False, add_generation_prompt=True if task == "generation" else False
+        )
     elif task == "rm":
         if all(k in example.keys() for k in ("chosen", "rejected")):
             chosen_messages = example["chosen"]
