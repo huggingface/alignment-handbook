@@ -152,12 +152,13 @@ class DataCollatorForCompletionOnlyLM(DataCollatorForLanguageModeling):
                     batch["labels"][i, :response_token_ids_end_idx] = self.ignore_index
         
         
-        labels = batch["labels"]
-        pickle_filename = "batch_labels.pkl"
-        with open(pickle_filename, 'wb') as file:
-            pickle.dump(labels, file)
+        # labels = batch["labels"]
+        # pickle_filename = "batch_labels.pkl"
+        # with open(pickle_filename, 'wb') as file:
+        #     pickle.dump(labels, file)
         
-        assert 0
+        # assert 0
+        
         return batch
 
 
