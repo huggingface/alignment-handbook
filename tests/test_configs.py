@@ -24,7 +24,9 @@ class H4ArgumentParserTest(unittest.TestCase):
         self.yaml_file_path = "tests/fixtures/config_sft_full.yaml"
 
     def test_load_yaml(self):
-        model_args, data_args, training_args = self.parser.parse_yaml_file(os.path.abspath(self.yaml_file_path))
+        model_args, data_args, training_args = self.parser.parse_yaml_file(
+            os.path.abspath(self.yaml_file_path)
+        )
         self.assertEqual(model_args.model_name_or_path, "mistralai/Mistral-7B-v0.1")
 
     def test_load_yaml_and_args(self):

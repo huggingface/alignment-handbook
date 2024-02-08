@@ -50,14 +50,20 @@ class GetQuantizationConfigTest(unittest.TestCase):
 
 class GetTokenizerTest(unittest.TestCase):
     def setUp(self) -> None:
-        self.model_args = ModelArguments(model_name_or_path="HuggingFaceH4/zephyr-7b-alpha")
+        self.model_args = ModelArguments(
+            model_name_or_path="HuggingFaceH4/zephyr-7b-alpha"
+        )
 
     def test_right_truncation_side(self):
-        tokenizer = get_tokenizer(self.model_args, DataArguments(truncation_side="right"))
+        tokenizer = get_tokenizer(
+            self.model_args, DataArguments(truncation_side="right")
+        )
         self.assertEqual(tokenizer.truncation_side, "right")
 
     def test_left_truncation_side(self):
-        tokenizer = get_tokenizer(self.model_args, DataArguments(truncation_side="left"))
+        tokenizer = get_tokenizer(
+            self.model_args, DataArguments(truncation_side="left")
+        )
         self.assertEqual(tokenizer.truncation_side, "left")
 
     def test_default_chat_template(self):
@@ -70,22 +76,33 @@ class GetTokenizerTest(unittest.TestCase):
         `default_chat_template` but no `chat_template` we do not set a `chat_template`,
         and that we do not change `default_chat_template`
         """
-        model_args = ModelArguments(model_name_or_path="codellama/CodeLlama-7b-Instruct-hf")
-        base_tokenizer = AutoTokenizer.from_pretrained("codellama/CodeLlama-7b-Instruct-hf")
+        model_args = ModelArguments(
+            model_name_or_path="codellama/CodeLlama-7b-Instruct-hf"
+        )
+        base_tokenizer = AutoTokenizer.from_pretrained(
+            "codellama/CodeLlama-7b-Instruct-hf"
+        )
         processed_tokenizer = get_tokenizer(model_args, DataArguments())
 
         assert getattr(processed_tokenizer, "chat_template") is None
-        self.assertEqual(base_tokenizer.default_chat_template, processed_tokenizer.default_chat_template)
+        self.assertEqual(
+            base_tokenizer.default_chat_template,
+            processed_tokenizer.default_chat_template,
+        )
 
     def test_chatml_chat_template(self):
         chat_template = "{% if not add_generation_prompt is defined %}{% set add_generation_prompt = false %}{% endif %}{% for message in messages %}{{'<|im_start|>' + message['role'] + '\n' + message['content'] + '<|im_end|>' + '\n'}}{% endfor %}{% if add_generation_prompt %}{{ '<|im_start|>assistant\n' }}{% endif %}"
-        tokenizer = get_tokenizer(self.model_args, DataArguments(chat_template=chat_template))
+        tokenizer = get_tokenizer(
+            self.model_args, DataArguments(chat_template=chat_template)
+        )
         self.assertEqual(tokenizer.chat_template, chat_template)
 
 
 class GetPeftConfigTest(unittest.TestCase):
     def test_peft_config(self):
-        model_args = ModelArguments(use_peft=True, lora_r=42, lora_alpha=0.66, lora_dropout=0.99)
+        model_args = ModelArguments(
+            use_peft=True, lora_r=42, lora_alpha=0.66, lora_dropout=0.99
+        )
         peft_config = get_peft_config(model_args)
         self.assertEqual(peft_config.r, 42)
         self.assertEqual(peft_config.lora_alpha, 0.66)

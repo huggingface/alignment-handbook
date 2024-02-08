@@ -77,7 +77,13 @@ _deps = [
 # packaging: "packaging"
 #
 # some of the values are versioned whereas others aren't.
-deps = {b: a for a, b in (re.findall(r"^(([^!=<>~ \[\]]+)(?:\[[^\]]+\])?(?:[!=<>~ ].*)?$)", x)[0] for x in _deps)}
+deps = {
+    b: a
+    for a, b in (
+        re.findall(r"^(([^!=<>~ \[\]]+)(?:\[[^\]]+\])?(?:[!=<>~ ].*)?$)", x)[0]
+        for x in _deps
+    )
+}
 
 
 def deps_list(*pkgs):

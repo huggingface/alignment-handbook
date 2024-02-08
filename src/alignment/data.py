@@ -49,7 +49,9 @@ def apply_chat_template(
         # We add an empty system message if there is none
         # maybe_insert_system_message(messages, tokenizer)
         example["text"] = tokenizer.apply_chat_template(
-            messages, tokenize=False, add_generation_prompt=True if task == "generation" else False
+            messages,
+            tokenize=False,
+            add_generation_prompt=True if task == "generation" else False,
         )
     elif task == "rm":
         if all(k in example.keys() for k in ("chosen", "rejected")):
@@ -59,8 +61,12 @@ def apply_chat_template(
             maybe_insert_system_message(chosen_messages, tokenizer)
             maybe_insert_system_message(rejected_messages, tokenizer)
 
-            example["text_chosen"] = tokenizer.apply_chat_template(chosen_messages, tokenize=False)
-            example["text_rejected"] = tokenizer.apply_chat_template(rejected_messages, tokenize=False)
+            example["text_chosen"] = tokenizer.apply_chat_template(
+                chosen_messages, tokenize=False
+            )
+            example["text_rejected"] = tokenizer.apply_chat_template(
+                rejected_messages, tokenize=False
+            )
         else:
             raise ValueError(
                 f"Could not format example as dialogue for `rm` task! Require `[chosen, rejected]` keys but found {list(example.keys())}"
@@ -76,9 +82,15 @@ def apply_chat_template(
             # Now we extract the final turn to define chosen/rejected responses
             chosen_messages = example["chosen"][-1:]
             rejected_messages = example["rejected"][-1:]
-            example["text_chosen"] = tokenizer.apply_chat_template(chosen_messages, tokenize=False)
-            example["text_rejected"] = tokenizer.apply_chat_template(rejected_messages, tokenize=False)
-            example["text_prompt"] = tokenizer.apply_chat_template(prompt_messages, tokenize=False)
+            example["text_chosen"] = tokenizer.apply_chat_template(
+                chosen_messages, tokenize=False
+            )
+            example["text_rejected"] = tokenizer.apply_chat_template(
+                rejected_messages, tokenize=False
+            )
+            example["text_prompt"] = tokenizer.apply_chat_template(
+                prompt_messages, tokenize=False
+            )
         else:
             raise ValueError(
                 f"Could not format example as dialogue for `dpo` task! Require `[chosen, rejected]` keys but found {list(example.keys())}"
@@ -132,7 +144,9 @@ def get_datasets(
     return raw_datasets
 
 
-def mix_datasets(dataset_mixer: dict, splits: Optional[List[str]] = None, shuffle=True) -> DatasetDict:
+def mix_datasets(
+    dataset_mixer: dict, splits: Optional[List[str]] = None, shuffle=True
+) -> DatasetDict:
     """
     Loads and mixes datasets according to proportions specified in `dataset_mixer`.
 
@@ -164,7 +178,9 @@ def mix_datasets(dataset_mixer: dict, splits: Optional[List[str]] = None, shuffl
             elif "test" in split:
                 raw_val_datasets.append(dataset)
             else:
-                raise ValueError(f"Split type {split} not recognized as one of test or train.")
+                raise ValueError(
+                    f"Split type {split} not recognized as one of test or train."
+                )
 
     if any(frac < 0 for frac in fracs):
         raise ValueError("Dataset fractions cannot be negative.")
@@ -181,7 +197,9 @@ def mix_datasets(dataset_mixer: dict, splits: Optional[List[str]] = None, shuffl
     # No subsampling for test datasets to enable fair comparison across models
     if len(raw_val_datasets) > 0:
         if shuffle:
-            raw_datasets["test"] = concatenate_datasets(raw_val_datasets).shuffle(seed=42)
+            raw_datasets["test"] = concatenate_datasets(raw_val_datasets).shuffle(
+                seed=42
+            )
         else:
             raw_datasets["test"] = concatenate_datasets(raw_val_datasets)
 
