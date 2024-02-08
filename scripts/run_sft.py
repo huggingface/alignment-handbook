@@ -43,7 +43,7 @@ from alignment import (
     get_tokenizer,
 )
 from trl import SFTTrainer
-
+import pickle
 
 warnings.filterwarnings("ignore", category=FutureWarning)
 
@@ -150,10 +150,14 @@ class DataCollatorForCompletionOnlyLM(DataCollatorForLanguageModeling):
 
                     # Make pytorch loss function ignore all tokens up through the end of the response key
                     batch["labels"][i, :response_token_ids_end_idx] = self.ignore_index
-
-        print(batch["labels"])
-        assert 0
         
+        
+        labels = batch["labels"]
+        pickle_filename = "batch_labels.pkl"
+        with open(pickle_filename, 'wb') as file:
+            pickle.dump(labels, file)
+        
+        assert 0
         return batch
 
 

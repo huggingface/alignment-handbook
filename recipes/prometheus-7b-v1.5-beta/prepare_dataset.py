@@ -79,10 +79,10 @@ def prepare_dataset_properly():
     rel_system_prompt = "You are a fair judge assistant assigned to deliver insightful feedback that compares individual performances, highlighting how each stands relative to others within the same cohort."
 
     def add_messages_column(row, system_prompt: str):
-        system_msg = {"content": system_prompt, "role": "system"}
-        user_msg = {"content": row["instruction"], "role": "user"}
+        # system_msg = {"content": system_prompt, "role": "system"}
+        user_msg = {"content": system_prompt + row["instruction"], "role": "user"}
         assistant_msg = {"content": row["output"], "role": "assistant"}
-        messages = [system_msg, user_msg, assistant_msg]
+        messages = [user_msg, assistant_msg]
         row["messages"] = messages
         return row
 
