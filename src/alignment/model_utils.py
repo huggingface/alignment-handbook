@@ -82,7 +82,7 @@ def get_tokenizer(
     if tokenizer.model_max_length > 100_000:
         tokenizer.model_max_length = 8192
 
-    # Hard code max length for now (Mistral, Mixtral models)
+    # Hard code max length for now (Mistral models)
     tokenizer.model_max_length = 8192
 
     # if data_args.chat_template is not None:
