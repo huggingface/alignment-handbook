@@ -30,7 +30,7 @@ logging_strategy: steps
 lr_scheduler_type: cosine
 max_seq_length: 4096
 max_steps: -1
-num_train_epochs: 3
+num_train_epochs: 1
 output_dir: /home/seungone_kim/data/prometheus-7b-v1.5-beta-2
 overwrite_output_dir: true
 per_device_eval_batch_size: 1
