@@ -4,6 +4,7 @@ import pandas as pd
 from datasets import Dataset, load_dataset, load_from_disk
 from sklearn.model_selection import train_test_split
 from tqdm import tqdm
+import json
 
 
 def prepare_dataset():
@@ -126,11 +127,25 @@ def prepare_dataset_properly():
         "./recipes/prometheus-7b-v1.5-beta/assets/preference-collection/test"
     )
 
+def export_dataset_to_json(path: str, output_path: str = "dataset.json"):
+    dataset = load_from_disk(path)
+    dataset_list = [dict(row) for row in dataset]
+
+    dataset_json = json.dumps(dataset_list, indent=4)  # `indent=4` for pretty printing
+
+    with open(output_path, 'w') as json_file:
+        json_file.write(dataset_json)
+
+    print(f"Dataset with {len(dataset)} entries has been exported to 'dataset.json'.")
+
 
 if __name__ == "__main__":
     prepare_dataset_properly()
     # dataset_1 = load_from_disk('./recipes/prometheus-7b-v1.5-beta/assets/feedback-collection/train')
-    dataset_2 = load_from_disk(
-        "./recipes/prometheus-7b-v1.5-beta/assets/feedback-collection/test"
-    )
-    print(len(dataset_2))
+    # dataset_2 = load_from_disk(
+    #     "./recipes/prometheus-7b-v1.5-beta/assets/feedback-collection/test"
+    # )
+    preference_dataset_teest_path = "./recipes/prometheus-7b-v1.5-beta/assets/preference-collection/test"
+    preference_dataset_test = load_from_disk(preference_dataset_teest_path)
+    print(len(preference_dataset_test))
+    export_dataset_to_json(preference_dataset_teest_path, "preference_dataset_test.json")
