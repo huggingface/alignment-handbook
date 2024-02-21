@@ -7,7 +7,7 @@ tokenizer = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-Instruct-v0.2")
 import pickle
 
 # Specify the same filename you used for saving
-pickle_filename = '/home/seungone_kim/alignment-handbook/batch_labels.pkl'
+pickle_filename = '/home/seungone_kim/alignment-handbook/batch_labels_1.pkl'
 
 # Open the file in binary-read mode and use pickle.load() to load the object
 with open(pickle_filename, 'rb') as file:

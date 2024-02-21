@@ -2,26 +2,27 @@
 model_name_or_path: mistralai/Mixtral-8x7B-Instruct-v0.1
 model_revision: main
 torch_dtype: bfloat16
+use_flash_attention_2: true
 
 # Config borrowed from: https://generativeai.pub/a-beginners-guide-to-fine-tuning-mixtral-instruct-model-7f6a30aacf61
 # BitsAndBytes arguments
-load_in_4bit: true
-bnb_4bit_quant_type: nf4
-use_bnb_nested_quant: true
+# load_in_4bit: true
+# bnb_4bit_quant_type: nf4
+# use_bnb_nested_quant: true
 
 # LoRA arguments
 use_peft: true
-lora_r: 64
-lora_alpha: 16
+lora_r: 256
+lora_alpha: 512
 lora_dropout: 0.1
 lora_target_modules:
 - q_proj
 - k_proj
 - v_proj
 - o_proj
-- gate_proj
-- up_proj
-- down_proj
+- w1
+- w2
+- w3
 - lm_head
 
 # Data training arguments
@@ -31,7 +32,7 @@ dataset_mixer:
 dataset_splits:
 - train
 - test
-preprocessing_num_workers: 48
+preprocessing_num_workers: 64
 
 # SFT trainer config
 bf16: true
@@ -43,7 +44,7 @@ gradient_checkpointing_kwargs:
   use_reentrant: False
 hub_model_id: kaist-ai/prometheus-mixtral-alpha-1
 hub_strategy: every_save
-learning_rate: 1.0e-05
+learning_rate: 1.0e-04
 log_level: info
 logging_steps: 5  
 logging_strategy: steps
@@ -54,7 +55,7 @@ num_train_epochs: 1
 output_dir: /home/seungone_kim/data/prometheus-mixtral-alpha-1
 overwrite_output_dir: true
 per_device_eval_batch_size: 1
-per_device_train_batch_size: 1
+per_device_train_batch_size: 8
 push_to_hub: true
 remove_unused_columns: true
 report_to:

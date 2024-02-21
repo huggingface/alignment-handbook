@@ -1,0 +1,67 @@
+# Model arguments
+model_name_or_path: mistralai/Mixtral-8x7B-Instruct-v0.1
+model_revision: main
+torch_dtype: bfloat16
+use_flash_attention_2: true
+
+# Config borrowed from: https://generativeai.pub/a-beginners-guide-to-fine-tuning-mixtral-instruct-model-7f6a30aacf61
+# BitsAndBytes arguments
+# load_in_4bit: true
+# bnb_4bit_quant_type: nf4
+# use_bnb_nested_quant: true
+
+# LoRA arguments
+use_peft: true
+lora_r: 256
+lora_alpha: 512
+lora_dropout: 0.1
+lora_target_modules:
+- q_proj
+- k_proj
+- v_proj
+- o_proj
+- w1
+- w2
+- w3
+- lm_head
+
+# Data training arguments
+chat_template: "{% for message in messages %}\n{% if message['role'] == 'user' %}\n{{ '<|user|>\n' + message['content'] + eos_token }}\n{% elif message['role'] == 'system' %}\n{{ '<|system|>\n' + message['content'] + eos_token }}\n{% elif message['role'] == 'assistant' %}\n{{ '<|assistant|>\n'  + message['content'] + eos_token }}\n{% endif %}\n{% if loop.last and add_generation_prompt %}\n{{ '<|assistant|>' }}\n{% endif %}\n{% endfor %}"
+dataset_mixer:
+  /home/seungone_kim/alignment-handbook/recipes/prometheus-7b-v1.5-beta/assets/feedback-collection: 1.0
+dataset_splits:
+- train
+- test
+preprocessing_num_workers: 64
+
+# SFT trainer config
+bf16: true
+do_eval: true
+evaluation_strategy: epoch
+gradient_accumulation_steps: 1
+gradient_checkpointing: true
+gradient_checkpointing_kwargs:
+  use_reentrant: False
+hub_model_id: kaist-ai/prometheus-mixtral-alpha-1
+hub_strategy: every_save
+learning_rate: 1.0e-04
+log_level: info
+logging_steps: 5  
+logging_strategy: steps
+lr_scheduler_type: cosine
+max_seq_length: 4096
+max_steps: -1
+num_train_epochs: 1
+output_dir: /home/seungone_kim/data/prometheus-mixtral-alpha-1
+overwrite_output_dir: true
+per_device_eval_batch_size: 1
+per_device_train_batch_size: 8
+push_to_hub: true
+remove_unused_columns: true
+report_to:
+- wandb
+save_strategy: "epoch"
+save_steps: 1000
+save_total_limit: 1
+seed: 42
+warmup_ratio: 0.1

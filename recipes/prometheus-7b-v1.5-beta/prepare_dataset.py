@@ -80,8 +80,8 @@ def prepare_dataset_properly():
     rel_system_prompt = "You are a fair judge assistant assigned to deliver insightful feedback that compares individual performances, highlighting how each stands relative to others within the same cohort."
 
     def add_messages_column(row, system_prompt: str):
-        # system_msg = {"content": system_prompt, "role": "system"}
-        user_msg = {"content": system_prompt + row["instruction"], "role": "user"}
+        system_msg = {"content": system_prompt, "role": "system"}
+        user_msg = {"content": row["instruction"], "role": "user"}
         assistant_msg = {"content": row["output"], "role": "assistant"}
         messages = [user_msg, assistant_msg]
         row["messages"] = messages
@@ -140,12 +140,12 @@ def export_dataset_to_json(path: str, output_path: str = "dataset.json"):
 
 
 if __name__ == "__main__":
-    prepare_dataset_properly()
+    # prepare_dataset_properly()
     # dataset_1 = load_from_disk('./recipes/prometheus-7b-v1.5-beta/assets/feedback-collection/train')
     # dataset_2 = load_from_disk(
     #     "./recipes/prometheus-7b-v1.5-beta/assets/feedback-collection/test"
     # )
-    preference_dataset_teest_path = "./recipes/prometheus-7b-v1.5-beta/assets/preference-collection/test"
-    preference_dataset_test = load_from_disk(preference_dataset_teest_path)
-    print(len(preference_dataset_test))
-    export_dataset_to_json(preference_dataset_teest_path, "preference_dataset_test.json")
+    # preference_dataset_teest_path = "./recipes/prometheus-7b-v1.5-beta/assets/preference-collection/test"
+    # preference_dataset_test = load_from_disk(preference_dataset_teest_path)
+    # print(len(preference_dataset_test))
+    #export_dataset_to_json(preference_dataset_teest_path, "preference_dataset_test.json")

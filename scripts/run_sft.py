@@ -44,6 +44,7 @@ from alignment import (
 )
 from trl import SFTTrainer
 import pickle
+from transformers import AutoModelForCausalLM
 
 warnings.filterwarnings("ignore", category=FutureWarning)
 
@@ -153,7 +154,7 @@ class DataCollatorForCompletionOnlyLM(DataCollatorForLanguageModeling):
         
         
         # labels = batch["labels"]
-        # pickle_filename = "batch_labels.pkl"
+        # pickle_filename = "batch_labels_1.pkl"
         # with open(pickle_filename, 'wb') as file:
         #     pickle.dump(labels, file)
         
@@ -264,9 +265,37 @@ def main():
     ), "The tokenizer's pad token id and eos token id should not be the same."
 
     response_template_context = "[/INST]"
+    if "zephyr" in model_args.model_name_or_path:
+        response_template_context = "<|assistant|>\n"
+    elif "Hermes" in model_args.model_name_or_path:
+        response_template_context = "<|im_start|>assistant\n"
+
     response_template_ids = tokenizer.encode(
         response_template_context, add_special_tokens=False
-    )[2:]
+    )
+
+    for i in range(len(train_dataset)):
+        example = train_dataset[0]['text']
+        example_ids = tokenizer.encode(example, add_special_tokens=False)
+
+        response_template_ids = tokenizer.encode(
+            response_template_context, add_special_tokens=False
+        )
+
+        # print("response_template_ids: ", response_template_ids)
+        # for id in response_template_ids:
+        #     print(tokenizer.decode(id, add_special_tokens=False))
+        # print(response_template_context)
+        # print(example)
+        # assert 0
+
+        # assert ("assistant" in example)
+        # assert ("<|assistant|>" in example)
+        # assert ("<|assistant|>\n" in example)
+        assert (response_template_context in example)
+        assert (response_template_ids[0] in example_ids)
+        assert (response_template_ids[-1] in example_ids)
+
     data_collator = DataCollatorForCompletionOnlyLM(
         response_template=response_template_ids,
         tokenizer=tokenizer,
@@ -276,6 +305,22 @@ def main():
     ########################
     # Initialize the Trainer
     ########################
+    # if "Mixtral" in model_args.model_name_or_path:
+    #     model = AutoModelForCausalLM.from_pretrained(model_args.model_name_or_path, **model_kwargs, low_cpu_mem_usage=False)
+    #     trainer = SFTTrainer(
+    #         model=model,
+    #         args=training_args,
+    #         train_dataset=train_dataset,
+    #         eval_dataset=eval_dataset,
+    #         max_seq_length=training_args.max_seq_length,
+    #         # Off tokenizer and dataset_text_field when using Data Collator
+    #         # tokenizer=tokenizer,
+    #         dataset_text_field="text",
+    #         packing=False,
+    #         data_collator=data_collator,
+    #         peft_config=get_peft_config(model_args),
+    #     )
+    # else:
     trainer = SFTTrainer(
         model=model_args.model_name_or_path,
         model_init_kwargs=model_kwargs,
