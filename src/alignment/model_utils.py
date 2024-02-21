@@ -71,7 +71,7 @@ def get_tokenizer(
         revision=model_args.model_revision,
         add_eos_token=True,
     )
-    
+
     # if tokenizer.pad_token_id is None:
     #     tokenizer.pad_token_id = tokenizer.eos_token_id
 
