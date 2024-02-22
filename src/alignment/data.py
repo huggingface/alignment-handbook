@@ -75,7 +75,7 @@ def apply_chat_template(
             # Prepend a system message if the first message is not a system message
             if auto_insert_empty_system_msg:
                 maybe_insert_system_message(prompt_messages, tokenizer)
-                
+
             # Now we extract the final turn to define chosen/rejected responses
             chosen_messages = example["chosen"][-1:]
             rejected_messages = example["rejected"][-1:]
