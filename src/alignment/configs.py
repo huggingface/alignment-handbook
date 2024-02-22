@@ -208,7 +208,7 @@ class DataArguments:
         default=True,
         metadata={
             "help": (
-                "Whether to automatically insert an empty system message as the first messageif `system` is mentioned in the chat template."
+                "Whether to automatically insert an empty system message as the first message if `system` is mentioned in the chat template."
             )
         },
     )
