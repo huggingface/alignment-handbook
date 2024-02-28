@@ -204,6 +204,14 @@ class DataArguments:
     truncation_side: Optional[str] = field(
         default=None, metadata={"help": "Truncation side to use for the tokenizer."}
     )
+    auto_insert_empty_system_msg: bool = field(
+        default=True,
+        metadata={
+            "help": (
+                "Whether to automatically insert an empty system message as the first message if `system` is mentioned in the chat template."
+            )
+        },
+    )
 
 
 @dataclass

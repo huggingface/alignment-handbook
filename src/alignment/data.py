@@ -42,11 +42,13 @@ def apply_chat_template(
     example,
     tokenizer,
     task: Literal["sft", "generation", "rm", "dpo"],
+    auto_insert_empty_system_msg: bool = True,
 ):
     if task in ["sft", "generation"]:
         messages = example["messages"]
         # We add an empty system message if there is none
-        maybe_insert_system_message(messages, tokenizer)
+        if auto_insert_empty_system_msg:
+            maybe_insert_system_message(messages, tokenizer)
         example["text"] = tokenizer.apply_chat_template(
             messages, tokenize=False, add_generation_prompt=True if task == "generation" else False
         )
@@ -55,8 +57,9 @@ def apply_chat_template(
             chosen_messages = example["chosen"]
             rejected_messages = example["rejected"]
             # We add an empty system message if there is none
-            maybe_insert_system_message(chosen_messages, tokenizer)
-            maybe_insert_system_message(rejected_messages, tokenizer)
+            if auto_insert_empty_system_msg:
+                maybe_insert_system_message(chosen_messages, tokenizer)
+                maybe_insert_system_message(rejected_messages, tokenizer)
 
             example["text_chosen"] = tokenizer.apply_chat_template(chosen_messages, tokenize=False)
             example["text_rejected"] = tokenizer.apply_chat_template(rejected_messages, tokenize=False)
@@ -70,8 +73,9 @@ def apply_chat_template(
             # We therefore need to extract the N-1 turns to form the prompt
             prompt_messages = example["chosen"][:-1]
             # Prepend a system message if the first message is not a system message
-            if example["chosen"][0]["role"] != "system":
-                prompt_messages.insert(0, {"role": "system", "content": ""})
+            if auto_insert_empty_system_msg:
+                maybe_insert_system_message(prompt_messages, tokenizer)
+
             # Now we extract the final turn to define chosen/rejected responses
             chosen_messages = example["chosen"][-1:]
             rejected_messages = example["rejected"][-1:]

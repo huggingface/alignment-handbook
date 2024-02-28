@@ -100,7 +100,11 @@ def main():
     #####################
     raw_datasets = raw_datasets.map(
         apply_chat_template,
-        fn_kwargs={"tokenizer": tokenizer, "task": "sft"},
+        fn_kwargs={
+            "tokenizer": tokenizer,
+            "task": "sft",
+            "auto_insert_empty_system_msg": data_args.auto_insert_empty_system_msg,
+        },
         num_proc=data_args.preprocessing_num_workers,
         remove_columns=column_names,
         desc="Applying chat template",
