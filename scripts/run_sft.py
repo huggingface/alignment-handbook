@@ -146,6 +146,10 @@ def main():
         tokenizer=tokenizer,
         packing=True,
         peft_config=get_peft_config(model_args),
+        dataset_kwargs={
+        "add_special_tokens": True, # make sure we add <bos> and <eos> tokens
+        "append_concat_token": False, # make sure to not add additional tokens when packing
+    }
     )
 
     ###############
