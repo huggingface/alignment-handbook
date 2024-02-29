@@ -24,7 +24,7 @@ import sys
 import datasets
 import torch
 import transformers
-from transformers import set_seed
+from transformers import set_seed, AutoModelForCausalLM
 
 from alignment import (
     DataArguments,
@@ -94,6 +94,7 @@ def main():
     # Load tokenizer
     ################
     tokenizer = get_tokenizer(model_args, data_args)
+    tokenizer.add_special_tokens({"additional_special_tokens": ["<start_of_turn>", "<end_of_turn>"]})
 
     #####################
     # Apply chat template
@@ -130,12 +131,18 @@ def main():
         device_map=get_kbit_device_map() if quantization_config is not None else None,
         quantization_config=quantization_config,
     )
+    # model = AutoModelForCausalLM.from_pretrained(
+    #     model_args.model_name_or_path,
+    #     **model_kwargs,
+    # )
+    # model.resize_token_embeddings(len(tokenizer))
     logger.info("*** Model loaded! ***")
 
     ########################
     # Initialize the Trainer
     ########################
     trainer = SFTTrainer(
+        # model=model,
         model=model_args.model_name_or_path,
         model_init_kwargs=model_kwargs,
         args=training_args,
@@ -146,10 +153,10 @@ def main():
         tokenizer=tokenizer,
         packing=True,
         peft_config=get_peft_config(model_args),
-        dataset_kwargs={
-        "add_special_tokens": True, # make sure we add <bos> and <eos> tokens
-        "append_concat_token": False, # make sure to not add additional tokens when packing
-    }
+    #     dataset_kwargs={
+    #     "add_special_tokens": True, # make sure we add <bos> and <eos> tokens
+    #     "append_concat_token": False, # make sure to not add additional tokens when packing
+    # }
     )
 
     ###############
