@@ -40,7 +40,7 @@ from alignment import (
     get_tokenizer,
 )
 from trl import SFTTrainer
-datasets.disable_caching()
+# datasets.disable_caching()
 
 logger = logging.getLogger(__name__)
 
