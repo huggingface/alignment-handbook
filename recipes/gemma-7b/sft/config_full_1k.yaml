@@ -5,7 +5,7 @@ torch_dtype: bfloat16
 use_flash_attention_2: true
 
 # Data training arguments
-chat_template: "{{ bos_token }}{% for message in messages %}{% if (message['role'] == 'assistant') %}{% set role = 'model' %}{% else %}{% set role = message['role'] %}{% endif %}{{ '<start_of_turn>' + role + '\n' + message['content'] | trim + '<end_of_turn>\n' }}{% endfor %}{% if add_generation_prompt %}{{ '<start_of_turn>model\n' }}{% else %}{{ eos_token }}{% endif %}"
+chat_template: "{{ bos_token }}{% for message in messages %}{{'<|im_start|>' + message['role'] + '\n' + message['content'] + '<|im_end|>' + '\n'}}{% endfor %}{% if add_generation_prompt %}{{ '<|im_start|>assistant\n' }}{% else %}{{ eos_token }}{% endif %}"
 dataset_mixer:
   HuggingFaceH4/OpenHermes-2.5-1k-longest: 1.0
 dataset_splits:
@@ -17,7 +17,7 @@ preprocessing_num_workers: 12
 bf16: true
 do_eval: true
 evaluation_strategy: epoch
-gradient_accumulation_steps: 2
+gradient_accumulation_steps: 4
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: False
@@ -34,8 +34,8 @@ neftune_noise_alpha: 3
 num_train_epochs: 15
 output_dir: data/gemma-7b-sft-full-longest-1k-v0
 overwrite_output_dir: true
-per_device_eval_batch_size: 16
-per_device_train_batch_size: 8
+per_device_eval_batch_size: 8
+per_device_train_batch_size: 4
 push_to_hub: true
 remove_unused_columns: true
 report_to:
