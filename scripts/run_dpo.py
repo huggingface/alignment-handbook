@@ -37,6 +37,9 @@ from alignment import (
 )
 from peft import PeftConfig, PeftModel
 from trl import DPOTrainer
+import datasets
+
+datasets.disable_caching()
 
 
 logger = logging.getLogger(__name__)
@@ -197,6 +200,10 @@ def main():
 
     logger.info("*** Training complete ***")
 
+    logger.info("*** Save model ***")
+    trainer.save_model(training_args.output_dir)
+    logger.info(f"Model saved to {training_args.output_dir}")
+
     ##########
     # Evaluate
     ##########
@@ -210,9 +217,6 @@ def main():
     ##################################
     # Save model and create model card
     ##################################
-    logger.info("*** Save model ***")
-    trainer.save_model(training_args.output_dir)
-    logger.info(f"Model saved to {training_args.output_dir}")
 
     # Save everything else on main process
     kwargs = {
