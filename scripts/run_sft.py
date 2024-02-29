@@ -40,7 +40,7 @@ from alignment import (
     get_tokenizer,
 )
 from trl import SFTTrainer
-
+datasets.disable_caching()
 
 logger = logging.getLogger(__name__)
 
@@ -94,7 +94,7 @@ def main():
     # Load tokenizer
     ################
     tokenizer = get_tokenizer(model_args, data_args)
-    tokenizer.add_special_tokens({"additional_special_tokens": ["<start_of_turn>", "<end_of_turn>"]})
+    # tokenizer.add_special_tokens({"additional_special_tokens": ["<|im_end|>", "<|im_start|>"]})
 
     #####################
     # Apply chat template
@@ -107,7 +107,7 @@ def main():
         desc="Applying chat template",
     )
     train_dataset = raw_datasets["train"]
-    eval_dataset = raw_datasets["test"]
+    # eval_dataset = raw_datasets["test"]
 
     with training_args.main_process_first(desc="Log a few random samples from the processed training set"):
         for index in random.sample(range(len(raw_datasets["train"])), 3):
@@ -147,16 +147,16 @@ def main():
         model_init_kwargs=model_kwargs,
         args=training_args,
         train_dataset=train_dataset,
-        eval_dataset=eval_dataset,
+        # eval_dataset=eval_dataset,
         dataset_text_field="text",
         max_seq_length=training_args.max_seq_length,
         tokenizer=tokenizer,
         packing=True,
         peft_config=get_peft_config(model_args),
-    #     dataset_kwargs={
-    #     "add_special_tokens": True, # make sure we add <bos> and <eos> tokens
-    #     "append_concat_token": False, # make sure to not add additional tokens when packing
-    # }
+        dataset_kwargs={
+        "add_special_tokens": False,
+        "append_concat_token": False, # make sure to not add additional tokens when packing
+    }
     )
 
     ###############
