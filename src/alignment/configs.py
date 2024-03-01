@@ -136,6 +136,14 @@ class ModelArguments:
             "choices": ["auto", "bfloat16", "float16", "float32"],
         },
     )
+    tokenizer_name_or_path: Optional[str] = field(
+        default=None,
+        metadata={
+            "help": (
+                "The path to the tokenizer. Useful if you want to use a different tokenizer to the one stored in `model_name_or_path`."
+            )
+        },
+    )
     trust_remote_code: bool = field(default=False, metadata={"help": "Trust remote code when loading a model."})
     use_flash_attention_2: bool = field(
         default=False,
@@ -220,6 +228,9 @@ class SFTConfig(transformers.TrainingArguments):
     Arguments related to the training process itself. For all parameters, see: https://huggingface.co/docs/transformers/v4.26.1/en/main_classes/trainer#transformers.TrainingArguments
     """
 
+    dataset_kwargs: Optional[Dict[str, Any]] = field(
+        default=None, metadata={"help": "Dataset kwargs for the SFTTrainer"}
+    )
     max_seq_length: Optional[int] = field(
         default=None,
         metadata={"help": ("Used by TRL for reward model training, which tries to read this parameter in init.")},
