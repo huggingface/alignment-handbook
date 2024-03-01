@@ -65,7 +65,9 @@ def get_quantization_config(model_args: ModelArguments) -> BitsAndBytesConfig | 
 def get_tokenizer(model_args: ModelArguments, data_args: DataArguments) -> PreTrainedTokenizer:
     """Get the tokenizer for the model."""
     tokenizer = AutoTokenizer.from_pretrained(
-        model_args.model_name_or_path,
+        model_args.model_name_or_path
+        if model_args.tokenizer_name_or_path is None
+        else model_args.tokenizer_name_or_path,
         revision=model_args.model_revision,
     )
     if tokenizer.pad_token_id is None:
