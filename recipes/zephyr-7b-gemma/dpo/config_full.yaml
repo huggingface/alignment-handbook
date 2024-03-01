@@ -1,5 +1,5 @@
 # Model arguments
-model_name_or_path: lewtun/zephyr-7b-gemma-sft
+model_name_or_path: HuggingFaceH4/zephyr-7b-gemma-sft-v0.1
 torch_dtype: bfloat16
 
 # Data training arguments
