@@ -1,7 +1,7 @@
 # Model arguments
 model_name_or_path: google/gemma-7b
 model_revision: main
-model_name_or_path: philschmid/gemma-tokenizer-chatml
+tokenizer_name_or_path: philschmid/gemma-tokenizer-chatml # Custom tokenizer with <|im_start|> and <|im_end|> tokens
 torch_dtype: bfloat16
 use_flash_attention_2: true
 
@@ -16,12 +16,15 @@ preprocessing_num_workers: 12
 
 # SFT trainer config
 bf16: true
+dataset_kwargs:
+  add_special_tokens: false  # We already wrap <bos> and <eos> in the chat template
+  append_concat_token: false # No need to add <eos> across samples
 do_eval: true
 evaluation_strategy: "epoch"
 gradient_accumulation_steps: 4
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
-  use_reentrant: False
+  use_reentrant: false
 hub_model_id: zephyr-7b-gemma-sft
 hub_strategy: every_save
 learning_rate: 2.0e-05
