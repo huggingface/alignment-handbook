@@ -65,7 +65,7 @@ _deps = [
     "scipy",
     "tensorboard",
     "torch==2.1.2",
-    "transformers==4.38.1",
+    "transformers @ git+https://github.com/huggingface/transformers.git@b647acdb53d251cec126b79e505bac11821d7c93",  # Includes RoPE fix
     "trl==0.7.10",
     "jinja2>=3.0.0",
     "tqdm>=4.64.1",

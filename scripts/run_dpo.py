@@ -201,23 +201,12 @@ def main():
 
     logger.info("*** Training complete ***")
 
-    logger.info("*** Save model ***")
-    trainer.save_model(training_args.output_dir)
-    logger.info(f"Model saved to {training_args.output_dir}")
-
-    ##########
-    # Evaluate
-    ##########
-    if training_args.do_eval:
-        logger.info("*** Evaluate ***")
-        metrics = trainer.evaluate()
-        metrics["eval_samples"] = len(raw_datasets["test"])
-        trainer.log_metrics("eval", metrics)
-        trainer.save_metrics("eval", metrics)
-
     ##################################
     # Save model and create model card
     ##################################
+    logger.info("*** Save model ***")
+    trainer.save_model(training_args.output_dir)
+    logger.info(f"Model saved to {training_args.output_dir}")
 
     # Save everything else on main process
     kwargs = {
@@ -231,6 +220,16 @@ def main():
         # Restore k,v cache for fast inference
         trainer.model.config.use_cache = True
         trainer.model.config.save_pretrained(training_args.output_dir)
+
+    ##########
+    # Evaluate
+    ##########
+    if training_args.do_eval:
+        logger.info("*** Evaluate ***")
+        metrics = trainer.evaluate()
+        metrics["eval_samples"] = len(raw_datasets["test"])
+        trainer.log_metrics("eval", metrics)
+        trainer.save_metrics("eval", metrics)
 
     if training_args.push_to_hub is True:
         logger.info("Pushing to hub...")

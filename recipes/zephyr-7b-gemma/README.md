@@ -1,11 +1,10 @@
 
 # Instructions to Replicate Zephyr 7B Gemma
 
-Similar to how we trained Zephyr 7B Beta in [technical report](https://huggingface.co/papers/2310.16944), training this model proceeds in two steps:
+Similar to how we trained Zephyr 7B Beta in our [technical report](https://huggingface.co/papers/2310.16944), training this model proceeds in two steps:
 
-1. Apply SFT to fine-tune Gemma 7B on a filtered version of the UltraChat dataset ([link](https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k)). The result is an SFT model like [`zephyr-7b-sft-full`](https://huggingface.co/alignment-handbook/zephyr-7b-sft-full) or [`zephyr-7b-sft-qlora`](https://huggingface.co/alignment-handbook/zephyr-7b-sft-qlora).
-2. Align the SFT model to AI feedback via DPO on a preprocessed version of the UltraFeedback dataset ([link](https://huggingface.co/datasets/HuggingFaceH4/ultrafeedback_binarized)). The result is an DPO model like [`zephyr-7b-dpo-full`](https://huggingface.co/alignment-handbook/zephyr-7b-dpo-full) or [`zephyr-7b-dpo-qlora`](https://huggingface.co/alignment-handbook/zephyr-7b-dpo-qlora).
-
+1. Apply SFT to fine-tune Gemma 7B on the Deita 10k dataset ([link](https://huggingface.co/datasets/HuggingFaceH4/deita-10k-v0-sft)). The result is an SFT model like [`zephyr-7b-gemma-sft`](https://huggingface.co/HuggingFaceH4/zephyr-7b-gemma-sft).
+2. Align the SFT model to AI feedback via DPO on a curated mix of 7k examples by Argilla ([link](https://huggingface.co/datasets/argilla/dpo-mix-7k)). The result is a DPO model like [`zephyr-7b-gemma`](https://huggingface.co/HuggingFaceH4/zephyr-7b-gemma).
 
 See below for commands to train these models using either DeepSpeed ZeRO-3 or LoRA.
 
