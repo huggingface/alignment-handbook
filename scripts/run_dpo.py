@@ -17,7 +17,6 @@ import logging
 import random
 import sys
 
-import datasets
 import torch
 import transformers
 from transformers import AutoModelForCausalLM, set_seed
