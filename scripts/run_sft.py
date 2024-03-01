@@ -139,7 +139,6 @@ def main():
     # Initialize the Trainer
     ########################
     trainer = SFTTrainer(
-        # model=model,
         model=model_args.model_name_or_path,
         model_init_kwargs=model_kwargs,
         args=training_args,
