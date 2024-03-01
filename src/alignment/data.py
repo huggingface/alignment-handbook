@@ -90,9 +90,9 @@ def apply_chat_template(
             )  # Need to skip <eos> here for Gemma?
 
             # Slice out <bos> and <eos> tokens
-            example["text_chosen"] = example["text_chosen"][len(tokenizer.bos_token) :]
-            example["text_rejected"] = example["text_rejected"][len(tokenizer.bos_token) :]
-            example["text_prompt"] = example["text_prompt"][: -len(tokenizer.eos_token)]
+            # example["text_chosen"] = example["text_chosen"][len(tokenizer.bos_token) :]
+            # example["text_rejected"] = example["text_rejected"][len(tokenizer.bos_token) :]
+            # example["text_prompt"] = example["text_prompt"][: -len(tokenizer.eos_token)]
         else:
             raise ValueError(
                 f"Could not format example as dialogue for `dpo` task! Require `[chosen, rejected]` keys but found {list(example.keys())}"
