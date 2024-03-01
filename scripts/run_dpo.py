@@ -40,9 +40,6 @@ from peft import PeftConfig, PeftModel
 from trl import DPOTrainer
 
 
-datasets.disable_caching()
-
-
 logger = logging.getLogger(__name__)
 
 
