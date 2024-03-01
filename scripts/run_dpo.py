@@ -17,6 +17,7 @@ import logging
 import random
 import sys
 
+import datasets
 import torch
 import transformers
 from transformers import AutoModelForCausalLM, set_seed
@@ -37,7 +38,7 @@ from alignment import (
 )
 from peft import PeftConfig, PeftModel
 from trl import DPOTrainer
-import datasets
+
 
 datasets.disable_caching()
 

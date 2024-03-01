@@ -41,6 +41,7 @@ from alignment import (
 )
 from trl import SFTTrainer
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -149,10 +150,11 @@ def main():
         tokenizer=tokenizer,
         packing=True,
         peft_config=get_peft_config(model_args),
-        dataset_kwargs={
-        "add_special_tokens": False,
-        "append_concat_token": False, # make sure to not add additional tokens when packing
-    }
+        dataset_kwargs=training_args.dataset_kwargs,
+        #     dataset_kwargs={
+        #     "add_special_tokens": False,
+        #     "append_concat_token": False, # make sure to not add additional tokens when packing
+        # }
     )
 
     ###############
