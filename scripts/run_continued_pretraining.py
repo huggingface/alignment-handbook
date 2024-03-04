@@ -104,7 +104,7 @@ def main():
     ################
     # Load tokenizer
     ################
-    tokenizer = get_tokenizer(model_args, data_args)
+    tokenizer = get_tokenizer(model_args, data_args, auto_set_chat_template=False)
 
     with training_args.main_process_first(desc="Log a few random samples from the processed training set"):
         for index in random.sample(range(len(raw_datasets["train"])), 3):
