@@ -96,6 +96,7 @@ def apply_chat_template(
 def get_datasets(
     data_config: DataArguments | dict,
     splits: List[str] = ["train", "test"],
+    configs: Optional[List[str]] = None,
     shuffle: bool = True,
 ) -> DatasetDict:
     """
@@ -131,32 +132,40 @@ def get_datasets(
     else:
         raise ValueError(f"Data config {data_config} not recognized.")
 
-    raw_datasets = mix_datasets(dataset_mixer, splits=splits, shuffle=shuffle)
+    raw_datasets = mix_datasets(dataset_mixer, splits=splits, configs=configs, shuffle=shuffle)
     return raw_datasets
 
 
-def mix_datasets(dataset_mixer: dict, splits: Optional[List[str]] = None, shuffle=True) -> DatasetDict:
+def mix_datasets(
+    dataset_mixer: dict, configs: Optional[List[str]] = None, splits: Optional[List[str]] = None, shuffle=True
+) -> DatasetDict:
     """
     Loads and mixes datasets according to proportions specified in `dataset_mixer`.
 
     Args:
         dataset_mixer (`dict`):
             Dictionary containing the dataset names and their training proportions. By default, all test proportions are 1.
+        configs (Optional[List[str]], *optional*, defaults to `None`):
+            List of dataset config names. If given must be the same length as 'dataset_mixer' keys.
         splits (Optional[List[str]], *optional*, defaults to `None`):
             Dataset splits to load and mix. Assumes the splits exist in all datasets and have a `train_` or `test_` prefix.
         shuffle (`bool`, *optional*, defaults to `True`):
             Whether to shuffle the training and testing/validation data.
     """
+    if configs is not None and len(configs) != len(dataset_mixer):
+        raise ValueError("The number of given dataset config names must be the same as the given number of datasets.")
+
+    configs = [None] * len(dataset_mixer) if configs is None else configs
     raw_datasets = DatasetDict()
     raw_train_datasets = []
     raw_val_datasets = []
     fracs = []
-    for ds, frac in dataset_mixer.items():
+    for (ds, frac), ds_config in zip(dataset_mixer.items(), configs):
         fracs.append(frac)
         for split in splits:
             try:
                 # Try first if dataset on a Hub repo
-                dataset = load_dataset(ds, split=split)
+                dataset = load_dataset(ds, ds_config, split=split)
             except DatasetGenerationError:
                 # If not, check local dataset
                 dataset = load_from_disk(os.path.join(ds, split))
