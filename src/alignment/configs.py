@@ -243,6 +243,21 @@ class SFTConfig(transformers.TrainingArguments):
 
 
 @dataclass
+class ContinuedPreTrainingConfig(SFTConfig):
+    """
+    Arguments related to the continued pretraining process itself.
+    """
+    text_column: Optional[str] = field(
+        default="text",
+        metadata={"help": "The column name to use for the text in the dataset."},
+    )
+
+    def __post_init__(self):
+        if not self.text_column:
+            raise ValueError("You must provide a text column name for the dataset.")
+
+
+@dataclass
 class DPOConfig(transformers.TrainingArguments):
     """
     Arguments related to the DPO training process itself. For all parameters, see: https://huggingface.co/docs/transformers/v4.26.1/en/main_classes/trainer#transformers.TrainingArguments
