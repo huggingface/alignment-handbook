@@ -30,7 +30,7 @@ from alignment import (
     DataArguments,
     H4ArgumentParser,
     ModelArguments,
-    ContinuedPreTrainingConfig,
+    SFTConfig,
     get_checkpoint,
     get_datasets,
     get_kbit_device_map,
@@ -45,7 +45,7 @@ logger = logging.getLogger(__name__)
 
 
 def main():
-    parser = H4ArgumentParser((ModelArguments, DataArguments, ContinuedPreTrainingConfig))
+    parser = H4ArgumentParser((ModelArguments, DataArguments, SFTConfig))
     model_args, data_args, training_args = parser.parse()
 
     # Set seed for reproducibility
@@ -83,7 +83,7 @@ def main():
     ###############
     # Load datasets
     ###############
-    raw_datasets = get_datasets(data_args, splits=data_args.dataset_splits)
+    raw_datasets = get_datasets(data_args, splits=data_args.dataset_splits, configs=data_args.dataset_configs)
 
     logger.info(
         f"Training on the following datasets and their proportions:"
@@ -95,14 +95,11 @@ def main():
 
     if train_dataset is None:
         raise ValueError(
-            "Training set must be included (so make sure that your dataset has a split with"
-            " 'train' in the name)."
+            "Training set must be included (so make sure that your dataset has a split with" " 'train' in the name)."
         )
 
     if training_args.do_eval and eval_dataset is None:
-        raise ValueError(
-            "'--do_eval' enabled so make sure that your dataset has a split with 'test' in the name."
-        )
+        raise ValueError("'--do_eval' enabled so make sure that your dataset has a split with 'test' in the name.")
 
     ################
     # Load tokenizer
@@ -141,7 +138,7 @@ def main():
         args=training_args,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
-        dataset_text_field=training_args.text_column,
+        dataset_text_field=data_args.text_column,
         max_seq_length=training_args.max_seq_length,
         tokenizer=tokenizer,
         packing=True,
