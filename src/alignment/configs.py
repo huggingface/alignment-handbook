@@ -211,7 +211,7 @@ class DataArguments:
         metadata={"help": ("List of train test splits to use in the dataset")},
     )
     dataset_configs: Optional[List[str]] = field(
-        default_factory=lambda: ["train", "test"],
+        default=None,
         metadata={"help": "List of dataset config names. If given must be the same length as 'dataset_mixer' keys."},
     )
     preprocessing_num_workers: Optional[int] = field(

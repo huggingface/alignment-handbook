@@ -152,10 +152,10 @@ def mix_datasets(
         shuffle (`bool`, *optional*, defaults to `True`):
             Whether to shuffle the training and testing/validation data.
     """
+    configs = [None] * len(dataset_mixer) if not configs else configs
     if configs is not None and len(configs) != len(dataset_mixer):
         raise ValueError("The number of given dataset config names must be the same as the given number of datasets.")
 
-    configs = [None] * len(dataset_mixer) if configs is None else configs
     raw_datasets = DatasetDict()
     raw_train_datasets = []
     raw_val_datasets = []
