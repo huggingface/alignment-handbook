@@ -63,9 +63,7 @@ def get_quantization_config(model_args: ModelArguments) -> BitsAndBytesConfig | 
 
 
 def get_tokenizer(
-        model_args: ModelArguments,
-        data_args: DataArguments,
-        auto_set_chat_template: bool = True
+    model_args: ModelArguments, data_args: DataArguments, auto_set_chat_template: bool = True
 ) -> PreTrainedTokenizer:
     """Get the tokenizer for the model."""
     tokenizer = AutoTokenizer.from_pretrained(
