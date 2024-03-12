@@ -10,7 +10,7 @@ See below for commands to train these models using DeepSpeed ZeRO-3.
 
 ## Full training examples
 
-You will require 8 GPUs (80GB of VRAM) to train the full model - alternatively, you can train on 1 GPU by adjusting the micro batch size and gradient accumulation steps to keep the global batch size constant. A recipe involving QLoRA will come later 🤗.
+You will require 8 GPUs (80GB of VRAM) to train the full model - alternatively, you can train on 1 GPU by adjusting `per_device_train_batch_size` and `gradient_accumulation_steps` to keep the global batch size constant. A recipe involving QLoRA will come later 🤗.
 
 ```shell
 # Step 1 - SFT
