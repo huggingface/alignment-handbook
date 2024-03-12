@@ -1,0 +1,49 @@
+# Model arguments
+model_name_or_path: bigcode/starcoder2-15b
+model_revision: main
+torch_dtype: bfloat16
+use_flash_attention_2: true
+
+# Data training arguments
+chat_template: "{% if not add_generation_prompt is defined %}{% set add_generation_prompt = false %}{% endif %}{% for message in messages %}{{'<|im_start|>' + message['role'] + '\n' + message['content'] + '<|im_end|>' + '\n'}}{% endfor %}{% if add_generation_prompt %}{{ '<|im_start|>assistant\n' }}{% endif %}"
+dataset_mixer:
+  HuggingFaceH4/airoboros-3.2: 1.0
+  HuggingFaceH4/Code-Feedback: 1.0
+  HuggingFaceH4/orca-math-word-problems-200k: 1.0
+  HuggingFaceH4/SystemChat: 1.0
+  HuggingFaceH4/capybara: 1.0
+dataset_splits:
+- train_sft
+- test_sft
+preprocessing_num_workers: 24
+
+# SFT trainer config
+bf16: true
+do_eval: true
+evaluation_strategy: epoch
+gradient_accumulation_steps: 2
+gradient_checkpointing: true
+gradient_checkpointing_kwargs:
+  use_reentrant: false
+hub_model_id: starchat2-15b-v0.1
+hub_strategy: every_save
+learning_rate: 2.0e-05
+log_level: info
+logging_steps: 5
+logging_strategy: steps
+lr_scheduler_type: cosine
+max_seq_length: 2048
+max_steps: -1
+num_train_epochs: 3
+output_dir: data/starchat2-15b-v0.1
+overwrite_output_dir: true
+per_device_eval_batch_size: 8
+per_device_train_batch_size: 8
+push_to_hub: true
+remove_unused_columns: true
+report_to:
+- tensorboard
+- wandb
+save_strategy: "no"
+seed: 42
+warmup_ratio: 0.1
