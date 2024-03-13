@@ -23,6 +23,8 @@ from .configs import DataArguments
 
 DEFAULT_CHAT_TEMPLATE = "{% for message in messages %}\n{% if message['role'] == 'user' %}\n{{ '<|user|>\n' + message['content'] + eos_token }}\n{% elif message['role'] == 'system' %}\n{{ '<|system|>\n' + message['content'] + eos_token }}\n{% elif message['role'] == 'assistant' %}\n{{ '<|assistant|>\n'  + message['content'] + eos_token }}\n{% endif %}\n{% if loop.last and add_generation_prompt %}\n{{ '<|assistant|>' }}\n{% endif %}\n{% endfor %}"
 
+COLUMNS_TO_KEEP = ["messages", "chosen", "rejected", "prompt", "completion", "label"]
+
 
 def maybe_insert_system_message(messages, tokenizer):
     if messages[0]["role"] == "system":
@@ -159,6 +161,8 @@ def mix_datasets(dataset_mixer: dict, splits: Optional[List[str]] = None, shuffl
                 # If not, check local dataset
                 dataset = load_from_disk(os.path.join(ds, split))
 
+            # Remove redundant columns to avoid schema conflicts on load
+            dataset = dataset.remove_columns([col for col in dataset.column_names if col not in COLUMNS_TO_KEEP])
             if "train" in split:
                 raw_train_datasets.append(dataset)
             elif "test" in split:

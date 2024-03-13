@@ -28,7 +28,7 @@ hub_model_id: zephyr-7b-gemma-sft
 hub_strategy: every_save
 learning_rate: 2.0e-05
 log_level: info
-logging_steps: 5  
+logging_steps: 5
 logging_strategy: steps
 lr_scheduler_type: cosine
 max_seq_length: 2048
