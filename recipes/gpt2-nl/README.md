@@ -12,8 +12,8 @@ This step will further pretrain the original `gpt2` model on plain Dutch text. N
 ACCELERATE_LOG_LEVEL=info accelerate launch \
     --config_file recipes/accelerate_configs/multi_gpu.yaml \
     --num_processes 4 \
-    scripts/run_continued_pretraining.py \
-    recipes/gpt2-nl/continued_pretraining/config_full.yaml
+    scripts/run_cpt.py \
+    recipes/gpt2-nl/cpt/config_full.yaml
 ```
 
 ## Supervised finetuning

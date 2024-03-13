@@ -25,7 +25,7 @@ ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_con
 ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/deepspeed_zero3.yaml --num_processes={num_gpus} scripts/run_{task}.py recipes/{model_name}/{task}/config_qlora.yaml --load_in_4bit=false
 ```
 
-Here `{task}` refers to the type of training you wish to run (SFT, DPO, etc), while `{model_name}` refers to the choice of a recipe in the `recipes` directory. For example, to replicate Zephyr-7B-β you can run:
+Here `{task}` refers to the type of training you wish to run. Currently the following tasks are supported: continued pretraining `cpt`, supervised finetuning `sft`, and direct preference optimisation `dpo`. Note that `cpt` is only present in the `gpt-nl` example recipe. {model_name}` refers to the choice of a recipe in the `recipes` directory. For example, to replicate Zephyr-7B-β you can run:
 
 ```shell
 # Step 1 - train SFT policy
