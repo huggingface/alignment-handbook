@@ -65,7 +65,7 @@ _deps = [
     "scipy",
     "tensorboard",
     "torch==2.1.2",
-    "transformers>=4.38.2",  # Fixes RoPE computation
+    "transformers @ git+https://github.com/huggingface/transformers.git@831bc25d8fdb85768402f772cf65cc3d7872b211",  # Enable StarCoder2
     "trl==0.7.10",
     "jinja2>=3.0.0",
     "tqdm>=4.64.1",

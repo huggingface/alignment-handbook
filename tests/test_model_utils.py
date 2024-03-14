@@ -70,8 +70,8 @@ class GetTokenizerTest(unittest.TestCase):
         `default_chat_template` but no `chat_template` we do not set a `chat_template`,
         and that we do not change `default_chat_template`
         """
-        model_args = ModelArguments(model_name_or_path="codellama/CodeLlama-7b-Instruct-hf")
-        base_tokenizer = AutoTokenizer.from_pretrained("codellama/CodeLlama-7b-Instruct-hf")
+        model_args = ModelArguments(model_name_or_path="m-a-p/OpenCodeInterpreter-SC2-7B")
+        base_tokenizer = AutoTokenizer.from_pretrained("m-a-p/OpenCodeInterpreter-SC2-7B")
         processed_tokenizer = get_tokenizer(model_args, DataArguments())
 
         assert getattr(processed_tokenizer, "chat_template") is None
