@@ -8,7 +8,7 @@
 
 # The Alignment Handbook
 
-Robust recipes to align language models with human and AI preferences.
+Robust recipes to continue pretraining and to align language models with human and AI preferences.
 
 ## What is this?
 
@@ -33,8 +33,8 @@ The Alignment Handbook aims to fill that gap by providing the community with a s
 
 This project is simple by design and mostly consists of:
 
-* [`scripts`](./scripts/) to train and evaluate chat models. Each script supports distributed training of the full model weights with DeepSpeed ZeRO-3, or LoRA/QLoRA for parameter-efficient fine-tuning.
-* [`recipes`](./recipes/) to reproduce models like Zephyr 7B. Each recipe takes the form of a YAML file which contains all the parameters associated with a single training run.
+* [`scripts`](./scripts/) to train and evaluate models. Three steps are included: continued pretraining, supervised-finetuning (SFT) for chat, and preference alignment with DPO. Each script supports distributed training of the full model weights with DeepSpeed ZeRO-3, or LoRA/QLoRA for parameter-efficient fine-tuning.
+* [`recipes`](./recipes/) to reproduce models like Zephyr 7B. Each recipe takes the form of a YAML file which contains all the parameters associated with a single training run. A `gpt2-nl` recipe is also given to illustrate how this handbook can be used for language or domain adaptation, e.g. by continuing to pretrain on a different language, and then SFT and DPO tuning the result. 
 
 We are also working on a series of guides to explain how methods like direct preference optimization (DPO) work, along with lessons learned from gathering human preferences in practice. To get started, we recommend the following:
 
@@ -48,6 +48,7 @@ If you would like to train chat models on your own datasets, we recommend follow
 
 The initial release of the handbook will focus on the following techniques:
 
+* **Continued pretraining:** adapt language models to a new language or domain, or simply improve it by continue pretraning (causal language modeling) on a new dataset.
 * **Supervised fine-tuning:** teach language models to follow instructions and tips on how to collect and curate your own training dataset.
 * **Reward modeling:** teach language models to distinguish model responses according to human or AI preferences.
 * **Rejection sampling:** a simple, but powerful technique to boost the performance of your SFT model.
