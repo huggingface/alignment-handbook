@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-Supervised fine-tuning script for decoder language models.
+Continued pretraining script for decoder language models.
 """
 
 import logging
@@ -24,15 +24,13 @@ import sys
 import datasets
 import torch
 import transformers
-from transformers import AutoModelForCausalLM, set_seed
+from transformers import set_seed
 
 from alignment import (
     DataArguments,
     H4ArgumentParser,
     ModelArguments,
     SFTConfig,
-    apply_chat_template,
-    decontaminate_humaneval,
     get_checkpoint,
     get_datasets,
     get_kbit_device_map,
@@ -40,7 +38,7 @@ from alignment import (
     get_quantization_config,
     get_tokenizer,
 )
-from trl import SFTTrainer, setup_chat_format
+from trl import SFTTrainer
 
 
 logger = logging.getLogger(__name__)
@@ -86,15 +84,31 @@ def main():
     # Load datasets
     ###############
     raw_datasets = get_datasets(data_args, splits=data_args.dataset_splits, configs=data_args.dataset_configs)
+
     logger.info(
-        f"Training on the following datasets and their proportions: {[split + ' : ' + str(dset.num_rows) for split, dset in raw_datasets.items()]}"
+        f"Training on the following datasets and their proportions:"
+        f" {[split + ' : ' + str(dset.num_rows) for split, dset in raw_datasets.items()]}"
     )
-    column_names = list(raw_datasets["train"].features)
+
+    train_dataset = raw_datasets["train"] if "train" in raw_datasets else None
+    eval_dataset = raw_datasets["test"] if "test" in raw_datasets else None
+
+    if train_dataset is None:
+        raise ValueError(
+            "Training set must be included (so make sure that your dataset has a split with" " 'train' in the name)."
+        )
+
+    if training_args.do_eval and eval_dataset is None:
+        raise ValueError("'--do_eval' enabled so make sure that your dataset has a split with 'test' in the name.")
 
     ################
     # Load tokenizer
     ################
-    tokenizer = get_tokenizer(model_args, data_args)
+    tokenizer = get_tokenizer(model_args, data_args, auto_set_chat_template=False)
+
+    with training_args.main_process_first(desc="Log a few random samples from the processed training set"):
+        for index in random.sample(range(len(raw_datasets["train"])), 3):
+            logger.info(f"Sample {index} of the processed training set:\n\n{raw_datasets['train'][index]['text']}")
 
     #######################
     # Load pretrained model
@@ -115,55 +129,16 @@ def main():
         quantization_config=quantization_config,
     )
 
-    model = model_args.model_name_or_path
-    # For ChatML we need to add special tokens and resize the embedding layer
-    if "<|im_start|>" in tokenizer.chat_template:
-        model = AutoModelForCausalLM.from_pretrained(model_args.model_name_or_path, **model_kwargs)
-        model, tokenizer = setup_chat_format(model, tokenizer)
-        model_kwargs = None
-
-    #####################
-    # Apply chat template
-    #####################
-    raw_datasets = raw_datasets.map(
-        apply_chat_template,
-        fn_kwargs={
-            "tokenizer": tokenizer,
-            "task": "sft",
-            "auto_insert_empty_system_msg": data_args.auto_insert_empty_system_msg,
-        },
-        num_proc=data_args.preprocessing_num_workers,
-        remove_columns=column_names,
-        desc="Applying chat template",
-    )
-
-    ##########################
-    # Decontaminate benchmarks
-    ##########################
-    num_raw_train_samples = len(raw_datasets["train"])
-    raw_datasets = raw_datasets.filter(decontaminate_humaneval, batched=True, batch_size=10_000, num_proc=1)
-    num_filtered_train_samples = num_raw_train_samples - len(raw_datasets["train"])
-    logger.info(
-        f"Decontaminated {num_filtered_train_samples} ({num_filtered_train_samples/num_raw_train_samples * 100:.2f}%) samples from the training set."
-    )
-
-    train_dataset = raw_datasets["train"]
-    eval_dataset = raw_datasets["test"]
-
-    with training_args.main_process_first(desc="Log a few random samples from the processed training set"):
-        for index in random.sample(range(len(raw_datasets["train"])), 3):
-            logger.info(f"Sample {index} of the processed training set:\n\n{raw_datasets['train'][index]['text']}")
-
     ########################
     # Initialize the Trainer
     ########################
     trainer = SFTTrainer(
-        model=model,
+        model=model_args.model_name_or_path,
         model_init_kwargs=model_kwargs,
         args=training_args,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
-        dataset_text_field="text",
+        dataset_text_field=data_args.text_column,
         max_seq_length=training_args.max_seq_length,
         tokenizer=tokenizer,
         packing=True,
@@ -180,6 +155,7 @@ def main():
         checkpoint = training_args.resume_from_checkpoint
     elif last_checkpoint is not None:
         checkpoint = last_checkpoint
+
     train_result = trainer.train(resume_from_checkpoint=checkpoint)
     metrics = train_result.metrics
     metrics["train_samples"] = len(train_dataset)

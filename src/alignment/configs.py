@@ -57,6 +57,7 @@ class H4ArgumentParser(HfArgumentParser):
             inputs = {k: v for k, v in vars(data_yaml).items() if k in keys}
             for arg, val in other_args.items():
                 # add only if in keys
+
                 if arg in keys:
                     base_type = data_yaml.__dataclass_fields__[arg].type
                     inputs[arg] = val
@@ -201,9 +202,17 @@ class DataArguments:
         default=None,
         metadata={"help": ("Datasets and their proportions to be used for training ift/rl.")},
     )
+    text_column: Optional[str] = field(
+        default="text",
+        metadata={"help": "The column name to use for the text in the dataset (only used for continued pretraining)."},
+    )
     dataset_splits: Optional[List[str]] = field(
         default_factory=lambda: ["train", "test"],
         metadata={"help": ("List of train test splits to use in the dataset")},
+    )
+    dataset_configs: Optional[List[str]] = field(
+        default=None,
+        metadata={"help": "List of dataset config names. If given must be the same length as 'dataset_mixer' keys."},
     )
     preprocessing_num_workers: Optional[int] = field(
         default=None,
@@ -226,6 +235,7 @@ class DataArguments:
 class SFTConfig(transformers.TrainingArguments):
     """
     Arguments related to the training process itself. For all parameters, see: https://huggingface.co/docs/transformers/v4.26.1/en/main_classes/trainer#transformers.TrainingArguments
+    Also used for the continued pretraining task.
     """
 
     dataset_kwargs: Optional[Dict[str, Any]] = field(
