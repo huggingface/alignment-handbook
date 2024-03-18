@@ -97,7 +97,7 @@ def apply_chat_template(
 
 def get_datasets(
     data_config: DataArguments | dict,
-    splits: List[str] = ["train", "test"],
+    splits: Optional[List[str]] = None,
     configs: Optional[List[str]] = None,
     shuffle: bool = True,
 ) -> DatasetDict:
@@ -115,7 +115,7 @@ def get_datasets(
     Returns
         [`DatasetDict`]: The dataset dictionary containing the loaded datasets.
     """
-
+    splits = ["train", "test"] if splits is None else splits
     if type(data_config) is DataArguments:
         # Structure of the config to read the datasets and their mix
         # datasets_mixer:
