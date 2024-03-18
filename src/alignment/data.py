@@ -175,7 +175,7 @@ def mix_datasets(
     raw_train_datasets = []
     raw_val_datasets = []
     fracs = []
-    colums_to_keep = COLUMNS_TO_KEEP if text_column is None else COLUMNS_TO_KEEP + [text_column]
+    columns_to_keep = COLUMNS_TO_KEEP if text_column is None else COLUMNS_TO_KEEP + [text_column]
     for (ds, frac), ds_config in zip(dataset_mixer.items(), configs):
         fracs.append(frac)
         for split in splits:
@@ -187,7 +187,7 @@ def mix_datasets(
                 dataset = load_from_disk(os.path.join(ds, split))
 
             # Remove redundant columns to avoid schema conflicts on load
-            dataset = dataset.remove_columns([col for col in dataset.column_names if col not in colums_to_keep])
+            dataset = dataset.remove_columns([col for col in dataset.column_names if col not in columns_to_keep])
             if "train" in split:
                 raw_train_datasets.append(dataset)
             elif "test" in split:
