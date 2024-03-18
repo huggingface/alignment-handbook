@@ -99,6 +99,7 @@ def get_datasets(
     data_config: DataArguments | dict,
     splits: Optional[List[str]] = None,
     configs: Optional[List[str]] = None,
+    text_column: Optional[str] = None,
     shuffle: bool = True,
 ) -> DatasetDict:
     """
@@ -109,6 +110,10 @@ def get_datasets(
             Dataset configuration and split proportions.
         splits (`List[str]`, *optional*, defaults to `['train', 'test']`):
             Dataset splits to load and mix. Assumes the splits exist in all datasets and have a `train_` or `test_` prefix.
+        configs (Optional[List[str]], *optional*, defaults to `None`):
+            List of dataset config names. If given must be the same length as 'data_config' keys.
+        text_column (Optional[str], *optional*, defaults to `None`):
+            Name of the text column to use as input, just to make sure that we do not remove it. Only used in cpt.
         shuffle (`bool`, *optional*, defaults to `True`):
             Whether to shuffle the training and testing/validation data.
 
@@ -134,12 +139,18 @@ def get_datasets(
     else:
         raise ValueError(f"Data config {data_config} not recognized.")
 
-    raw_datasets = mix_datasets(dataset_mixer, splits=splits, configs=configs, shuffle=shuffle)
+    raw_datasets = mix_datasets(
+        dataset_mixer, splits=splits, configs=configs, text_column=text_column, shuffle=shuffle
+    )
     return raw_datasets
 
 
 def mix_datasets(
-    dataset_mixer: dict, configs: Optional[List[str]] = None, splits: Optional[List[str]] = None, shuffle=True
+    dataset_mixer: dict,
+    splits: Optional[List[str]] = None,
+    configs: Optional[List[str]] = None,
+    text_column: Optional[str] = None,
+    shuffle=True,
 ) -> DatasetDict:
     """
     Loads and mixes datasets according to proportions specified in `dataset_mixer`.
@@ -147,10 +158,12 @@ def mix_datasets(
     Args:
         dataset_mixer (`dict`):
             Dictionary containing the dataset names and their training proportions. By default, all test proportions are 1.
-        configs (Optional[List[str]], *optional*, defaults to `None`):
-            List of dataset config names. If given must be the same length as 'dataset_mixer' keys.
         splits (Optional[List[str]], *optional*, defaults to `None`):
             Dataset splits to load and mix. Assumes the splits exist in all datasets and have a `train_` or `test_` prefix.
+        configs (Optional[List[str]], *optional*, defaults to `None`):
+            List of dataset config names. If given must be the same length as 'dataset_mixer' keys.
+        text_column (Optional[str], *optional*, defaults to `None`):
+            Name of the text column to use as input, just to make sure that we do not remove it. Only used in cpt.
         shuffle (`bool`, *optional*, defaults to `True`):
             Whether to shuffle the training and testing/validation data.
     """
@@ -162,6 +175,7 @@ def mix_datasets(
     raw_train_datasets = []
     raw_val_datasets = []
     fracs = []
+    colums_to_keep = COLUMNS_TO_KEEP if text_column is None else COLUMNS_TO_KEEP + [text_column]
     for (ds, frac), ds_config in zip(dataset_mixer.items(), configs):
         fracs.append(frac)
         for split in splits:
@@ -173,7 +187,7 @@ def mix_datasets(
                 dataset = load_from_disk(os.path.join(ds, split))
 
             # Remove redundant columns to avoid schema conflicts on load
-            dataset = dataset.remove_columns([col for col in dataset.column_names if col not in COLUMNS_TO_KEEP])
+            dataset = dataset.remove_columns([col for col in dataset.column_names if col not in colums_to_keep])
             if "train" in split:
                 raw_train_datasets.append(dataset)
             elif "test" in split:
