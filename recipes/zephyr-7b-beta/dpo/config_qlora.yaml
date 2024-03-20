@@ -1,6 +1,7 @@
 # Model arguments
 model_name_or_path: alignment-handbook/zephyr-7b-sft-qlora
 torch_dtype: bfloat16
+use_flash_attention_2: true
 
 # LoRA arguments
 use_peft: true
