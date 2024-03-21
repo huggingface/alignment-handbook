@@ -87,7 +87,7 @@ def main():
         data_args,
         splits=data_args.dataset_splits,
         configs=data_args.dataset_configs,
-        text_column=data_args.text_column,
+        columns_to_keep=[data_args.text_column],
     )
 
     logger.info(
