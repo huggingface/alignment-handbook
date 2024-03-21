@@ -33,7 +33,7 @@ class GetDatasetsTest(unittest.TestCase):
             "HuggingFaceH4/testing_codealpaca_small": 0.2,
         }
         data_args = DataArguments(dataset_mixer=dataset_mixer)
-        datasets = get_datasets(data_args)
+        datasets = get_datasets(data_args, columns_to_keep=["prompt", "completion"])
         self.assertEqual(len(datasets["train"]), 100)
         self.assertEqual(len(datasets["test"]), 300)
 
@@ -43,7 +43,7 @@ class GetDatasetsTest(unittest.TestCase):
             "HuggingFaceH4/testing_self_instruct_small": 0.3,
             "HuggingFaceH4/testing_codealpaca_small": 0.2,
         }
-        datasets = get_datasets(dataset_mixer)
+        datasets = get_datasets(dataset_mixer, columns_to_keep=["prompt", "completion"])
         self.assertEqual(len(datasets["train"]), 100)
         self.assertEqual(len(datasets["test"]), 300)
 
@@ -53,7 +53,7 @@ class GetDatasetsTest(unittest.TestCase):
             "HuggingFaceH4/testing_self_instruct_small": 1.0,
             "HuggingFaceH4/testing_codealpaca_small": 1.0,
         }
-        datasets = get_datasets(dataset_mixer)
+        datasets = get_datasets(dataset_mixer, columns_to_keep=["prompt", "completion"])
         self.assertEqual(len(datasets["train"]), 300)
         self.assertEqual(len(datasets["test"]), 300)
 
@@ -62,7 +62,7 @@ class GetDatasetsTest(unittest.TestCase):
             "HuggingFaceH4/testing_alpaca_small": 0.7,
             "HuggingFaceH4/testing_self_instruct_small": 0.4,
         }
-        datasets = get_datasets(dataset_mixer)
+        datasets = get_datasets(dataset_mixer, columns_to_keep=["prompt", "completion"])
         self.assertEqual(len(datasets["train"]), 70 + 40)
         self.assertEqual(len(datasets["test"]), 200)
 
@@ -72,13 +72,13 @@ class GetDatasetsTest(unittest.TestCase):
             "HuggingFaceH4/testing_self_instruct_small": -0.3,
         }
         with pytest.raises(ValueError, match=r"Dataset fractions cannot be negative."):
-            get_datasets(dataset_mixer)
+            get_datasets(dataset_mixer, columns_to_keep=["prompt", "completion"])
 
     def test_loading_single_split_with_unit_fractions(self):
         dataset_mixer = {
             "HuggingFaceH4/testing_alpaca_small": 1.0,
         }
-        datasets = get_datasets(dataset_mixer, splits=["test"])
+        datasets = get_datasets(dataset_mixer, splits=["test"], columns_to_keep=["prompt", "completion"])
         self.assertEqual(len(datasets["test"]), 100)
         self.assertRaises(KeyError, lambda: datasets["train"])
 
