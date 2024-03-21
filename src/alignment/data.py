@@ -23,8 +23,6 @@ from .configs import DataArguments
 
 DEFAULT_CHAT_TEMPLATE = "{% for message in messages %}\n{% if message['role'] == 'user' %}\n{{ '<|user|>\n' + message['content'] + eos_token }}\n{% elif message['role'] == 'system' %}\n{{ '<|system|>\n' + message['content'] + eos_token }}\n{% elif message['role'] == 'assistant' %}\n{{ '<|assistant|>\n'  + message['content'] + eos_token }}\n{% endif %}\n{% if loop.last and add_generation_prompt %}\n{{ '<|assistant|>' }}\n{% endif %}\n{% endfor %}"
 
-COLUMNS_TO_KEEP = ["messages", "chosen", "rejected", "prompt", "completion", "label"]
-
 
 def maybe_insert_system_message(messages, tokenizer):
     if messages[0]["role"] == "system":
@@ -171,7 +169,7 @@ def mix_datasets(
     splits = ["train", "test"] if splits is None else splits
     configs = [None] * len(dataset_mixer) if not configs else configs
     columns_to_keep = [] if columns_to_keep is None else columns_to_keep
-    
+
     if configs is not None and len(configs) != len(dataset_mixer):
         raise ValueError("The number of given dataset config names must be the same as the given number of datasets.")
 
@@ -219,7 +217,7 @@ def mix_datasets(
 
     if len(raw_datasets) == 0:
         raise ValueError(
-            f"Dataset {dataset_mixer} not recognized with split {split}. Check the dataset has been correctly formatted."
+            f"Dataset {dataset_mixer} not recognized with splits {splits}. Check the dataset has been correctly formatted."
         )
 
     return raw_datasets
