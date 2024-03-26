@@ -71,6 +71,7 @@ def get_tokenizer(
         if model_args.tokenizer_name_or_path is None
         else model_args.tokenizer_name_or_path,
         revision=model_args.model_revision,
+        trust_remote_code=model_args.trust_remote_code,
     )
     if tokenizer.pad_token_id is None:
         tokenizer.pad_token_id = tokenizer.eos_token_id
