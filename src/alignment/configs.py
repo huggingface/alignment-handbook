@@ -340,3 +340,17 @@ class ORPOConfig(transformers.TrainingArguments):
             )
         },
     )
+
+    model_init_kwargs: Optional[Dict] = field(
+        default=None,
+        metadata={
+            "help": (
+                "Dict of Optional kwargs to pass when instantiating the model from a string"
+            )
+        },
+    )
+
+    dataset_num_proc: Optional[int] = field(
+        default=None,
+        metadata={"help": ("The number of workers to use to tokenize the data.")},
+    )
