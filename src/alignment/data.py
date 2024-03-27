@@ -85,15 +85,9 @@ def apply_chat_template(
             if auto_insert_empty_system_msg:
                 maybe_insert_system_message(prompt_messages, tokenizer)
 
-            example["text_prompt"] = tokenizer.apply_chat_template(
-                prompt_messages, tokenize=False
-            )
-            example["text_chosen"] = tokenizer.apply_chat_template(
-                chosen_messages, tokenize=False
-            )
-            example["text_rejected"] = tokenizer.apply_chat_template(
-                rejected_messages, tokenize=False
-            )
+            example["text_prompt"] = tokenizer.apply_chat_template(prompt_messages, tokenize=False)
+            example["text_chosen"] = tokenizer.apply_chat_template(chosen_messages, tokenize=False)
+            example["text_rejected"] = tokenizer.apply_chat_template(rejected_messages, tokenize=False)
         else:
             raise ValueError(
                 f"Could not format example as dialogue for `{task}` task! Require either the "

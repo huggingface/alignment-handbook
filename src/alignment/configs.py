@@ -315,39 +315,25 @@ class ORPOConfig(transformers.TrainingArguments):
     )
     padding_value: Optional[int] = field(
         default=None,
-        metadata={
-            "help": "The padding value if it is different to the tokenizer's pad_token_id."
-        },
+        metadata={"help": "The padding value if it is different to the tokenizer's pad_token_id."},
     )
     truncation_mode: str = field(
         default="keep_end",
-        metadata={
-            "help": "The truncation mode to use, either `keep_end` or `keep_start`."
-        },
+        metadata={"help": "The truncation mode to use, either `keep_end` or `keep_start`."},
     )
 
     generate_during_eval: bool = field(
         default=False,
-        metadata={
-            "help": "Whether to sample and log generations during evaluation step."
-        },
+        metadata={"help": "Whether to sample and log generations during evaluation step."},
     )
     is_encoder_decoder: Optional[bool] = field(
         default=None,
-        metadata={
-            "help": (
-                "If no model is provided, we need to know if the model_init returns an encoder-decoder."
-            )
-        },
+        metadata={"help": ("If no model is provided, we need to know if the model_init returns an encoder-decoder.")},
     )
 
     model_init_kwargs: Optional[Dict] = field(
         default=None,
-        metadata={
-            "help": (
-                "Dict of Optional kwargs to pass when instantiating the model from a string"
-            )
-        },
+        metadata={"help": ("Dict of Optional kwargs to pass when instantiating the model from a string")},
     )
 
     dataset_num_proc: Optional[int] = field(
