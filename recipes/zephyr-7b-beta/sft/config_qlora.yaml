@@ -1,7 +1,8 @@
 # Model arguments
 model_name_or_path: mistralai/Mistral-7B-v0.1
 model_revision: main
-torch_dtype: float16
+torch_dtype: bfloat16
+use_flash_attention_2: true
 
 # LoRA arguments
 load_in_4bit: true
