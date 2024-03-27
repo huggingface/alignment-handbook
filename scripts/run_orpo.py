@@ -122,7 +122,7 @@ def main():
     if "<|im_start|>" in tokenizer.chat_template:
         model, tokenizer = setup_chat_format(model, tokenizer)
 
-        #####################
+    #####################
     # Apply chat template
     #####################
     raw_datasets = raw_datasets.map(
