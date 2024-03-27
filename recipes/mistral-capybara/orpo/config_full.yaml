@@ -13,7 +13,7 @@ dataset_splits:
 - test
 preprocessing_num_workers: 12
 
-# DPOTrainer arguments
+# ORPOTrainer arguments
 bf16: true
 beta: 0.05
 do_eval: true
