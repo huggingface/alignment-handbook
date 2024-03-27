@@ -36,7 +36,8 @@ from alignment import (
     get_tokenizer,
 )
 from alignment.configs import ORPOConfig
-from trl import ORPOTrainer
+from transformers import AutoModelForCausalLM
+from trl import ORPOTrainer, setup_chat_format
 
 
 logger = logging.getLogger(__name__)
@@ -99,7 +100,29 @@ def main():
     )
     tokenizer = get_tokenizer(model_args, data_args)
 
-    #####################
+    torch_dtype = (
+        model_args.torch_dtype
+        if model_args.torch_dtype in ["auto", None]
+        else getattr(torch, model_args.torch_dtype)
+    )
+    quantization_config = get_quantization_config(model_args)
+
+    model = AutoModelForCausalLM.from_pretrained(
+        model_args.model_name_or_path,
+        revision=model_args.model_revision,
+        trust_remote_code=model_args.trust_remote_code,
+        use_flash_attention_2=model_args.use_flash_attention_2,
+        torch_dtype=torch_dtype,
+        use_cache=False if training_args.gradient_checkpointing else True,
+        device_map=get_kbit_device_map() if quantization_config is not None else None,
+        quantization_config=quantization_config,
+    )
+
+    # For ChatML we need to add special tokens and resize the embedding layer
+    if "<|im_start|>" in tokenizer.chat_template:
+        model, tokenizer = setup_chat_format(model, tokenizer)
+
+        #####################
     # Apply chat template
     #####################
     raw_datasets = raw_datasets.map(
@@ -131,7 +154,7 @@ def main():
         f"Decontaminated {num_filtered_train_samples} ({num_filtered_train_samples/num_raw_train_samples * 100:.2f}%) samples from the training set."
     )
 
-    # Replace column names with what TRL needs, text_chosen -> chosen and text_rejected -> rejected
+    # Replace column names with what TRL needs, text_prompt -> prompt, text_chosen -> chosen and text_rejected -> rejected
     for split in ["train", "test"]:
         raw_datasets[split] = raw_datasets[split].rename_columns(
             {
@@ -153,26 +176,6 @@ def main():
             f"Rejected sample {index} of the raw training set:\n\n{raw_datasets['train'][index]['rejected']}"
         )
 
-    torch_dtype = (
-        model_args.torch_dtype
-        if model_args.torch_dtype in ["auto", None]
-        else getattr(torch, model_args.torch_dtype)
-    )
-    quantization_config = get_quantization_config(model_args)
-
-    model = model_args.model_name_or_path
-    model_kwargs = dict(
-        revision=model_args.model_revision,
-        trust_remote_code=model_args.trust_remote_code,
-        use_flash_attention_2=model_args.use_flash_attention_2,
-        torch_dtype=torch_dtype,
-        use_cache=False if training_args.gradient_checkpointing else True,
-        device_map=get_kbit_device_map() if quantization_config is not None else None,
-        quantization_config=quantization_config,
-    )
-
-    training_args.model_init_kwargs = model_kwargs
-
     ##########################
     # Instantiate ORPO trainer
     ##########################
@@ -182,7 +185,7 @@ def main():
         train_dataset=raw_datasets["train"],
         eval_dataset=raw_datasets["test"],
         tokenizer=tokenizer,
-        peft_config=get_peft_config(model_args),
+        peft_config=get_peft_config(model_args),  # type: ignore
     )
 
     ###############
