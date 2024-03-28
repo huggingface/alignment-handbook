@@ -20,7 +20,7 @@ import sys
 
 import torch
 import transformers
-from transformers import set_seed
+from transformers import AutoModelForCausalLM, set_seed
 
 from alignment import (
     DataArguments,
@@ -36,7 +36,6 @@ from alignment import (
     get_tokenizer,
 )
 from alignment.configs import ORPOConfig
-from transformers import AutoModelForCausalLM
 from trl import ORPOTrainer, setup_chat_format
 
 
