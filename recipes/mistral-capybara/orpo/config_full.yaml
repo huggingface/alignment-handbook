@@ -5,28 +5,24 @@ torch_dtype: bfloat16
 use_flash_attention_2: true
 
 # Data training arguments
-chat_template: "{% for message in messages %}{{'<|im_start|>' + message['role'] + '\n' + message['content'] + '<|im_end|>' + '\n'}}{% endfor %}{% if add_generation_prompt %}{{ '<|im_start|>assistant\n' }}{% endif %}"
+chat_template: "{% for message in messages %}\n{% if message['role'] == 'user' %}\n{{ '<|user|>\n' + message['content'] + eos_token }}\n{% elif message['role'] == 'system' %}\n{{ '<|system|>\n' + message['content'] + eos_token }}\n{% elif message['role'] == 'assistant' %}\n{{ '<|assistant|>\n'  + message['content'] + eos_token }}\n{% endif %}\n{% if loop.last and add_generation_prompt %}\n{{ '<|assistant|>' }}\n{% endif %}\n{% endfor %}"
 dataset_mixer:
   argilla/distilabel-capybara-dpo-7k-binarized: 1.0
 dataset_splits:
 - train
-- test
 preprocessing_num_workers: 12
 
 # ORPOTrainer arguments
 bf16: true
 beta: 0.05
-do_eval: true
-evaluation_strategy: steps
-eval_steps: 100
 gradient_accumulation_steps: 1
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
-  use_reentrant: False
-hub_model_id: mistral-7b-orpo-capybara-alignment-handbook
+  use_reentrant: true
+hub_model_id: orpo-explorers/Mistral-7B-v0.1-ORPO-Capybara-TRL
 learning_rate: 5.0e-6
 log_level: info
-logging_steps: 10
+logging_steps: 50
 lr_scheduler_type: inverse_sqrt
 max_length: 2048
 max_prompt_length: 1792
@@ -41,5 +37,4 @@ report_to:
 - wandb
 save_strategy: "no"
 seed: 42
-warmup_ratio: 0.1
 warmup_steps: 100
