@@ -150,7 +150,7 @@ def main():
     )
 
     # Replace column names with what TRL needs, text_prompt -> prompt, text_chosen -> chosen and text_rejected -> rejected
-    for split in ["train", "test"]:
+    for split in raw_datasets.keys():
         raw_datasets[split] = raw_datasets[split].rename_columns(
             {
                 "text_prompt": "prompt",
@@ -172,7 +172,7 @@ def main():
         model,
         args=training_args,
         train_dataset=raw_datasets["train"],
-        eval_dataset=raw_datasets["test"],
+        eval_dataset=raw_datasets["test"] if "test" in raw_datasets else None,
         tokenizer=tokenizer,
         peft_config=get_peft_config(model_args),  # type: ignore
     )
