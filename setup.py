@@ -66,7 +66,7 @@ _deps = [
     "tensorboard",
     "torch==2.1.2",
     "transformers @ git+https://github.com/huggingface/transformers.git@831bc25d8fdb85768402f772cf65cc3d7872b211",  # Enable StarCoder2
-    "trl @ git+https://github.com/huggingface/trl.git@main",
+    "trl @ git+https://github.com/alvarobartt/trl.git@main",
     "jinja2>=3.0.0",
     "tqdm>=4.64.1",
 ]
@@ -77,7 +77,13 @@ _deps = [
 # packaging: "packaging"
 #
 # some of the values are versioned whereas others aren't.
-deps = {b: a for a, b in (re.findall(r"^(([^!=<>~ \[\]]+)(?:\[[^\]]+\])?(?:[!=<>~ ].*)?$)", x)[0] for x in _deps)}
+deps = {
+    b: a
+    for a, b in (
+        re.findall(r"^(([^!=<>~ \[\]]+)(?:\[[^\]]+\])?(?:[!=<>~ ].*)?$)", x)[0]
+        for x in _deps
+    )
+}
 
 
 def deps_list(*pkgs):
