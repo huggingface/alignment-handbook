@@ -19,7 +19,7 @@ gradient_accumulation_steps: 1
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: true
-hub_model_id: orpo-explorers/Mistral-7B-v0.1-ORPO-Capybara-TRL
+hub_model_id: orpo-explorers/Mistral-7B-v0.1-ORPO-Capybara-TRL-v1
 learning_rate: 5.0e-6
 log_level: info
 logging_steps: 50
@@ -28,9 +28,8 @@ max_length: 2048
 max_prompt_length: 1792
 num_train_epochs: 3
 optim: adamw_bnb_8bit
-output_dir: data/mistral-7b-orpo-alignment-handbook
+output_dir: data/alignment-handbook
 per_device_train_batch_size: 8
-per_device_eval_batch_size: 8
 push_to_hub: true
 report_to:
 - tensorboard
