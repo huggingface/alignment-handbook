@@ -160,10 +160,10 @@ def prepare_format_dataset():
 
     # Convert the DataFrames back to datasets and save them
     dataset_1_train = Dataset.from_pandas(df_1)
-    dataset_1_train.save_to_disk("./recipes/prometheus-7b-v1.5-beta/assets/feedback-collection/train")
+    dataset_1_train.save_to_disk("./recipes/prometheus-7b-v1.5-beta/assets/feedback-collection-format/train")
 
     dataset_2_train = Dataset.from_pandas(df_2)
-    dataset_2_train.save_to_disk("./recipes/prometheus-7b-v1.5-beta/assets/preference-collection/train")
+    dataset_2_train.save_to_disk("./recipes/prometheus-7b-v1.5-beta/assets/preference-collection-format/train")
 
 
 

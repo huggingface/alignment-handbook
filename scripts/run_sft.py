@@ -227,9 +227,9 @@ def main():
         desc="Applying chat template",
     )
     # TODO: Change this part!
-    train_dataset = raw_datasets["test"]
+    train_dataset = raw_datasets["train"]
     # Randomly sample 1% of examples from the training set
-    eval_dataset = raw_datasets["test"]
+    eval_dataset = raw_datasets["train"]
 
     with training_args.main_process_first(
         desc="Log a few random samples from the processed training set"
