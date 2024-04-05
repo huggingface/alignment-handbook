@@ -20,7 +20,7 @@
 
 # ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/deepspeed_zero3.yaml scripts/run_sft.py recipes/prometheus-7b-v1.5-beta/sft/config_full_9.yaml
 
-CUDA_VISIBLE_DEVICES=8,9,10,11,12,13,14,15 ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/deepspeed_zero3.yaml --num_processes=8 scripts/run_sft.py recipes/prometheus-7b-v1.5-beta/sft/config_full_1_84.yaml
+# CUDA_VISIBLE_DEVICES=8,9,10,11,12,13,14,15 ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/deepspeed_zero3.yaml --num_processes=8 scripts/run_sft.py recipes/prometheus-7b-v1.5-beta/sft/config_full_1_84.yaml
 
 CUDA_VISIBLE_DEVICES=8,9,10,11,12,13,14,15 ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/deepspeed_zero3.yaml --num_processes=8 scripts/run_sft.py recipes/prometheus-7b-v1.5-beta/sft/config_full_2_84.yaml
 

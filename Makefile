@@ -44,7 +44,7 @@ pypi_test_upload:
 	twine upload dist/* -r pypitest --repository-url=https://test.pypi.org/legacy/
 
 train:
-	find ./recipes/prometheus-7b-v1.5-beta/assets/ -type f -name 'cache-*' -exec rm -f {} +
+# 	find ./recipes/prometheus-7b-v1.5-beta/assets/ -type f -name 'cache-*' -exec rm -f {} +
 	python -m pip install .
 	bash recipes/prometheus-7b-v1.5-beta/train.sh
 
