@@ -129,7 +129,42 @@ def prepare_dataset_properly():
     dataset_2_test.save_to_disk(
         "./recipes/prometheus-7b-v1.5-beta/assets/preference-collection/test"
     )
-    
+
+
+def prepare_format_dataset():
+    cache_dir = "/home/seungone_kim/cache"
+    dataset_1 = load_dataset("kaist-ai/Feedback-Collection", cache_dir=cache_dir)
+    dataset_2 = load_dataset("kaist-ai/Preference-Collection", cache_dir=cache_dir)
+
+    # Limit to 100 samples from each dataset
+    df_1 = dataset_1["train"].to_pandas().sample(n=100, random_state=42)
+    df_2 = dataset_2["train"].to_pandas().sample(n=100, random_state=42)
+
+    abs_system_prompt = "You are a fair judge assistant tasked with providing clear, objective feedback based on specific criteria, ensuring each assessment reflects the absolute standards set for performance.\n"
+    rel_system_prompt = "You are a fair judge assistant assigned to deliver insightful feedback that compares individual performances, highlighting how each stands relative to others within the same cohort.\n"
+
+    def add_messages_column(row, system_prompt: str):
+        user_msg = {"content": system_prompt + row["instruction"], "role": "user"}
+        assistant_msg = {"content": row["output"], "role": "assistant"}
+        messages = [user_msg, assistant_msg]
+        row["messages"] = messages
+        return row
+
+    # Apply the function to add messages column
+    df_1 = df_1.apply(lambda row: add_messages_column(row, abs_system_prompt), axis=1)
+    df_2 = df_2.apply(lambda row: add_messages_column(row, rel_system_prompt), axis=1)
+
+    # Create directories for saving the datasets
+    Path("./recipes/prometheus-7b-v1.5-beta/assets/feedback-collection-format/train").mkdir(parents=True, exist_ok=True)
+    Path("./recipes/prometheus-7b-v1.5-beta/assets/preference-collection-format/train").mkdir(parents=True, exist_ok=True)
+
+    # Convert the DataFrames back to datasets and save them
+    dataset_1_train = Dataset.from_pandas(df_1)
+    dataset_1_train.save_to_disk("./recipes/prometheus-7b-v1.5-beta/assets/feedback-collection/train")
+
+    dataset_2_train = Dataset.from_pandas(df_2)
+    dataset_2_train.save_to_disk("./recipes/prometheus-7b-v1.5-beta/assets/preference-collection/train")
+
 
 
 def upload_test_dataset():
