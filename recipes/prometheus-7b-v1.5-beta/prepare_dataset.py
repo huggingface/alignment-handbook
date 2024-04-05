@@ -5,6 +5,9 @@ import pandas as pd
 from datasets import Dataset, load_dataset, load_from_disk
 from sklearn.model_selection import train_test_split
 from tqdm import tqdm
+from datasets import Dataset, DatasetDict, load_dataset, concatenate_datasets
+import huggingface_hub
+
 
 
 def prepare_dataset():
@@ -126,6 +129,49 @@ def prepare_dataset_properly():
     dataset_2_test.save_to_disk(
         "./recipes/prometheus-7b-v1.5-beta/assets/preference-collection/test"
     )
+    
+
+
+def upload_test_dataset():
+    dataset_1_path = "./recipes/prometheus-7b-v1.5-beta/assets/feedback-collection/test"
+    dataset_2_path = "./recipes/prometheus-7b-v1.5-beta/assets/preference-collection/test"
+
+    dataset_1 = load_from_disk(dataset_1_path)
+    dataset_2 = load_from_disk(dataset_2_path)
+    
+    merged_dataset = concatenate_datasets([dataset_1, dataset_2])
+    merged_dataset.save_to_disk("./recipes/prometheus-7b-v1.5-beta/assets/Promixtheus-Bench/train")
+    
+    merged_dataset.push_to_hub("kaist-ai/Promixtheus-Bench")
+
+
+def prepare_dataset_bgb():
+    cache_dir = "/home/seungone_kim/cache"
+    dataset = load_dataset("kaist-ai/BiGGen-Bench-Feedback-Collection", cache_dir=cache_dir)
+    
+    df_train = dataset["train"].to_pandas()
+    df_test = dataset["test"].to_pandas()
+    
+    # Messages column already exists in the dataset
+    
+    Path("./recipes/prometheus-7b-v1.5-beta/assets/bgb-feedback-collection/train").mkdir(
+        parents=True, exist_ok=True
+    )
+    Path("./recipes/prometheus-7b-v1.5-beta/assets/bgb-feedback-collection/test").mkdir(
+        parents=True, exist_ok=True
+    )
+    
+    dataset_train = Dataset.from_pandas(df_train)
+    dataset_train.save_to_disk(
+        "./recipes/prometheus-7b-v1.5-beta/assets/bgb-feedback-collection/train"
+    )
+    
+    dataset_test = Dataset.from_pandas(df_test)
+    dataset_test.save_to_disk(
+        "./recipes/prometheus-7b-v1.5-beta/assets/bgb-feedback-collection/train"
+    )
+
+
 
 
 def export_dataset_to_json(path: str, output_path: str = "dataset.json"):
@@ -141,7 +187,11 @@ def export_dataset_to_json(path: str, output_path: str = "dataset.json"):
 
 
 if __name__ == "__main__":
-    prepare_dataset_properly()
+    # prepare_dataset_properly()
+    upload_test_dataset()
+    # prepare_dataset_bgb()
+    
+    
     # dataset_1 = load_from_disk('./recipes/prometheus-7b-v1.5-beta/assets/feedback-collection/train')
     # dataset_2 = load_from_disk(
     #     "./recipes/prometheus-7b-v1.5-beta/assets/feedback-collection/test"
