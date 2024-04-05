@@ -45,7 +45,7 @@ pypi_test_upload:
 
 train:
 # 	find ./recipes/prometheus-7b-v1.5-beta/assets/ -type f -name 'cache-*' -exec rm -f {} +
-	python -m pip install .
+#	python -m pip install .
 	bash recipes/prometheus-7b-v1.5-beta/train.sh
 
 data:

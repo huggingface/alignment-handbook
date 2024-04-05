@@ -332,7 +332,7 @@ def main():
     ##########
     # Evaluate
     ##########
-    if training_args.do_eval:
+    if False:
         logger.info("*** Evaluate ***")
         metrics = trainer.evaluate()
         metrics["eval_samples"] = len(eval_dataset)
