@@ -140,7 +140,7 @@ def upload_test_dataset():
     dataset_2 = load_from_disk(dataset_2_path)
     
     dataset_1.push_to_hub("kaist-ai/Promixtheus-Absolute-Bench")
-    dataset_2.push_to_hub("kaist-ai/Promixtheus-Absolute-Bench")
+    dataset_2.push_to_hub("kaist-ai/Promixtheus-Relative-Bench")
 
 
 def prepare_dataset_bgb():
