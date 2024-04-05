@@ -139,10 +139,8 @@ def upload_test_dataset():
     dataset_1 = load_from_disk(dataset_1_path)
     dataset_2 = load_from_disk(dataset_2_path)
     
-    merged_dataset = concatenate_datasets([dataset_1, dataset_2])
-    merged_dataset.save_to_disk("./recipes/prometheus-7b-v1.5-beta/assets/Promixtheus-Bench/train")
-    
-    merged_dataset.push_to_hub("kaist-ai/Promixtheus-Bench")
+    dataset_1.push_to_hub("kaist-ai/Promixtheus-Absolute-Bench")
+    dataset_2.push_to_hub("kaist-ai/Promixtheus-Absolute-Bench")
 
 
 def prepare_dataset_bgb():
