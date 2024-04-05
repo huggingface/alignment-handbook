@@ -31,6 +31,7 @@ dataset_mixer:
   /home/seungone_kim/alignment-handbook/recipes/prometheus-7b-v1.5-beta/assets/preference-collection: 1.0
   /home/seungone_kim/alignment-handbook/recipes/prometheus-7b-v1.5-beta/assets/feedback-collection: 1.0
 dataset_splits:
+- train
 - test
 preprocessing_num_workers: 16
 
