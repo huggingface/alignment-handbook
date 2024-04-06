@@ -221,8 +221,9 @@ def export_dataset_to_json(path: str, output_path: str = "dataset.json"):
 
 if __name__ == "__main__":
     # prepare_dataset_properly()
-    upload_test_dataset()
+    # upload_test_dataset()
     # prepare_dataset_bgb()
+    prepare_format_dataset()
     
     
     # dataset_1 = load_from_disk('./recipes/prometheus-7b-v1.5-beta/assets/feedback-collection/train')
