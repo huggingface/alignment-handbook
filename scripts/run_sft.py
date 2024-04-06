@@ -229,7 +229,7 @@ def main():
     # TODO: Change this part!
     train_dataset = raw_datasets["train"]
     # Randomly sample 1% of examples from the training set
-    eval_dataset = raw_datasets["train"]
+    eval_dataset = raw_datasets["test"]
 
     with training_args.main_process_first(
         desc="Log a few random samples from the processed training set"
@@ -332,7 +332,7 @@ def main():
     ##########
     # Evaluate
     ##########
-    if False:
+    if True:
         logger.info("*** Evaluate ***")
         metrics = trainer.evaluate()
         metrics["eval_samples"] = len(eval_dataset)

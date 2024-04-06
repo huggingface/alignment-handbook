@@ -6,7 +6,7 @@ from datasets import Dataset, load_dataset, load_from_disk
 from sklearn.model_selection import train_test_split
 from tqdm import tqdm
 from datasets import Dataset, DatasetDict, load_dataset, concatenate_datasets
-import huggingface_hub
+import ast
 
 
 
@@ -179,13 +179,28 @@ def upload_test_dataset():
 
 
 def prepare_dataset_bgb():
-    cache_dir = "/home/seungone_kim/cache"
-    dataset = load_dataset("kaist-ai/BiGGen-Bench-Feedback-Collection", cache_dir=cache_dir)
+    # cache_dir = "/home/seungone_kim/cache"
+    dataset = load_dataset("kaist-ai/BiGGen-Bench-Feedback-Collection")
     
     df_train = dataset["train"].to_pandas()
     df_test = dataset["test"].to_pandas()
     
-    # Messages column already exists in the dataset
+    def add_messages_column(row):
+        messages = ast.literal_eval(row['instruction'])
+        assert len(messages) == 2
+        system_content = messages[0]["content"].strip() + "\n\n"
+        user_content = messages[1]["content"].strip()
+        assistant_content = row["output"].strip()
+        
+        user_msg = {"content": system_content + user_content, "role": "user"}
+        assistant_msg = {"content": assistant_content, "role": "assistant"}
+        messages = [user_msg, assistant_msg]
+        row["messages"] = messages
+        
+        return row
+    
+    df_train = df_train.apply(lambda row: add_messages_column(row), axis=1)
+    df_test = df_test.apply(lambda row: add_messages_column(row), axis=1)
     
     Path("./recipes/prometheus-7b-v1.5-beta/assets/bgb-feedback-collection/train").mkdir(
         parents=True, exist_ok=True
@@ -193,6 +208,7 @@ def prepare_dataset_bgb():
     Path("./recipes/prometheus-7b-v1.5-beta/assets/bgb-feedback-collection/test").mkdir(
         parents=True, exist_ok=True
     )
+    
     
     dataset_train = Dataset.from_pandas(df_train)
     dataset_train.save_to_disk(
@@ -222,8 +238,8 @@ def export_dataset_to_json(path: str, output_path: str = "dataset.json"):
 if __name__ == "__main__":
     # prepare_dataset_properly()
     # upload_test_dataset()
-    # prepare_dataset_bgb()
-    prepare_format_dataset()
+    prepare_dataset_bgb()
+    # prepare_format_dataset()
     
     
     # dataset_1 = load_from_disk('./recipes/prometheus-7b-v1.5-beta/assets/feedback-collection/train')
