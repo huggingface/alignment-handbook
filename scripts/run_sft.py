@@ -206,6 +206,13 @@ def main():
         f"Training on the following datasets and their proportions: {[split + ' : ' + str(dset.num_rows) for split, dset in raw_datasets.items()]}"
     )
     column_names = list(raw_datasets["train"].features)
+    column_names_test = list(raw_datasets["test"].features)
+    
+    print("column_names: ", column_names)
+    print("column_names_test: ", column_names_test)
+    
+    assert column_names == column_names_test, "Column names in train and test datasets do not match."
+    
 
     ################
     # Load tokenizer
