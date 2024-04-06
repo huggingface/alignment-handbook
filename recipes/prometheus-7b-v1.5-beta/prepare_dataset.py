@@ -180,11 +180,23 @@ def upload_test_dataset():
 
 def prepare_dataset_bgb():
     # cache_dir = "/home/seungone_kim/cache"
-    dataset = load_dataset("kaist-ai/BiGGen-Bench-Feedback-Collection")
+    dataset = load_dataset("kaist-ai/BiGGen-Bench-Feedback-Collection",download_mode="force_redownload")
     
     df_train = dataset["train"].to_pandas()
     df_test = dataset["test"].to_pandas()
     
+    columns_to_consider = df_test.columns.difference(['input'])
+    print("Test DF Before: ", len(df_test))
+    df_test = df_test.dropna(subset=columns_to_consider)
+    print("Test DF After: ", len(df_test))
+    
+    columns_to_consider = df_train.columns.difference(['input'])
+    print("Train DF Before: ", len(df_train))
+    df_train = df_train.dropna(subset=columns_to_consider)
+    print("Train DF After: ", len(df_train))
+
+
+        
     def add_messages_column(row):
         messages = ast.literal_eval(row['instruction'])
         assert len(messages) == 2
