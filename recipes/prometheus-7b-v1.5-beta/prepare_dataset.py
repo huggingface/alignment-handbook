@@ -214,12 +214,16 @@ def prepare_dataset_bgb():
     df_train = df_train.apply(lambda row: add_messages_column(row), axis=1)
     df_test = df_test.apply(lambda row: add_messages_column(row), axis=1)
     
+    df_train['__index_level_0__'] = df_train.index
+    df_test['__index_level_0__'] = df_test.index
+    
     Path("./recipes/prometheus-7b-v1.5-beta/assets/bgb-feedback-collection/train").mkdir(
         parents=True, exist_ok=True
     )
     Path("./recipes/prometheus-7b-v1.5-beta/assets/bgb-feedback-collection/test").mkdir(
         parents=True, exist_ok=True
     )
+    
     
     
     dataset_train = Dataset.from_pandas(df_train)
