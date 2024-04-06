@@ -229,7 +229,7 @@ def prepare_dataset_bgb():
     
     dataset_test = Dataset.from_pandas(df_test)
     dataset_test.save_to_disk(
-        "./recipes/prometheus-7b-v1.5-beta/assets/bgb-feedback-collection/train"
+        "./recipes/prometheus-7b-v1.5-beta/assets/bgb-feedback-collection/test"
     )
 
 
