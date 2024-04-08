@@ -1,5 +1,5 @@
 # Model arguments
-model_name_or_path: alignment-handbook/zephyr-7b-sft-full
+model_name_or_path: data/zephyr-7b-sft-full2/
 torch_dtype: null
 
 # Data training arguments
@@ -10,6 +10,7 @@ dataset_splits:
 - train_prefs
 - test_prefs
 preprocessing_num_workers: 12
+chat_template: "{% for message in messages %}\n{% if message['role'] == 'user' %}\n{{ '<|user|>\n' + message['content'] + eos_token }}\n{% elif message['role'] == 'system' %}\n{{ '<|system|>\n' + message['content'] + eos_token }}\n{% elif message['role'] == 'assistant' %}\n{{ '<|assistant|>\n'  + message['content'] + eos_token }}\n{% endif %}\n{% if loop.last and add_generation_prompt %}\n{{ '<|assistant|>' }}\n{% endif %}\n{% endfor %}"
 
 # DPOTrainer arguments
 bf16: true
@@ -21,10 +22,9 @@ gradient_accumulation_steps: 2
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: False
-hub_model_id: zephyr-7b-dpo-full
-learning_rate: 5.0e-7
+learning_rate: 5.0e-6
 log_level: info
-logging_steps: 10
+logging_steps: 1
 lr_scheduler_type: cosine
 max_length: 1024
 max_prompt_length: 512
@@ -33,8 +33,8 @@ optim: adamw_torch
 output_dir: data/zephyr-7b-dpo-full
 per_device_train_batch_size: 8
 per_device_eval_batch_size: 8
-push_to_hub: true
-save_strategy: "steps"
+push_to_hub: false
+save_strategy: "epoch"
 save_steps: 100
 save_total_limit: 1
 seed: 42
