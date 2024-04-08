@@ -17,6 +17,7 @@
 import logging
 import random
 import sys
+from typing import Any, Dict
 
 import torch
 import transformers
@@ -94,11 +95,15 @@ def main():
     #####################################
     # Load tokenizer and process datasets
     #####################################
-    data_args.truncation_side = "left"  # Truncate from left to ensure we don't lose labels in final turn
+    data_args.truncation_side = (
+        "left"  # Truncate from left to ensure we don't lose labels in final turn
+    )
     tokenizer = get_tokenizer(model_args, data_args)
 
     torch_dtype = (
-        model_args.torch_dtype if model_args.torch_dtype in ["auto", None] else getattr(torch, model_args.torch_dtype)
+        model_args.torch_dtype
+        if model_args.torch_dtype in ["auto", None]
+        else getattr(torch, model_args.torch_dtype)
     )
     quantization_config = get_quantization_config(model_args)
 
@@ -132,6 +137,37 @@ def main():
         desc="Formatting comparisons with prompt template",
     )
 
+    #############################
+    # Filter out seq > max_length
+    #############################
+    if training_args.max_prompt_length is not None:
+        unfiltered_train_samples = len(raw_datasets["train"])
+        if "test" in raw_datasets:
+            unfiltered_test_samples = len(raw_datasets["test"])
+
+        def filter_fn(sample: Dict[str, Any]) -> Dict[str, Any]:
+            prompt_length = tokenizer(
+                sample["prompt"],
+                return_tensors="pt",
+            ).size(-1)
+
+            return prompt_length < training_args.max_prompt_length
+
+        raw_datasets = raw_datasets.filter(
+            filter_fn,
+            desc="Filtering out the samples where len(prompt) > max_prompt_length",
+        )
+
+        filtered_train_samples = len(raw_datasets["train"]) - unfiltered_train_samples
+        logger.info(
+            f"Filtered out {filtered_train_samples} training samples out of the {unfiltered_train_samples} samples."
+        )
+        if "test" in raw_datasets:
+            filtered_test_samples = len(raw_datasets["test"]) - unfiltered_test_samples
+            logger.info(
+                f"Filtered out {filtered_test_samples} test samples out of the {unfiltered_test_samples} samples."
+            )
+
     ##########################
     # Decontaminate benchmarks
     ##########################
@@ -161,9 +197,15 @@ def main():
 
     # Log a few random samples from the training set:
     for index in random.sample(range(len(raw_datasets["train"])), 3):
-        logger.info(f"Prompt sample {index} of the raw training set:\n\n{raw_datasets['train'][index]['prompt']}")
-        logger.info(f"Chosen sample {index} of the raw training set:\n\n{raw_datasets['train'][index]['chosen']}")
-        logger.info(f"Rejected sample {index} of the raw training set:\n\n{raw_datasets['train'][index]['rejected']}")
+        logger.info(
+            f"Prompt sample {index} of the raw training set:\n\n{raw_datasets['train'][index]['prompt']}"
+        )
+        logger.info(
+            f"Chosen sample {index} of the raw training set:\n\n{raw_datasets['train'][index]['chosen']}"
+        )
+        logger.info(
+            f"Rejected sample {index} of the raw training set:\n\n{raw_datasets['train'][index]['rejected']}"
+        )
 
     ##########################
     # Instantiate ORPO trainer
@@ -217,7 +259,7 @@ def main():
     ##########
     # Evaluate
     ##########
-    if training_args.do_eval:
+    if training_args.do_eval and "test" in raw_datasets:
         logger.info("*** Evaluate ***")
         metrics = trainer.evaluate()
         metrics["eval_samples"] = len(raw_datasets["test"])
