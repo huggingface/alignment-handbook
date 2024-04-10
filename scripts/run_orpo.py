@@ -95,15 +95,11 @@ def main():
     #####################################
     # Load tokenizer and process datasets
     #####################################
-    data_args.truncation_side = (
-        "left"  # Truncate from left to ensure we don't lose labels in final turn
-    )
+    data_args.truncation_side = "left"  # Truncate from left to ensure we don't lose labels in final turn
     tokenizer = get_tokenizer(model_args, data_args)
 
     torch_dtype = (
-        model_args.torch_dtype
-        if model_args.torch_dtype in ["auto", None]
-        else getattr(torch, model_args.torch_dtype)
+        model_args.torch_dtype if model_args.torch_dtype in ["auto", None] else getattr(torch, model_args.torch_dtype)
     )
     quantization_config = get_quantization_config(model_args)
 
@@ -149,7 +145,9 @@ def main():
             prompt_length = tokenizer(
                 sample["text_prompt"],
                 return_tensors="pt",
-            )["input_ids"].size(dim=-1)
+            )[
+                "input_ids"
+            ].size(dim=-1)
 
             return prompt_length < training_args.max_prompt_length
 
@@ -197,15 +195,9 @@ def main():
 
     # Log a few random samples from the training set:
     for index in random.sample(range(len(raw_datasets["train"])), 3):
-        logger.info(
-            f"Prompt sample {index} of the raw training set:\n\n{raw_datasets['train'][index]['prompt']}"
-        )
-        logger.info(
-            f"Chosen sample {index} of the raw training set:\n\n{raw_datasets['train'][index]['chosen']}"
-        )
-        logger.info(
-            f"Rejected sample {index} of the raw training set:\n\n{raw_datasets['train'][index]['rejected']}"
-        )
+        logger.info(f"Prompt sample {index} of the raw training set:\n\n{raw_datasets['train'][index]['prompt']}")
+        logger.info(f"Chosen sample {index} of the raw training set:\n\n{raw_datasets['train'][index]['chosen']}")
+        logger.info(f"Rejected sample {index} of the raw training set:\n\n{raw_datasets['train'][index]['rejected']}")
 
     ##########################
     # Instantiate ORPO trainer
