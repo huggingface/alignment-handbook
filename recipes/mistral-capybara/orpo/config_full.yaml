@@ -19,7 +19,7 @@ gradient_accumulation_steps: 1
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: true
-hub_model_id: orpo-explorers/Mistral-7B-v0.1-ORPO-Capybara-TRL-v1
+hub_model_id: orpo-explorers/Mistral-7B-v0.1-ORPO-Capybara
 learning_rate: 5.0e-6
 log_level: info
 logging_steps: 10
