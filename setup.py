@@ -65,7 +65,7 @@ _deps = [
     "scipy",
     "tensorboard",
     "torch==2.1.2",
-    "transformers @ git+https://github.com/huggingface/transformers.git@831bc25d8fdb85768402f772cf65cc3d7872b211",  # Enable StarCoder2
+    "transformers>=4.39.3",
     "trl @ git+https://github.com/huggingface/trl.git@57aebe9c36021e679662181468b04ff42432daf3",  # ORPOTrainer and follow up fixes
     "jinja2>=3.0.0",
     "tqdm>=4.64.1",
