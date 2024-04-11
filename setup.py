@@ -66,7 +66,7 @@ _deps = [
     "tensorboard",
     "torch==2.1.2",
     "transformers>=4.39.3",
-    "trl @ git+https://github.com/huggingface/trl.git@57aebe9c36021e679662181468b04ff42432daf3",  # ORPOTrainer and follow up fixes
+    "trl>=0.8.2",
     "jinja2>=3.0.0",
     "tqdm>=4.64.1",
 ]
