@@ -1,5 +1,5 @@
 
-# Instructions to StarChat2
+# Instructions to train StarChat2
 
 Similar to how we trained Zephyr 7B Beta in our [technical report](https://huggingface.co/papers/2310.16944), training this model proceeds in two steps:
 

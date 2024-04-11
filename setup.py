@@ -41,10 +41,10 @@ if stale_egg_info.exists():
 # IMPORTANT: all dependencies should be listed here with their version requirements, if any.
 #   * If a dependency is fast-moving (e.g. transformers), pin to the exact version
 _deps = [
-    "accelerate==0.27.2",
+    "accelerate>=0.29.2",
     "bitsandbytes==0.41.2.post2",
     "black==23.1.0",
-    "datasets==2.14.6",
+    "datasets>=2.18.0",
     "deepspeed==0.12.2",
     "einops>=0.6.1",
     "evaluate==0.4.0",
@@ -65,8 +65,8 @@ _deps = [
     "scipy",
     "tensorboard",
     "torch==2.1.2",
-    "transformers @ git+https://github.com/huggingface/transformers.git@831bc25d8fdb85768402f772cf65cc3d7872b211",  # Enable StarCoder2
-    "trl==0.7.10",
+    "transformers>=4.39.3",
+    "trl>=0.8.2",
     "jinja2>=3.0.0",
     "tqdm>=4.64.1",
 ]
