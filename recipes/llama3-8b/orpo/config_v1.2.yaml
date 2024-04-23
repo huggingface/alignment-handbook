@@ -7,7 +7,7 @@ use_flash_attention_2: true
 # Data training arguments
 chat_template: "{% for message in messages %}\n{% if message['role'] == 'user' %}\n{{ '<|user|>\n' + message['content'] + eos_token }}\n{% elif message['role'] == 'system' %}\n{{ '<|system|>\n' + message['content'] + eos_token }}\n{% elif message['role'] == 'assistant' %}\n{{ '<|assistant|>\n'  + message['content'] + eos_token }}\n{% endif %}\n{% if loop.last and add_generation_prompt %}\n{{ '<|assistant|>' }}\n{% endif %}\n{% endfor %}"
 dataset_mixer:
-  argilla/Capybara-Preferences: 1.0
+  argilla/OpenHermesPreferences: 1.0
 dataset_splits:
 - train
 preprocessing_num_workers: 8
@@ -19,7 +19,7 @@ gradient_accumulation_steps: 1
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: true
-hub_model_id: orpo-explorers/hf-llama3-8b-orpo-v0.0
+hub_model_id: orpo-explorers/hf-llama3-8b-orpo-v1.0
 learning_rate: 5.0e-6
 log_level: info
 logging_steps: 10
@@ -28,8 +28,8 @@ max_length: 2048
 max_prompt_length: 1792
 num_train_epochs: 3
 optim: adamw_bnb_8bit
-output_dir: data/hf-llama3-8b-orpo-v0.0
-per_device_train_batch_size: 4
+output_dir: data/hf-llama3-8b-orpo-v1.0
+per_device_train_batch_size: 8
 push_to_hub: true
 report_to:
 - tensorboard
