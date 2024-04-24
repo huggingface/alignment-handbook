@@ -42,7 +42,7 @@ if stale_egg_info.exists():
 #   * If a dependency is fast-moving (e.g. transformers), pin to the exact version
 _deps = [
     "accelerate>=0.29.2",
-    "bitsandbytes==0.41.2.post2",
+    "bitsandbytes>=0.43.0",
     "black==23.1.0",
     "datasets>=2.18.0",
     "deepspeed==0.12.2",
@@ -57,7 +57,7 @@ _deps = [
     "numpy>=1.24.2",
     "packaging>=23.0",
     "parameterized>=0.9.0",
-    "peft==0.7.1",
+    "peft>=0.9.0",
     "protobuf<=3.20.2",  # Needed to avoid conflicts with `transformers`
     "pytest",
     "safetensors>=0.3.3",
