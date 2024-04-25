@@ -78,11 +78,11 @@ python -m pip install .
 You will also need Flash Attention 2 installed, which can be done by running:
 
 ```shell
-python -m pip install flash-attn==2.3.6 --no-build-isolation
+python -m pip install flash-attn --no-build-isolation
 ```
 
 > **Note**
-> If your machine has less than 96GB of RAM and many CPU cores, reduce the `MAX_JOBS` arguments, e.g. `MAX_JOBS=4 pip install flash-attn==2.3.6 --no-build-isolation`
+> If your machine has less than 96GB of RAM and many CPU cores, reduce the `MAX_JOBS` arguments, e.g. `MAX_JOBS=4 pip install flash-attn --no-build-isolation`
 
 Next, log into your Hugging Face account as follows:
 
