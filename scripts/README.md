@@ -1,4 +1,3 @@
-
 # Scripts to Train and Evaluate Chat Models
 
 ## Fine-tuning
@@ -25,7 +24,13 @@ ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_con
 ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/deepspeed_zero3.yaml --num_processes={num_gpus} scripts/run_{task}.py recipes/{model_name}/{task}/config_qlora.yaml --load_in_4bit=false
 ```
 
-Here `{task}` refers to the type of training you wish to run. Currently the following tasks are supported: continued pretraining `cpt`, supervised finetuning `sft`, and direct preference optimisation `dpo`. Note that `cpt` is only present in the `gpt-nl` example recipe. {model_name}` refers to the choice of a recipe in the `recipes` directory. For example, to replicate Zephyr-7B-β you can run:
+Here `{task}` refers to the type of training you wish to run. Currently the following tasks are supported:
+* continued pretraining `cpt` (note that `cpt` is only present in the `gpt-nl` example recipe)
+* supervised finetuning `sft`
+* direct preference optimisation `dpo`
+* odds ratio preference optimisation `orpo`
+
+`{model_name}` refers to the choice of a recipe in the `recipes` directory. For example, to replicate Zephyr-7B-β you can run:
 
 ```shell
 # Step 1 - train SFT policy
@@ -85,14 +90,14 @@ dataset_splits:
 - test_xxx          # The test splits to mix
 ```
 
-If you want to fine-tune on your datasets, the main thing to keep in mind is how the chat templates are applied to the dataset blend. Since each task (SFT, DPO, etc), requires a different format, we assume the datasets have the following columns:
+If you want to fine-tune on your datasets, the main thing to keep in mind is how the chat templates are applied to the dataset blend. Since each task (SFT, DPO, ORPO, etc), requires a different format, we assume the datasets have the following columns:
 
 **SFT**
 
 * `messages`: A list of `dicts` in the form `{"role": "{role}", "content": {content}}`. 
 * See [ultrachat_200k](https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k) for an example.
 
-**DPO**
+**DPO and ORPO**
 
 * `chosen`: A list of `dicts` in the form `{"role": "{role}", "content": {content}}` corresponding to the preferred dialogue.
 * `rejected`: A list of `dicts` in the form `{"role": "{role}", "content": {content}}` corresponding to the dispreferred dialogue.
