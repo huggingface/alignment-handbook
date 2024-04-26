@@ -154,39 +154,40 @@ def main():
     ###############
     # Training loop
     ###############
-    logger.info("*** Train ***")
-    checkpoint = None
-    if training_args.resume_from_checkpoint is not None:
-        checkpoint = training_args.resume_from_checkpoint
-    elif last_checkpoint is not None:
-        checkpoint = last_checkpoint
-
-    train_result = trainer.train(resume_from_checkpoint=checkpoint)
-    metrics = train_result.metrics
-    metrics["train_samples"] = len(train_dataset)
-    trainer.log_metrics("train", metrics)
-    trainer.save_metrics("train", metrics)
-    trainer.save_state()
-
-    ##################################
-    # Save model and create model card
-    ##################################
-    logger.info("*** Save model ***")
-    trainer.save_model(training_args.output_dir)
-    logger.info(f"Model saved to {training_args.output_dir}")
-
-    # Save everything else on main process
-    kwargs = {
-        "finetuned_from": model_args.model_name_or_path,
-        "dataset": list(data_args.dataset_mixer.keys()),
-        "dataset_tags": list(data_args.dataset_mixer.keys()),
-        "tags": ["alignment-handbook"],
-    }
-    if trainer.accelerator.is_main_process:
-        trainer.create_model_card(**kwargs)
-        # Restore k,v cache for fast inference
-        trainer.model.config.use_cache = True
-        trainer.model.config.save_pretrained(training_args.output_dir)
+    if training_args.do_train:
+        logger.info("*** Train ***")
+        checkpoint = None
+        if training_args.resume_from_checkpoint is not None:
+            checkpoint = training_args.resume_from_checkpoint
+        elif last_checkpoint is not None:
+            checkpoint = last_checkpoint
+    
+        train_result = trainer.train(resume_from_checkpoint=checkpoint)
+        metrics = train_result.metrics
+        metrics["train_samples"] = len(train_dataset)
+        trainer.log_metrics("train", metrics)
+        trainer.save_metrics("train", metrics)
+        trainer.save_state()
+    
+        ##################################
+        # Save model and create model card
+        ##################################
+        logger.info("*** Save model ***")
+        trainer.save_model(training_args.output_dir)
+        logger.info(f"Model saved to {training_args.output_dir}")
+    
+        # Save everything else on main process
+        kwargs = {
+            "finetuned_from": model_args.model_name_or_path,
+            "dataset": list(data_args.dataset_mixer.keys()),
+            "dataset_tags": list(data_args.dataset_mixer.keys()),
+            "tags": ["alignment-handbook"],
+        }
+        if trainer.accelerator.is_main_process:
+            trainer.create_model_card(**kwargs)
+            # Restore k,v cache for fast inference
+            trainer.model.config.use_cache = True
+            trainer.model.config.save_pretrained(training_args.output_dir)
 
     ##########
     # Evaluate
