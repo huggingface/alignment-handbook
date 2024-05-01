@@ -19,6 +19,7 @@ However, we know from the [InstructGPT](https://huggingface.co/papers/2203.02155
 The Alignment Handbook aims to fill that gap by providing the community with a series of robust training recipes that span the whole pipeline.
 
 ## News 🗞️
+* **April 12, 2024**: We release Zephyr 141B (A35B), in collaboration with Argilla and Kaist AI, along with the recipe to fine-tune Mixtral 8x22B with ORPO 🪁
 * **March 12, 2024:** We release StarChat2 15B, along with the recipe to train capable coding assistants 🌟
 * **March 1, 2024:** We release Zephyr 7B Gemma, which is a new recipe to align Gemma 7B with RLAIF 🔥
 * **February 1, 2024:** We release a recipe to align open LLMs with Constitutional AI 📜! See the [recipe](https://github.com/huggingface/alignment-handbook/tree/main/recipes/constitutional-ai) and the [blog post](https://huggingface.co/blog/constitutional_ai) for details. 
@@ -33,7 +34,7 @@ The Alignment Handbook aims to fill that gap by providing the community with a s
 
 This project is simple by design and mostly consists of:
 
-* [`scripts`](./scripts/) to train and evaluate models. Three steps are included: continued pretraining, supervised-finetuning (SFT) for chat, and preference alignment with DPO. Each script supports distributed training of the full model weights with DeepSpeed ZeRO-3, or LoRA/QLoRA for parameter-efficient fine-tuning.
+* [`scripts`](./scripts/) to train and evaluate models. Four steps are included: continued pretraining, supervised-finetuning (SFT) for chat, preference alignment with DPO, and supervised-finetuning with preference alignment with ORPO. Each script supports distributed training of the full model weights with DeepSpeed ZeRO-3, or LoRA/QLoRA for parameter-efficient fine-tuning.
 * [`recipes`](./recipes/) to reproduce models like Zephyr 7B. Each recipe takes the form of a YAML file which contains all the parameters associated with a single training run. A `gpt2-nl` recipe is also given to illustrate how this handbook can be used for language or domain adaptation, e.g. by continuing to pretrain on a different language, and then SFT and DPO tuning the result. 
 
 We are also working on a series of guides to explain how methods like direct preference optimization (DPO) work, along with lessons learned from gathering human preferences in practice. To get started, we recommend the following:
@@ -53,6 +54,7 @@ The initial release of the handbook will focus on the following techniques:
 * **Reward modeling:** teach language models to distinguish model responses according to human or AI preferences.
 * **Rejection sampling:** a simple, but powerful technique to boost the performance of your SFT model.
 * **Direct preference optimisation (DPO):** a powerful and promising alternative to PPO.
+* **Odds Ratio Preference Optimisation (ORPO)**: a technique to fine-tune language models with human preferences, combining SFT and DPO in a single stage.
 
 ## Installation instructions
 
@@ -76,11 +78,11 @@ python -m pip install .
 You will also need Flash Attention 2 installed, which can be done by running:
 
 ```shell
-python -m pip install flash-attn==2.3.6 --no-build-isolation
+python -m pip install flash-attn --no-build-isolation
 ```
 
 > **Note**
-> If your machine has less than 96GB of RAM and many CPU cores, reduce the `MAX_JOBS` arguments, e.g. `MAX_JOBS=4 pip install flash-attn==2.3.6 --no-build-isolation`
+> If your machine has less than 96GB of RAM and many CPU cores, reduce the `MAX_JOBS` arguments, e.g. `MAX_JOBS=4 pip install flash-attn --no-build-isolation`
 
 Next, log into your Hugging Face account as follows:
 
