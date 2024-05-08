@@ -95,18 +95,14 @@ def main():
     ################
     # Load tokenizer
     ################
-    data_args.truncation_side = (
-        "left"  # Truncate from left to ensure we don't lose labels in final turn
-    )
+    data_args.truncation_side = "left"  # Truncate from left to ensure we don't lose labels in final turn
     tokenizer = get_tokenizer(model_args, data_args)
 
     #####################################################
     # Load model (required here to setup the chat format)
     #####################################################
     torch_dtype = (
-        model_args.torch_dtype
-        if model_args.torch_dtype in ["auto", None]
-        else getattr(torch, model_args.torch_dtype)
+        model_args.torch_dtype if model_args.torch_dtype in ["auto", None] else getattr(torch, model_args.torch_dtype)
     )
     quantization_config = get_quantization_config(model_args)
 
@@ -123,9 +119,7 @@ def main():
     if is_adapter_model(model_args.model_name_or_path, model_args.model_revision):
         logger.info(f"Loading adapter for {model_args.model_name_or_path=}")
 
-        peft_config = PeftConfig.from_pretrained(
-            model_args.model_name_or_path, revision=model_args.model_revision
-        )
+        peft_config = PeftConfig.from_pretrained(model_args.model_name_or_path, revision=model_args.model_revision)
         base_model = AutoModelForCausalLM.from_pretrained(
             peft_config.base_model_name_or_path,
             **model_kwargs,
@@ -179,9 +173,7 @@ def main():
 
     # Log a few random samples from the training set:
     for index in random.sample(range(len(raw_datasets["train"])), 3):
-        logger.info(
-            f"Prompt sample {index} of the raw training set:\n\n{raw_datasets['train'][index]['prompt']}"
-        )
+        logger.info(f"Prompt sample {index} of the raw training set:\n\n{raw_datasets['train'][index]['prompt']}")
         logger.info(
             f"Completion sample {index} of the raw training set:\n\n{raw_datasets['train'][index]['completion']}"
         )

@@ -103,18 +103,12 @@ def apply_chat_template(
             )
     elif task == "kto":
         if all(k in example.keys() for k in ("prompt", "completion", "label")):
-            if not is_openai_format(example["prompt"]) or not is_openai_format(
-                example["completion"]
-            ):
+            if not is_openai_format(example["prompt"]) or not is_openai_format(example["completion"]):
                 raise ValueError(
                     f"Could not format example as dialogue for `{task}` task! Require OpenAI format for all messages"
                 )
-            example["prompt"] = tokenizer.apply_chat_template(
-                example["prompt"], tokenize=False
-            )
-            example["completion"] = tokenizer.apply_chat_template(
-                example["completion"], tokenize=False
-            )
+            example["prompt"] = tokenizer.apply_chat_template(example["prompt"], tokenize=False)
+            example["completion"] = tokenizer.apply_chat_template(example["completion"], tokenize=False)
         else:
             raise ValueError(
                 f"Could not format example as dialogue for `{task}` task! Requires the keys `[prompt, completion, label]`"
