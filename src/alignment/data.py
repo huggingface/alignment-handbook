@@ -42,7 +42,7 @@ def maybe_insert_system_message(messages, tokenizer):
 def apply_chat_template(
     example,
     tokenizer,
-    task: Literal["sft", "generation", "rm", "dpo"],
+    task: Literal["sft", "generation", "rm", "dpo", "kto"],
     auto_insert_empty_system_msg: bool = True,
 ):
     if task in ["sft", "generation"]:
@@ -101,9 +101,28 @@ def apply_chat_template(
                 f"Could not format example as dialogue for `{task}` task! Require either the "
                 f"`[chosen, rejected]` or `[prompt, chosen, rejected]` keys but found {list(example.keys())}"
             )
+    elif task == "kto":
+        if all(k in example.keys() for k in ("prompt", "completion", "label")):
+            if not is_openai_format(example["prompt"]) or not is_openai_format(
+                example["completion"]
+            ):
+                raise ValueError(
+                    f"Could not format example as dialogue for `{task}` task! Require OpenAI format for all messages"
+                )
+            example["prompt"] = tokenizer.apply_chat_template(
+                example["prompt"], tokenize=False
+            )
+            example["completion"] = tokenizer.apply_chat_template(
+                example["completion"], tokenize=False
+            )
+        else:
+            raise ValueError(
+                f"Could not format example as dialogue for `{task}` task! Requires the keys `[prompt, completion, label]`"
+                f" but found {list(example.keys())} instead."
+            )
     else:
         raise ValueError(
-            f"Task {task} not supported, please ensure that the provided task is one of ['sft', 'generation', 'rm', 'dpo', 'orpo']"
+            f"Task {task} not supported, please ensure that the provided task is one of ['sft', 'generation', 'rm', 'dpo', 'orpo', 'kto']"
         )
     return example
 
