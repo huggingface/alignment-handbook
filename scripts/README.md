@@ -7,6 +7,7 @@ In the handbook, we provide three main ways to align LLMs for chat:
 - Full fine-tuning on a multi-GPU machine with DeepSpeed ZeRO-3 (tested on an 8 x A100 (80GB) node).
 - LoRA or QLoRA fine-tuning on a single consumer 24GB GPU (tested on an RTX 4090).
 - LoRA fine-tuning on a multi-GPU machine with DeepSpeed ZeRO-3 (tested on a 2 x A100s (80GB)).
+- QLoRA fine-tuning on multi-GPU machine with FSDP (tested on a 2 x A6000s (48GB)).
 
 In practice, we find comparable performance for both full and QLoRA fine-tuning, with the latter having the advantage of producing small adapter weights that are fast to upload and download from the Hugging Face Hub. Here are the general commands to fine-tune your models:
 
@@ -22,6 +23,9 @@ ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_con
 
 # LoRA training with ZeRO-3 on two or more GPUs
 ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/deepspeed_zero3.yaml --num_processes={num_gpus} scripts/run_{task}.py recipes/{model_name}/{task}/config_qlora.yaml --load_in_4bit=false
+
+# QLoRA training with FSDP on two or more GPUs
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/fsdp+qlora.yaml --num_processes={num_gpus} scripts/run_{task}.py recipes/{model_name}/{task}/config_qlora.yaml --torch_dtype=bfloat16 --bnb_4bit_quant_storage=bfloat16
 ```
 
 Here `{task}` refers to the type of training you wish to run. Currently the following tasks are supported:
