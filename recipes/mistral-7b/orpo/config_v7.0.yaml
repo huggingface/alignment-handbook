@@ -37,4 +37,4 @@ report_to:
 - wandb
 save_strategy: "epoch"
 seed: 42
-warmup_steps: 100
+warmup_ratio: 0.1

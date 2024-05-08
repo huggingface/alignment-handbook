@@ -19,7 +19,8 @@ gradient_accumulation_steps: 1
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: true
-hub_model_id: orpo-explorers/hf-llama3-70b-orpo-v0.0
+hub_model_id: orpo-explorers/hf-llama3-70b-orpo-CapybaraPreferences
+hub_private_repo: true
 learning_rate: 5.0e-6
 log_level: info
 logging_steps: 10
@@ -27,13 +28,13 @@ lr_scheduler_type: cosine
 max_length: 2048
 max_prompt_length: 1792
 num_train_epochs: 3
-optim: adamw_bnb_8bit
-output_dir: data/hf-llama3-70b-orpo-v0.0
+optim: paged_adamw_8bit
+output_dir: data/hf-llama3-70b-orpo-CapybaraPreferences
 per_device_train_batch_size: 1
 push_to_hub: true
 report_to:
 - tensorboard
 - wandb
-save_strategy: "no"
+save_strategy: "epoch"
 seed: 42
 warmup_ratio: 0.1
