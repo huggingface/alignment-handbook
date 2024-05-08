@@ -128,7 +128,7 @@ def main():
             "task": "orpo",
             "auto_insert_empty_system_msg": data_args.auto_insert_empty_system_msg,
         },
-        num_proc=data_args.preprocessing_num_workers,
+        num_proc=training_args.dataset_num_proc,
         remove_columns=column_names,
         desc="Formatting comparisons with prompt template",
     )
