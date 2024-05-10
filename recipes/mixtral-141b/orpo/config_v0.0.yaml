@@ -35,6 +35,6 @@ push_to_hub: true
 report_to:
 - tensorboard
 - wandb
-save_strategy: "epoch"
+save_strategy: "no"
 seed: 42
 warmup_ratio: 0.1

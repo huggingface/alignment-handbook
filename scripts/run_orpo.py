@@ -266,6 +266,5 @@ def main():
 
     logger.info("*** Training complete! ***")
 
-
 if __name__ == "__main__":
     main()
