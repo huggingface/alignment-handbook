@@ -45,7 +45,7 @@ _deps = [
     "bitsandbytes>=0.43.0",
     "black==23.1.0",
     "datasets>=2.18.0",
-    "deepspeed==0.12.2",
+    "deepspeed==0.14.2",
     "einops>=0.6.1",
     "evaluate==0.4.0",
     "flake8>=6.0.0",
@@ -66,7 +66,7 @@ _deps = [
     "tensorboard",
     "torch==2.1.2",
     "transformers>=4.39.3",
-    "trl>=0.8.2",
+    "trl @ git+https://github.com/huggingface/trl.git@e7cb597230bb0c630c67790881b0808f7b16cb05",
     "jinja2>=3.0.0",
     "tqdm>=4.64.1",
 ]
