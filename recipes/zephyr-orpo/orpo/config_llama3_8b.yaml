@@ -24,8 +24,8 @@ learning_rate: 5.0e-7
 log_level: info
 logging_steps: 10
 lr_scheduler_type: cosine
-max_length: 2048
-max_prompt_length: 1792
+max_length: 2816
+max_prompt_length: 2048
 num_train_epochs: 3
 optim: paged_adamw_8bit
 output_dir: data/zephyr-orpo-llama3-8b-beta-0.01
