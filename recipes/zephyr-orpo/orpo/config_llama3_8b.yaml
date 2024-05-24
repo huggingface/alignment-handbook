@@ -15,7 +15,7 @@ auto_insert_empty_system_msg: false
 # ORPOTrainer arguments
 bf16: true
 beta: 0.01
-gradient_accumulation_steps: 1
+gradient_accumulation_steps: 2
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: true
@@ -29,7 +29,7 @@ max_prompt_length: 2048
 num_train_epochs: 3
 optim: adamw_torch #paged_adamw_8bit
 output_dir: data/zephyr-orpo-llama3-8b-beta-0.01
-per_device_train_batch_size: 8
+per_device_train_batch_size: 4
 push_to_hub: true
 hub_private_repo: true
 report_to:

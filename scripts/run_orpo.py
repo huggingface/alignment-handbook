@@ -166,22 +166,22 @@ def main():
     #             f"Filtered out {filtered_test_samples} test samples out of the {unfiltered_test_samples} samples."
     #         )
 
-    ##########################
-    # Decontaminate benchmarks
-    ##########################
-    num_raw_train_samples = len(raw_datasets["train"])
-    raw_datasets = raw_datasets.filter(
-        decontaminate_humaneval,
-        fn_kwargs={"text_column": "text_chosen"},
-        batched=True,
-        batch_size=10_000,
-        num_proc=1,
-        desc="Decontaminating HumanEval samples",
-    )
-    num_filtered_train_samples = num_raw_train_samples - len(raw_datasets["train"])
-    logger.info(
-        f"Decontaminated {num_filtered_train_samples} ({num_filtered_train_samples/num_raw_train_samples * 100:.2f}%) samples from the training set."
-    )
+    # ##########################
+    # # Decontaminate benchmarks
+    # ##########################
+    # num_raw_train_samples = len(raw_datasets["train"])
+    # raw_datasets = raw_datasets.filter(
+    #     decontaminate_humaneval,
+    #     fn_kwargs={"text_column": "text_chosen"},
+    #     batched=True,
+    #     batch_size=10_000,
+    #     num_proc=1,
+    #     desc="Decontaminating HumanEval samples",
+    # )
+    # num_filtered_train_samples = num_raw_train_samples - len(raw_datasets["train"])
+    # logger.info(
+    #     f"Decontaminated {num_filtered_train_samples} ({num_filtered_train_samples/num_raw_train_samples * 100:.2f}%) samples from the training set."
+    # )
 
     # Replace column names with what TRL needs, text_prompt -> prompt, text_chosen -> chosen and text_rejected -> rejected
     for split in raw_datasets.keys():
