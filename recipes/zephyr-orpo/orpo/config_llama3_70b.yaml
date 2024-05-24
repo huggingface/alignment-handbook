@@ -18,8 +18,8 @@ gradient_accumulation_steps: 1
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: true
-hub_model_id: orpo-explorers/zephyr-orpo-llama3-70b
-learning_rate: 5.0e-6
+hub_model_id: orpo-explorers/zephyr-orpo-llama3-70b-beta-0.01
+learning_rate: 5.0e-7
 log_level: info
 logging_steps: 10
 lr_scheduler_type: cosine
@@ -27,7 +27,7 @@ max_length: 2048
 max_prompt_length: 1792
 num_train_epochs: 3
 optim: paged_adamw_8bit
-output_dir: data/zephyr-orpo-llama3-70b
+output_dir: data/zephyr-orpo-llama3-70b-beta-0.01
 per_device_train_batch_size: 1
 push_to_hub: true
 report_to:
