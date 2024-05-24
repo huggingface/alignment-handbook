@@ -133,38 +133,38 @@ def main():
         desc="Formatting comparisons with prompt template",
     )
 
-    #############################
-    # Filter out seq > max_length
-    #############################
-    if training_args.max_prompt_length is not None:
-        unfiltered_train_samples = len(raw_datasets["train"])
-        if "test" in raw_datasets:
-            unfiltered_test_samples = len(raw_datasets["test"])
+    # #############################
+    # # Filter out seq > max_length
+    # #############################
+    # if training_args.max_prompt_length is not None:
+    #     unfiltered_train_samples = len(raw_datasets["train"])
+    #     if "test" in raw_datasets:
+    #         unfiltered_test_samples = len(raw_datasets["test"])
 
-        def filter_fn(sample: Dict[str, Any]) -> Dict[str, Any]:
-            prompt_length = tokenizer(
-                sample["text_prompt"],
-                return_tensors="pt",
-            )[
-                "input_ids"
-            ].size(dim=-1)
+    #     def filter_fn(sample: Dict[str, Any]) -> Dict[str, Any]:
+    #         prompt_length = tokenizer(
+    #             sample["text_prompt"],
+    #             return_tensors="pt",
+    #         )[
+    #             "input_ids"
+    #         ].size(dim=-1)
 
-            return prompt_length < training_args.max_prompt_length
+    #         return prompt_length < training_args.max_prompt_length
 
-        raw_datasets = raw_datasets.filter(
-            filter_fn,
-            desc="Filtering out the samples where len(text_prompt) > max_prompt_length",
-        )
+    #     raw_datasets = raw_datasets.filter(
+    #         filter_fn,
+    #         desc="Filtering out the samples where len(text_prompt) > max_prompt_length",
+    #     )
 
-        filtered_train_samples = unfiltered_train_samples - len(raw_datasets["train"])
-        logger.info(
-            f"Filtered out {filtered_train_samples} training samples out of the {unfiltered_train_samples} samples."
-        )
-        if "test" in raw_datasets:
-            filtered_test_samples = unfiltered_test_samples - len(raw_datasets["test"])
-            logger.info(
-                f"Filtered out {filtered_test_samples} test samples out of the {unfiltered_test_samples} samples."
-            )
+    #     filtered_train_samples = unfiltered_train_samples - len(raw_datasets["train"])
+    #     logger.info(
+    #         f"Filtered out {filtered_train_samples} training samples out of the {unfiltered_train_samples} samples."
+    #     )
+    #     if "test" in raw_datasets:
+    #         filtered_test_samples = unfiltered_test_samples - len(raw_datasets["test"])
+    #         logger.info(
+    #             f"Filtered out {filtered_test_samples} test samples out of the {unfiltered_test_samples} samples."
+    #         )
 
     ##########################
     # Decontaminate benchmarks
