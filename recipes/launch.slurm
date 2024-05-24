@@ -5,6 +5,7 @@
 #SBATCH --partition=hopper-prod  # Adjust this for your cluster
 #SBATCH --output=/fsx/h4/logs/%x-%j.out # Adjust this for your cluster
 #SBATCH --err=/fsx/h4/logs/%x-%j.err    # Adjust this for your cluster
+#SBATCH --requeue
 
 set -x -e
 
