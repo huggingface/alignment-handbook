@@ -9,7 +9,7 @@ dataset_mixer:
   argilla/Capybara-Preferences: 1.0
 dataset_splits:
 - train
-preprocessing_num_workers: 8
+preprocessing_num_workers: 1
 auto_insert_empty_system_msg: false
 
 # ORPOTrainer arguments
