@@ -11,6 +11,7 @@ dataset_splits:
 - train
 preprocessing_num_workers: 48
 auto_insert_empty_system_msg: false
+chat_template: "{% if messages[0]['role'] == 'user' %}{{ bos_token }}{% endif %}{% for message in messages %}{% if message['role'] == 'user' %}{{ '[INST] ' + message['content'] + ' [/INST]' }}{% elif message['role'] == 'assistant' %}{{ message['content'] + eos_token}}{% else %}{{ raise_exception('Only user and assistant roles are supported!') }}{% endif %}{% endfor %}"
 
 # ORPOTrainer arguments
 bf16: true
