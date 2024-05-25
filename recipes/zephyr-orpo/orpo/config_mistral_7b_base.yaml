@@ -1,5 +1,5 @@
 # Model arguments
-model_name_or_path: meta-llama/Meta-Llama-3-8B-Instruct
+model_name_or_path: mistralai/Mistral-7B-v0.3
 model_revision: main
 torch_dtype: bfloat16
 use_flash_attention_2: true
@@ -11,15 +11,16 @@ dataset_splits:
 - train
 preprocessing_num_workers: 1
 auto_insert_empty_system_msg: false
+chat_template: "{% if messages[0]['role'] == 'user' %}{{ bos_token }}{% endif %}{% for message in messages %}{% if message['role'] == 'user' %}{{ '[INST] ' + message['content'] + ' [/INST]' }}{% elif message['role'] == 'assistant' %}{{ message['content'] + eos_token}}{% else %}{{ raise_exception('Only user and assistant roles are supported!') }}{% endif %}{% endfor %}"
 
 # ORPOTrainer arguments
 bf16: true
 beta: 0.01
-gradient_accumulation_steps: 4
+gradient_accumulation_steps: 2
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: true
-hub_model_id: orpo-explorers/zephyr-orpo-llama3-8b-beta-0.01
+hub_model_id: orpo-explorers/zephyr-orpo-mistral-7b-base-beta-0.01
 learning_rate: 5.0e-7
 log_level: info
 logging_steps: 10
@@ -28,8 +29,8 @@ max_length: 2816
 max_prompt_length: 2048
 num_train_epochs: 3
 optim: paged_adamw_8bit
-output_dir: data/zephyr-orpo-llama3-8b-beta-0.01
-per_device_train_batch_size: 2
+output_dir: data/zephyr-orpo-mistral-7b-base-beta-0.01
+per_device_train_batch_size: 8
 push_to_hub: true
 hub_private_repo: true
 report_to:
@@ -37,3 +38,4 @@ report_to:
 - wandb
 save_strategy: "epoch"
 seed: 42
+warmup_steps: 100

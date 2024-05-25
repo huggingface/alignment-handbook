@@ -1,5 +1,5 @@
 # Model arguments
-model_name_or_path: mistralai/Mistral-7B-Instruct-v0.3
+model_name_or_path: mistralai/Mixtral-8x22B
 model_revision: main
 torch_dtype: bfloat16
 use_flash_attention_2: true
@@ -20,7 +20,7 @@ gradient_accumulation_steps: 2
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: true
-hub_model_id: orpo-explorers/zephyr-orpo-mistral-7b-beta-0.01
+hub_model_id: orpo-explorers/zephyr-orpo-mixtral-141b-base-beta-0.01
 learning_rate: 5.0e-7
 log_level: info
 logging_steps: 10
@@ -29,8 +29,8 @@ max_length: 2816
 max_prompt_length: 2048
 num_train_epochs: 3
 optim: paged_adamw_8bit
-output_dir: data/zephyr-orpo-mistral-7b-beta-0.01
-per_device_train_batch_size: 8
+output_dir: data/zephyr-orpo-mixtral-141b-base-beta-0.01
+per_device_train_batch_size: 1
 push_to_hub: true
 hub_private_repo: true
 report_to:
@@ -38,3 +38,4 @@ report_to:
 - wandb
 save_strategy: "epoch"
 seed: 42
+warmup_steps: 100
