@@ -15,6 +15,7 @@
 import dataclasses
 import os
 import sys
+import trl
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, NewType, Optional, Tuple
 
@@ -235,7 +236,7 @@ class DataArguments:
 
 
 @dataclass
-class SFTConfig(transformers.TrainingArguments):
+class SFTConfig(trl.SFTConfig):
     """
     Arguments related to the training process itself. For all parameters, see: https://huggingface.co/docs/transformers/v4.26.1/en/main_classes/trainer#transformers.TrainingArguments
     Also used for the continued pretraining task.
@@ -256,7 +257,7 @@ class SFTConfig(transformers.TrainingArguments):
 
 
 @dataclass
-class DPOConfig(transformers.TrainingArguments):
+class DPOConfig(trl.SFTConfig):
     """
     Arguments related to the DPO training process itself. For all parameters, see: https://huggingface.co/docs/transformers/v4.26.1/en/main_classes/trainer#transformers.TrainingArguments
     """
