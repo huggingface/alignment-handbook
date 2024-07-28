@@ -5,13 +5,14 @@ This directory contains various comparisons for three algorithms: DPO, IPO, and 
 - OpenHermes-2.5 and the OpenOrca datasets 
 
 We release a collection containing the datasets and models used for these experiments, if you require the other trained models, we can release them on request.
-You can find a longer decription of there results in our [blogpost](https://huggingface.co/blog/pref-tuning)
+You can find a longer description of these results in our [blogpost](https://huggingface.co/blog/pref-tuning)
+
 ## Comparisons
 For each algorithm, we aim to tune the beta parameter for a fixed learning rate. We vary beta from 0.1-0.9 in steps of 0.1, we have also found that in certain configurations a tiny value of beta, 0.01, can be effective. So we have included this smaller value in all our comparisons.
 
 ## Usage
 The experiments can be launched with the following bash script:
-```
+```bash
 #!/bin/bash
 
 # Define an array containing the base configs we wish to fine tune
