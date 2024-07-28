@@ -18,7 +18,6 @@ import sys
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, NewType, Optional, Tuple
 
-import transformers
 from transformers import MODEL_FOR_CAUSAL_LM_MAPPING, HfArgumentParser
 
 import trl
