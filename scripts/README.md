@@ -28,7 +28,7 @@ ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_con
 ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/fsdp+qlora.yaml --num_processes={num_gpus} scripts/run_{task}.py recipes/{model_name}/{task}/config_qlora.yaml --torch_dtype=bfloat16 --bnb_4bit_quant_storage=bfloat16
 ```
 
-Here `{task}` refers to the type of training you wish to run. Currently the following tasks are supported:
+Here `{task}` refers to the type of training you wish to run. Currently, the following tasks are supported:
 * continued pretraining `cpt` (note that `cpt` is only present in the `gpt-nl` example recipe)
 * supervised finetuning `sft`
 * direct preference optimisation `dpo`
@@ -119,7 +119,7 @@ If you format your dataset in the same way, our training scripts should work out
 We recommend benchmarking chat models on:
 
 * [MT-Bench](https://huggingface.co/spaces/lmsys/mt-bench): a multi-turn benchmark spanning 80 dialogues and 10 domains.
-* [AlpacaEval](https://github.com/tatsu-lab/alpaca_eval): a single-turn benchmark which evaluates the helpfulness of chat and instruct models against `text-davinci-003`.
+* [AlpacaEval](https://github.com/tatsu-lab/alpaca_eval): a single-turn benchmark that evaluates the helpfulness of chat and instruct models against `text-davinci-003`.
 
 For both benchmarks, we have added support for the [Zephyr chat template](https://huggingface.co/alignment-handbook/zephyr-7b-sft-full/blob/ac6e600eefcce74f5e8bae1035d4f66019e93190/tokenizer_config.json#L30) (which is the default produced by our scripts), so you can evaluate models produced by our scripts as follows:
 
