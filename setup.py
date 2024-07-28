@@ -43,7 +43,7 @@ if stale_egg_info.exists():
 _deps = [
     "accelerate>=0.29.2",
     "bitsandbytes>=0.43.0",
-    "black==23.1.0",
+    "black>=24.4.2",
     "datasets>=2.18.0",
     "deepspeed>=0.14.4",
     "einops>=0.6.1",
