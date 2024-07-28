@@ -2,7 +2,7 @@
 model_name_or_path: mistralai/Mistral-7B-v0.1
 model_revision: main
 torch_dtype: bfloat16
-use_flash_attention_2: true
+attn_implementation: flash_attention_2
 
 # LoRA arguments
 load_in_4bit: true
@@ -31,7 +31,7 @@ preprocessing_num_workers: 12
 # SFT trainer config
 bf16: true
 do_eval: true
-evaluation_strategy: epoch
+eval_strategy: epoch
 gradient_accumulation_steps: 2
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:

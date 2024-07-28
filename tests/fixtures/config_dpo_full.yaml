@@ -14,7 +14,7 @@ preprocessing_num_workers: 12
 bf16: true
 beta: 0.1
 do_eval: true
-evaluation_strategy: steps
+eval_strategy: steps
 eval_steps: 100
 gradient_accumulation_steps: 1
 gradient_checkpointing: true

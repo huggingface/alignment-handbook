@@ -16,7 +16,7 @@ beta: 0.01
 loss_type: sigmoid
 do_eval: true
 do_train: true
-evaluation_strategy: steps
+eval_strategy: steps
 eval_steps: 100
 gradient_accumulation_steps: 2
 gradient_checkpointing: true
