@@ -257,4 +257,3 @@ class DPOConfig(trl.DPOConfig):
         default="main",
         metadata={"help": ("The Hub model branch to push the model to.")},
     )
-    remove_unused_columns: bool = field(default=False)
