@@ -124,7 +124,7 @@ class ApplyChatTemplateTest(unittest.TestCase):
     def test_maybe_insert_system_message(self):
         # does not accept system prompt
         mistral_tokenizer = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-Instruct-v0.2")
-        # accepts system prompt. use codellama since it has no HF token reqiurement
+        # accepts system prompt. use codellama since it has no HF token requirement
         llama_tokenizer = AutoTokenizer.from_pretrained("codellama/CodeLlama-7b-hf")
         messages_sys_excl = [{"role": "user", "content": "Tell me a joke."}]
         messages_sys_incl = [{"role": "system", "content": ""}, {"role": "user", "content": "Tell me a joke."}]
