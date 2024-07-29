@@ -71,7 +71,7 @@ class H4ArgumentParser(HfArgumentParser):
                         inputs[arg] = [str(v) for v in val.split(",")]
 
                     # bool of a non-empty string is True, so we manually check for bools
-                    if base_type == bool:
+                    if base_type is bool:
                         if val in ["true", "True"]:
                             inputs[arg] = True
                         else:
@@ -187,7 +187,8 @@ class ModelArguments:
     )
     use_bnb_nested_quant: bool = field(default=False, metadata={"help": "use nested quantization"})
     bnb_4bit_quant_storage: Optional[str] = field(
-        default="uint8", metadata={"help": "storage type to pack the quanitzed 4-bit prarams."}
+        default="uint8",
+        metadata={"help": "storage type to pack the quanitzed 4-bit prarams."},
     )
 
     def __post_init__(self):
@@ -245,9 +246,6 @@ class SFTConfig(trl.SFTConfig):
     hub_model_revision: Optional[str] = field(
         default="main",
         metadata={"help": ("The Hub model branch to push the model to.")},
-    )
-    dataset_kwargs: Optional[Dict[str, Any]] = field(
-        default=None, metadata={"help": "Dataset kwargs for the SFTTrainer"}
     )
     logging_first_step: bool = field(
         default=True,
