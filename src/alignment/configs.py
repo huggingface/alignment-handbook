@@ -242,6 +242,9 @@ class SFTConfig(trl.SFTConfig):
     Also used for the continued pretraining task.
     """
 
+    dataset_kwargs: Optional[Dict[str, Any]] = field(
+        default=None, metadata={"help": "Dataset kwargs for the SFTTrainer"}
+    )
     logging_first_step: bool = field(
         default=True,
         metadata={"help": ("Whether to log and evaluate the first global_step or not.")},
