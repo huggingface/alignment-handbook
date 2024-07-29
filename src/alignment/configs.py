@@ -250,7 +250,7 @@ class SFTConfig(trl.SFTConfig):
 @dataclass
 class DPOConfig(trl.DPOConfig):
     """
-    Arguments related to the DPO training process itself. For all parameters, see: https://huggingface.co/docs/transformers/v4.26.1/en/main_classes/trainer#transformers.TrainingArguments
+    Arguments related to the DPO training process itself. For all parameters, see: https://huggingface.co/docs/transformers/v4.39.3/en/main_classes/trainer#transformers.TrainingArguments
     """
 
     hub_model_revision: Optional[str] = field(
