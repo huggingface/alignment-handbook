@@ -257,3 +257,9 @@ class DPOConfig(trl.DPOConfig):
         default="main",
         metadata={"help": ("The Hub model branch to push the model to.")},
     )
+    logging_first_step: bool = field(
+        default=True,
+        metadata={"help": ("Whether to log and evaluate the first global_step or not.")},
+    )
+    optim: Optional[str] = field(default="rmsprop")
+    remove_unused_columns: bool = field(default=False)
