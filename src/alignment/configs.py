@@ -238,7 +238,7 @@ class DataArguments:
 @dataclass
 class SFTConfig(trl.SFTConfig):
     """
-    Arguments related to the training process itself. For all parameters, see: https://huggingface.co/docs/transformers/v4.26.1/en/main_classes/trainer#transformers.TrainingArguments
+    Arguments related to the training process itself. For all parameters, see: https://huggingface.co/docs/transformers/v4.39.3/en/main_classes/trainer#transformers.TrainingArguments
     Also used for the continued pretraining task.
     """
 
