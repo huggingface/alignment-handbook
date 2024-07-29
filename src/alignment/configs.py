@@ -242,6 +242,10 @@ class SFTConfig(trl.SFTConfig):
     Also used for the continued pretraining task.
     """
 
+    hub_model_revision: Optional[str] = field(
+        default="main",
+        metadata={"help": ("The Hub model branch to push the model to.")},
+    )
     dataset_kwargs: Optional[Dict[str, Any]] = field(
         default=None, metadata={"help": "Dataset kwargs for the SFTTrainer"}
     )
