@@ -49,8 +49,8 @@ If you would like to train chat models on your own datasets, we recommend follow
 
 The initial release of the handbook will focus on the following techniques:
 
-* **Continued pretraining:** adapt language models to a new language or domain, or simply improve it by continue pretraning (causal language modeling) on a new dataset.
-* **Supervised fine-tuning:** teach language models to follow instructions and tips on how to collect and curate your own training dataset.
+* **Continued pretraining:** adapt language models to a new language or domain, or simply improve it by continued pretraining (causal language modeling) on a new dataset.
+* **Supervised fine-tuning:** teach language models to follow instructions and tips on how to collect and curate your training dataset.
 * **Reward modeling:** teach language models to distinguish model responses according to human or AI preferences.
 * **Rejection sampling:** a simple, but powerful technique to boost the performance of your SFT model.
 * **Direct preference optimisation (DPO):** a powerful and promising alternative to PPO.

@@ -17,7 +17,7 @@ bf16: true
 beta: 0.1
 do_eval: true
 do_train: true
-evaluation_strategy: steps
+eval_strategy: steps
 eval_steps: 1000
 gradient_accumulation_steps: 1
 gradient_checkpointing: true

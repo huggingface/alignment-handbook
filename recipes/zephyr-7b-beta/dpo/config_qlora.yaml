@@ -1,7 +1,7 @@
 # Model arguments
 model_name_or_path: alignment-handbook/zephyr-7b-sft-qlora
 torch_dtype: bfloat16
-use_flash_attention_2: true
+attn_implementation: flash_attention_2
 
 # LoRA arguments
 use_peft: true
@@ -31,7 +31,7 @@ preprocessing_num_workers: 12
 bf16: true
 beta: 0.01
 do_eval: true
-evaluation_strategy: steps
+eval_strategy: steps
 eval_steps: 100
 gradient_accumulation_steps: 4
 gradient_checkpointing: true
