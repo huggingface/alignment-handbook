@@ -119,7 +119,7 @@ If you find the content of this repo useful in your work, please cite it as foll
 
 ```bibtex
 @software{Tunstall_The_Alignment_Handbook,
-  author = {Tunstall, Lewis and Beeching, Edward and Lambert, Nathan and Rajani, Nazneen and Huang, Shengyi and Rasul, Kashif and M. Rush, Alexander and Wolf, Thomas},
+  author = {Tunstall, Lewis and Beeching, Edward and Lambert, Nathan and Rajani, Nazneen and Huang, Shengyi and Rasul, Kashif and Bartolome, Alvaro and M. Rush, Alexander and Wolf, Thomas},
   license = {Apache-2.0},
   title = {{The Alignment Handbook}},
   url = {https://github.com/huggingface/alignment-handbook},
