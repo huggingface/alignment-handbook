@@ -29,13 +29,20 @@ REPLACE_PATTERNS = {
         r'\1version="VERSION",',
     ),
     "citation": (re.compile(r"^version:\s+[^ ]+", re.MULTILINE), "version: VERSION"),
+    "readme": (
+        re.compile(r"version\s+=\s+\{[^}]+\}", re.MULTILINE),
+        "version = {VERSION}",
+    ),
 }
+
+README_FILE = "README.md"
+
 REPLACE_FILES = {
     "init": "src/alignment/__init__.py",
     "setup": "setup.py",
     "citation": "CITATION.cff",
+    "readme": README_FILE,
 }
-README_FILE = "README.md"
 
 
 def update_version_in_file(fname, version, pattern):
