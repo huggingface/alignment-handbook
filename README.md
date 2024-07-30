@@ -115,7 +115,7 @@ You can now check out the `scripts` and `recipes` directories for instructions o
 
 ## Citation
 
-If you find the content of this repo useful in your work, please cite it as follows via '\usepackage{biblatex}`:
+If you find the content of this repo useful in your work, please cite it as follows via `\usepackage{biblatex}`:
 
 ```bibtex
 @software{Tunstall_The_Alignment_Handbook,
