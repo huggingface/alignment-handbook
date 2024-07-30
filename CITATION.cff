@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+title: The Alignment Handbook
+message: >-
+  Robust recipes to align language models with human and AI
+  preferences.
+type: software
+authors:
+  - given-names: Lewis
+    family-names: Tunstall
+  - given-names: Edward
+    family-names: Beeching
+  - given-names: Nathan
+    family-names: Lambert
+  - given-names: Nazneen
+    family-names: Rajani
+  - given-names: Shengyi
+    family-names: Huang
+  - given-names: Kashif
+    family-names: Rasul
+  - given-names: Alvaro
+    family-names: Bartolome
+  - given-names: Alexander
+    name-particle: M.
+    family-names: Rush
+  - given-names: Thomas
+    family-names: Wolf
+repository-code: 'https://github.com/huggingface/alignment-handbook'
+license: Apache-2.0
+version: 0.3.0.dev0

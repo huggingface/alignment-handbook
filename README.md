@@ -115,15 +115,14 @@ You can now check out the `scripts` and `recipes` directories for instructions o
 
 ## Citation
 
-If you find the content of this repo useful in your work, please cite it as follows:
+If you find the content of this repo useful in your work, please cite it as follows via '\usepackage{biblatex}`:
 
 ```bibtex
-@misc{alignment_handbook2023,
-  author = {Lewis Tunstall and Edward Beeching and Nathan Lambert and Nazneen Rajani and Shengyi Huang and Kashif Rasul and Alexander M. Rush and Thomas Wolf},
-  title = {The Alignment Handbook},
-  year = {2023},
-  publisher = {GitHub},
-  journal = {GitHub repository},
-  howpublished = {\url{https://github.com/huggingface/alignment-handbook}}
+@software{Tunstall_The_Alignment_Handbook,
+  author = {Tunstall, Lewis and Beeching, Edward and Lambert, Nathan and Rajani, Nazneen and Huang, Shengyi and Rasul, Kashif and Bartolome, Alvaro and M. Rush, Alexander and Wolf, Thomas},
+  license = {Apache-2.0},
+  title = {{The Alignment Handbook}},
+  url = {https://github.com/huggingface/alignment-handbook},
+  version = {0.3.0.dev0}
 }
 ```
