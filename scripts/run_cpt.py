@@ -200,7 +200,7 @@ def main():
 
     if training_args.push_to_hub is True:
         logger.info("Pushing to hub...")
-        trainer.push_to_hub(revision=training_args.hub_model_revision, **kwargs)
+        trainer.push_to_hub(**kwargs)
 
     logger.info("*** Training complete ***")
 
