@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Dict
 
 import torch
-from transformers import AutoTokenizer, BitsAndBytesConfig, PreTrainedTokenizer
+from transformers import AutoTokenizer, PreTrainedTokenizer
 from transformers.trainer_utils import get_last_checkpoint
 
 from accelerate import Accelerator
@@ -39,28 +39,6 @@ def get_kbit_device_map() -> Dict[str, int] | None:
     """Useful for running inference with quantized models by setting `device_map=get_peft_device_map()`"""
     return {"": get_current_device()} if torch.cuda.is_available() else None
 
-
-def get_quantization_config(model_args: ModelArguments) -> BitsAndBytesConfig | None:
-    if model_args.load_in_4bit:
-        compute_dtype = torch.float16
-        if model_args.torch_dtype not in {"auto", None}:
-            compute_dtype = getattr(torch, model_args.torch_dtype)
-
-        quantization_config = BitsAndBytesConfig(
-            load_in_4bit=True,
-            bnb_4bit_compute_dtype=compute_dtype,
-            bnb_4bit_quant_type=model_args.bnb_4bit_quant_type,
-            bnb_4bit_use_double_quant=model_args.use_bnb_nested_quant,
-            bnb_4bit_quant_storage=model_args.bnb_4bit_quant_storage,
-        )
-    elif model_args.load_in_8bit:
-        quantization_config = BitsAndBytesConfig(
-            load_in_8bit=True,
-        )
-    else:
-        quantization_config = None
-
-    return quantization_config
 
 
 def get_tokenizer(

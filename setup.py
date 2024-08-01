@@ -42,7 +42,6 @@ if stale_egg_info.exists():
 #   * If a dependency is fast-moving (e.g. transformers), pin to the exact version
 _deps = [
     "accelerate>=0.29.2",
-    "bitsandbytes>=0.43.0",
     "black>=24.4.2",
     "datasets>=2.18.0",
     "deepspeed>=0.14.4",
@@ -94,7 +93,6 @@ extras["dev"] = extras["docs"] + extras["quality"] + extras["tests"]
 # core dependencies shared across the whole project - keep this to a bare minimum :)
 install_requires = [
     deps["accelerate"],
-    deps["bitsandbytes"],
     deps["einops"],
     deps["evaluate"],
     deps["datasets"],
