@@ -108,7 +108,7 @@ def main():
     torch_dtype = (
         model_args.torch_dtype if model_args.torch_dtype in ["auto", None] else getattr(torch, model_args.torch_dtype)
     )
-    quantization_config = get_quantization_config(model_args)
+    quantization_config = get_quantization_config(model_args).to_dict()
 
     model_kwargs = dict(
         revision=model_args.model_revision,
