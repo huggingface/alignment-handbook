@@ -56,7 +56,7 @@ def get_quantization_config(model_args: ModelArguments) -> BitsAndBytesConfig | 
     elif model_args.load_in_8bit:
         quantization_config = BitsAndBytesConfig(
             load_in_8bit=True,
-        )
+        ).to_dict()
     else:
         quantization_config = None
 

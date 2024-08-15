@@ -108,7 +108,7 @@ def main():
     torch_dtype = (
         model_args.torch_dtype if model_args.torch_dtype in ["auto", None] else getattr(torch, model_args.torch_dtype)
     )
-    quantization_config = get_quantization_config(model_args).to_dict()
+    quantization_config = get_quantization_config(model_args)
 
     model_kwargs = dict(
         revision=model_args.model_revision,
@@ -117,7 +117,7 @@ def main():
         torch_dtype=torch_dtype,
         use_cache=False if training_args.gradient_checkpointing else True,
         device_map=get_kbit_device_map() if quantization_config is not None else None,
-        quantization_config=quantization_config.to_dict(),
+        quantization_config=quantization_config,
     )
 
     model = model_args.model_name_or_path
