@@ -1,0 +1,53 @@
+# Model arguments
+model_name_or_path: HuggingFaceTB/SmolLM-360M
+model_revision: main
+tokenizer_name_or_path: HuggingFaceTB/SmolLM-360M-Instruct # Custom tokenizer with <|im_start|> and <|im_end|> tokens
+torch_dtype: bfloat16
+use_flash_attention_2: true
+
+# Data training arguments
+dataset_mixer:
+  HuggingFaceTB/Magpie-Pro-300K-Filtered-H4: 1.0 
+  HuggingFaceTB/self-oss-instruct-sc2-H4: 1.0 
+  HuggingFaceTB/OpenHermes-2.5-H4: 0.001 
+  HuggingFaceTB/everyday-conversations-llama3.1-2k: 1.0 
+  HuggingFaceTB/instruct-data-basics-smollm-H4: 1.0 
+
+dataset_splits:
+- train_sft
+- test_sft
+preprocessing_num_workers: 36
+
+# SFT trainer config
+bf16: true
+dataset_kwargs:
+  add_special_tokens: false  # We already wrap <bos> and <eos> in the chat template
+  append_concat_token: false # No need to add <eos> across samples
+do_eval: true
+evaluation_strategy: epoch
+gradient_accumulation_steps: 4
+gradient_checkpointing: true
+gradient_checkpointing_kwargs:
+  use_reentrant: false
+hub_model_id: smollm-360M-instruct-new
+hub_strategy: every_save
+learning_rate: 1.0e-03 # 3e-4
+log_level: info
+logging_steps: 5
+logging_strategy: steps
+lr_scheduler_type: cosine
+max_seq_length: 2048
+max_steps: -1
+num_train_epochs: 1
+output_dir: data/smollm-360M-instruct-new
+overwrite_output_dir: true
+per_device_eval_batch_size: 4
+per_device_train_batch_size: 4
+push_to_hub: true
+remove_unused_columns: true
+report_to:
+- tensorboard
+- wandb
+save_strategy: "no"
+seed: 42
+warmup_ratio: 0.1
