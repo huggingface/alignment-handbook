@@ -122,21 +122,21 @@ class ApplyChatTemplateTest(unittest.TestCase):
         )
 
     def test_maybe_insert_system_message(self):
-        # does not accept system prompt
-        mistral_tokenizer = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-Instruct-v0.2")
-        # accepts system prompt. use codellama since it has no HF token requirement
-        llama_tokenizer = AutoTokenizer.from_pretrained("codellama/CodeLlama-7b-hf")
+        # Chat template that does not accept system prompt. Use community checkpoint since it has no HF token requirement
+        tokenizer_sys_excl = AutoTokenizer.from_pretrained("mistral-community/Mistral-7B-Instruct-v0.3")
+        # Chat template that accepts system prompt
+        tokenizer_sys_incl = AutoTokenizer.from_pretrained("Qwen/Qwen2-7B-Instruct")
         messages_sys_excl = [{"role": "user", "content": "Tell me a joke."}]
         messages_sys_incl = [{"role": "system", "content": ""}, {"role": "user", "content": "Tell me a joke."}]
 
-        mistral_messages = deepcopy(messages_sys_excl)
-        llama_messages = deepcopy(messages_sys_excl)
-        maybe_insert_system_message(mistral_messages, mistral_tokenizer)
-        maybe_insert_system_message(llama_messages, llama_tokenizer)
+        messages_proc_excl = deepcopy(messages_sys_excl)
+        message_proc_incl = deepcopy(messages_sys_excl)
+        maybe_insert_system_message(messages_proc_excl, tokenizer_sys_excl)
+        maybe_insert_system_message(message_proc_incl, tokenizer_sys_incl)
 
         # output from mistral should not have a system message, output from llama should
-        self.assertEqual(mistral_messages, messages_sys_excl)
-        self.assertEqual(llama_messages, messages_sys_incl)
+        self.assertEqual(messages_proc_excl, messages_sys_excl)
+        self.assertEqual(message_proc_incl, messages_sys_incl)
 
     def test_sft(self):
         dataset = self.dataset.map(
