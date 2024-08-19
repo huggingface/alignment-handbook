@@ -15,7 +15,6 @@
 import unittest
 
 import torch
-from transformers import AutoTokenizer
 
 from alignment import (
     DataArguments,
