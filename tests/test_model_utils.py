@@ -14,8 +14,6 @@
 # limitations under the License.
 import unittest
 
-import torch
-
 from alignment import (
     DataArguments,
     ModelArguments,
