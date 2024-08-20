@@ -52,11 +52,11 @@ def get_quantization_config(model_args: ModelArguments) -> BitsAndBytesConfig | 
             bnb_4bit_quant_type=model_args.bnb_4bit_quant_type,
             bnb_4bit_use_double_quant=model_args.use_bnb_nested_quant,
             bnb_4bit_quant_storage=model_args.bnb_4bit_quant_storage,
-        )
+        ).to_dict()
     elif model_args.load_in_8bit:
         quantization_config = BitsAndBytesConfig(
             load_in_8bit=True,
-        )
+        ).to_dict()
     else:
         quantization_config = None
 
