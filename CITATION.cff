@@ -26,4 +26,4 @@ authors:
     family-names: Wolf
 repository-code: 'https://github.com/huggingface/alignment-handbook'
 license: Apache-2.0
-version: 0.3.0.dev0
+version: 0.3.0

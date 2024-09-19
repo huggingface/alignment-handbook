@@ -124,6 +124,6 @@ If you find the content of this repo useful in your work, please cite it as foll
   license = {Apache-2.0},
   title = {{The Alignment Handbook}},
   url = {https://github.com/huggingface/alignment-handbook},
-  version = {0.3.0.dev0}
+  version = {0.3.0}
 }
 ```
