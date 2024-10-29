@@ -2,7 +2,7 @@
 
 ## Fine-tuning
 
-In the handbook, we provide three main ways to align LLMs for chat:
+In the handbook, we provide four main ways to align LLMs for chat:
 
 - Full fine-tuning on a multi-GPU machine with DeepSpeed ZeRO-3 (tested on an 8 x A100 (80GB) node).
 - LoRA or QLoRA fine-tuning on a single consumer 24GB GPU (tested on an RTX 4090).
