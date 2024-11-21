@@ -1,0 +1,49 @@
+# Model arguments
+model_name_or_path: HuggingFaceTB/SmolLM2-1.7B
+model_revision: main
+tokenizer_name_or_path: HuggingFaceTB/SmolLM2-1.7B-Instruct # Custom tokenizer with <|im_start|> and <|im_end|> tokens
+torch_dtype: bfloat16
+use_flash_attention_2: true
+
+# Data training arguments
+dataset_mixer:
+  HuggingFaceTB/smoltalk: 1.0
+
+dataset_configs:
+- all
+
+dataset_splits:
+- train
+- test
+preprocessing_num_workers: 36
+
+# SFT trainer config
+bf16: true
+do_eval: true
+evaluation_strategy: epoch
+gradient_accumulation_steps: 4
+gradient_checkpointing: true
+gradient_checkpointing_kwargs:
+  use_reentrant: false
+hub_model_id: smollm2-1.7B-sft
+hub_strategy: every_save
+learning_rate: 3.0e-04 
+log_level: info
+logging_steps: 5
+logging_strategy: steps
+lr_scheduler_type: cosine
+max_seq_length: 8192
+max_steps: -1
+num_train_epochs: 2
+output_dir: data/smollm2-1.7B-sft
+overwrite_output_dir: true
+per_device_eval_batch_size: 4
+per_device_train_batch_size: 4
+push_to_hub: true
+remove_unused_columns: true
+report_to:
+- tensorboard
+- wandb
+save_strategy: "no"
+seed: 42
+warmup_ratio: 0.1
