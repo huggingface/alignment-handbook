@@ -75,6 +75,15 @@ bash run_poft.sh
 If you find the content of this repo useful in your work, please cite it as follows via `\usepackage{biblatex}`:
 
 ```bibtex
+@misc{fan2024preferenceorientedsupervisedfinetuningfavoring,
+      title={Preference-Oriented Supervised Fine-Tuning: Favoring Target Model Over Aligned Large Language Models}, 
+      author={Yuchen Fan and Yuzhong Hong and Qiushi Wang and Junwei Bao and Hongfei Jiang and Yang Song},
+      year={2024},
+      eprint={2412.12865},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2412.12865}, 
+}
 @software{Tunstall_The_Alignment_Handbook,
   author = {Tunstall, Lewis and Beeching, Edward and Lambert, Nathan and Rajani, Nazneen and Huang, Shengyi and Rasul, Kashif and Bartolome, Alvaro and M. Rush, Alexander and Wolf, Thomas},
   license = {Apache-2.0},
