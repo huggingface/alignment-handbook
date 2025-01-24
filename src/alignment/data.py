@@ -154,7 +154,10 @@ def get_datasets(
         #     - 'dataset1': 0.5
         #     - 'dataset2': 0.3
         #     - 'dataset3': 0.2
-        dataset_mixer = data_config.dataset_mixer
+        if type(data_config.dataset_mixer) is str :
+            dataset_mixer = {data_config.dataset_mixer: 1}
+        else:
+            dataset_mixer = data_config.dataset_mixer
     elif isinstance(data_config, dict):
         # Structure of the input is:
         #     dataset_mixer = {
@@ -215,10 +218,10 @@ def mix_datasets(
         for split in splits:
             try:
                 # Try first if dataset on a Hub repo
-                dataset = load_dataset(ds, ds_config, split=split)
+                dataset = load_from_disk(os.path.join(ds, split))
             except DatasetGenerationError:
                 # If not, check local dataset
-                dataset = load_from_disk(os.path.join(ds, split))
+                dataset = load_dataset(ds, ds_config, split=split)
 
             # Remove redundant columns to avoid schema conflicts on load
             dataset = dataset.remove_columns([col for col in dataset.column_names if col not in columns_to_keep])

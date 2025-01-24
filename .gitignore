@@ -162,3 +162,7 @@ cython_debug/
 # Temp folders
 data/
 wandb/
+test/
+
+# test scripts
+run_poft_example.sh

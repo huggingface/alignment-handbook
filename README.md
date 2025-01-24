@@ -29,9 +29,9 @@ direct you to the [PyTorch Installation Page](https://pytorch.org/get-started/lo
 You can then install the remaining package dependencies as follows:
 
 ```shell
-git clone https://github.com/huggingface/alignment-handbook.git
-cd ./alignment-handbook/
-python -m pip install .
+git clone https://github.com/Savannah120/alignment-handbook-PoFT.git
+cd ./alignment-handbook-PoFT/
+pip install -e .
 ```
 
 You will also need Flash Attention 2 installed, which can be done by running:
@@ -57,17 +57,40 @@ sudo apt-get install git-lfs
 
 
 ## Run PoFT
-### First step: preprocess the data
-You can generate the preference scores for the aligned LLMs by running:
-
-```shell
-python generate_preference_scores.py
-```
-
-### Second step: Training
+### Overall training script:
 ```shell
 bash run_poft.sh
 ```
+, which contains the following steps:
+
+#### First step: generate preference scores
+
+```shell
+python generate_preference_scores.py \
+      --data_path /path/to/raw/data \
+      --model_name_or_path /path/to/the/aligned/LLM \
+      --json_save_path /path/to/the/save/file
+```
+Note that you should convert your data into the format of Ultrachat_200k, which contains ```['prompt','prompt_id','messages'] ```
+
+https://huggingface.co/datasets/HuggingFaceH4/ultrachat_200k
+
+#### Second step: merge preference scores
+```shell
+python merge_prefrence_scores.py \
+        --data_root /path/to/preference/scores/root \
+        --save_path /path/to/merged/results
+```
+
+#### Third step: training
+```shell
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/deepspeed_zero3.yaml scripts/run_poft.py 
+                            recipes/zephyr-7b-beta/sft/config_full_poft.yaml \
+                            --dataset_mixer=/path/to/merged/results \
+                            --model_name_or_path=/path/to/the/initial/model \
+                            --output_dir=/path/to/save/model 
+```
+
 
 
 ## Citation
