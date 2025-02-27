@@ -66,7 +66,7 @@ _deps = [
     "tensorboard",
     "torch>=2.1.2",
     "transformers>=4.39.3",
-    "trl>=0.9.6",
+    "trl>=0.9.6,<0.13.0",
     "jinja2>=3.0.0",
     "tqdm>=4.64.1",
 ]
