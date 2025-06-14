@@ -1,0 +1,48 @@
+# Model arguments
+model_name_or_path: CohereLabs/c4ai-command-r7b-arabic-02-2025 
+model_revision: main
+tokenizer_name_or_path: CohereLabs/c4ai-command-r7b-arabic-02-2025 
+torch_dtype: bfloat16
+attn_implementation: eager
+
+# Data training arguments
+dataset_mixer:
+  /workspace/data/dhd-wsd-june2025-exp1-smpl: 1.0
+dataset_splits:
+- train
+- test
+preprocessing_num_workers: 12
+text_column: messages
+
+# SFT trainer config
+bf16: true
+dataset_kwargs:
+  add_special_tokens: false  
+  append_concat_token: false # No need to add <eos> across samples
+dataset_text_field: messages
+gradient_accumulation_steps: 4
+gradient_checkpointing: true
+gradient_checkpointing_kwargs:
+  use_reentrant: false
+hub_model_id: wsd-temporal-exp1
+learning_rate: 2.0e-05
+log_level: info
+logging_steps: 5
+logging_strategy: steps
+lr_scheduler_type: cosine
+max_seq_length: 2048
+max_steps: -1
+num_train_epochs: 1
+output_dir: /workspace/output/wsd-temporal-exp1 
+overwrite_output_dir: true
+per_device_train_batch_size: 1
+push_to_hub: false
+remove_unused_columns: false
+report_to:
+- tensorboard
+save_strategy: steps
+save_steps: 1000
+save_total_limit: 2
+seed: 42
+warmup_ratio: 0.1
+packing: false

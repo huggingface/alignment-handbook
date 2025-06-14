@@ -199,6 +199,7 @@ def mix_datasets(
         shuffle (`bool`, *optional*, defaults to `True`):
             Whether to shuffle the training and testing/validation data.
     """
+    print(splits)
     splits = ["train", "test"] if splits is None else splits
     configs = [None] * len(dataset_mixer) if not configs else configs
     columns_to_keep = [] if columns_to_keep is None else columns_to_keep
@@ -209,38 +210,40 @@ def mix_datasets(
     raw_datasets = DatasetDict()
     raw_train_datasets = []
     raw_val_datasets = []
-    fracs = []
     for (ds, frac), ds_config in zip(dataset_mixer.items(), configs):
-        fracs.append(frac)
+        if frac < 0:
+            raise ValueError("Dataset fractions cannot be negative.")
+
         for split in splits:
-            try:
-                # Try first if dataset on a Hub repo
-                dataset = load_dataset(ds, ds_config, split=split)
-            except DatasetGenerationError:
-                # If not, check local dataset
+            if os.path.isdir(ds):
                 dataset = load_from_disk(os.path.join(ds, split))
+            else:
+                try:
+                    # Try first if dataset on a Hub repo
+                    dataset = load_dataset(ds, ds_config, split=split)
+                except DatasetGenerationError as e:
+                    raise ValueError(
+                        f"Dataset '{ds}' not found on Hub or as a local directory. Please check the name."
+                    ) from e
 
             # Remove redundant columns to avoid schema conflicts on load
             dataset = dataset.remove_columns([col for col in dataset.column_names if col not in columns_to_keep])
             if "train" in split:
-                raw_train_datasets.append(dataset)
+                if frac == 1.0:
+                    raw_train_datasets.append(dataset)
+                elif frac > 0:
+                    train_subset = dataset.select(range(int(frac * len(dataset))))
+                    raw_train_datasets.append(train_subset)
             elif "test" in split:
                 raw_val_datasets.append(dataset)
             else:
                 raise ValueError(f"Split type {split} not recognized as one of test or train.")
 
-    if any(frac < 0 for frac in fracs):
-        raise ValueError("Dataset fractions cannot be negative.")
-
     if len(raw_train_datasets) > 0:
-        train_subsets = []
-        for dataset, frac in zip(raw_train_datasets, fracs):
-            train_subset = dataset.select(range(int(frac * len(dataset))))
-            train_subsets.append(train_subset)
         if shuffle:
-            raw_datasets["train"] = concatenate_datasets(train_subsets).shuffle(seed=42)
+            raw_datasets["train"] = concatenate_datasets(raw_train_datasets).shuffle(seed=42)
         else:
-            raw_datasets["train"] = concatenate_datasets(train_subsets)
+            raw_datasets["train"] = concatenate_datasets(raw_train_datasets)
     # No subsampling for test datasets to enable fair comparison across models
     if len(raw_val_datasets) > 0:
         if shuffle:

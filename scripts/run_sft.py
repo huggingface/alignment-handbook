@@ -146,11 +146,14 @@ def main():
     # Decontaminate benchmarks
     ##########################
     num_raw_train_samples = len(raw_datasets["train"])
-    raw_datasets = raw_datasets.filter(decontaminate_humaneval, batched=True, batch_size=10_000, num_proc=1)
-    num_filtered_train_samples = num_raw_train_samples - len(raw_datasets["train"])
-    logger.info(
-        f"Decontaminated {num_filtered_train_samples} ({num_filtered_train_samples/num_raw_train_samples * 100:.2f}%) samples from the training set."
-    )
+    if num_raw_train_samples == 0:
+        raise ValueError("No train data found. Please ensure that the training data is properly loaded and formatted.")
+
+    #raw_datasets = raw_datasets.filter(decontaminate_humaneval, batched=True, batch_size=10_000, num_proc=1)
+    #num_filtered_train_samples = num_raw_train_samples - len(raw_datasets["train"])
+    #logger.info(
+    #    f"Decontaminated {num_filtered_train_samples} ({num_filtered_train_samples/num_raw_train_samples * 100:.2f}%) samples from the training set."
+    #)
 
     train_dataset = raw_datasets["train"]
     eval_dataset = raw_datasets["test"]
@@ -158,6 +161,9 @@ def main():
     with training_args.main_process_first(desc="Log a few random samples from the processed training set"):
         for index in random.sample(range(len(raw_datasets["train"])), 3):
             logger.info(f"Sample {index} of the processed training set:\n\n{raw_datasets['train'][index]['text']}")
+
+    logger.info(f"Number of training examples: {len(train_dataset)}")
+    logger.info(f"Number of evaluation examples: {len(eval_dataset)}")
 
     ########################
     # Initialize the Trainer
