@@ -1,0 +1,69 @@
+# Config for 8 nodes, with GBS 128
+# Model arguments
+model_name_or_path: HuggingFaceTB/smollm3-3B-base-final-remote-code
+model_revision: main
+torch_dtype: bfloat16
+attn_implementation: flash_attention_2
+trust_remote_code: true
+
+# Data training arguments
+chat_template: "{%- for message in messages -%}\n    {{- \"<|im_start|>\" + message.role + \"\\n\" + message.content + \"<|im_end|>\" + \"\\n\" -}}\n{%- endfor -%}\n{%- if add_generation_prompt -%}\n\t{{- \"<|im_start|>assistant\\n\" -}}\n{%- endif -%}"
+dataset_mixture:
+  datasets:                     
+    - id: HuggingFaceTB/smoltalk2 
+      config: Mid 
+      split: Llama_Nemotron_Post_Training_Dataset_reasoning_r1            
+      columns:
+        - messages
+      weight: 1.0
+    - id: HuggingFaceTB/smoltalk2
+      config: Mid
+      split: OpenThoughts3_1.2M         
+      columns:
+        - messages
+      weight: 1.0
+  seed: 0
+dataset_num_proc: 12
+eos_token: <|im_end|>
+
+# SFT trainer config
+bf16: true
+ddp_timeout: 14400 # avoid nccl errors when tokenizing large datasets
+do_eval: false
+eval_strategy: 'no'
+gradient_accumulation_steps: 2
+gradient_checkpointing: true
+gradient_checkpointing_kwargs:
+  use_reentrant: true
+hub_model_id: HuggingFaceTB/SmolLM3-SFT
+hub_model_revision: v14.00
+output_dir: data/SmolLM3-SFT-v14.00
+hub_strategy: every_save
+learning_rate: 2.0e-05
+log_level: info
+logging_steps: 1
+logging_strategy: steps
+lr_scheduler_type: cosine_with_min_lr
+lr_scheduler_kwargs:
+  min_lr_rate: 0.1
+packing: true
+max_grad_norm: 0.2
+max_length: 32768
+max_steps: -1
+num_train_epochs: 5
+overwrite_output_dir: true
+per_device_train_batch_size: 1
+push_to_hub: true
+report_to:
+- wandb
+save_strategy: steps
+save_steps: 0.05 # save every 0.25 epochs
+save_total_limit: 1
+seed: 42
+use_liger_kernel: true
+warmup_ratio: 0.03
+wandb_entity: huggingface
+wandb_project: SmolLM3
+wandb_run_group: SmolLM3-SFT
+run_name: v14.00
+average_tokens_across_devices: true

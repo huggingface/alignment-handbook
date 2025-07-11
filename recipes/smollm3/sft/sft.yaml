@@ -1,0 +1,233 @@
+# Config for 8 nodes
+# Model arguments
+model_name_or_path: HuggingFaceTB/SmolLM3-SFT
+model_revision: v14.01-step-000033664
+torch_dtype: bfloat16
+attn_implementation: flash_attention_2
+trust_remote_code: true
+
+# Data training arguments
+chat_template: "{# ───── defaults ───── #}\n{%- if enable_thinking is not defined -%}\n{%- set enable_thinking = true -%}\n{%- endif -%}\n\n{# ───── reasoning mode ───── #}\n{%- if enable_thinking -%}\n  {%- set reasoning_mode = \"/think\" -%}\n{%- else -%}\n  {%- set reasoning_mode = \"/no_think\" -%}\n{%- endif -%}\n\n{# ───── header (system message) ───── #}\n{{- \"<|im_start|>system\\n\" -}}\n\n{%- if messages[0].role == \"system\" -%}\n  {%- set system_message = messages[0].content -%}\n  {%- if \"/no_think\" in system_message -%}\n    {%- set reasoning_mode = \"/no_think\" -%}\n  {%- elif \"/think\" in system_message -%}\n    {%- set reasoning_mode = \"/think\" -%}\n  {%- endif -%}\n  {%- set custom_instructions = system_message.replace(\"/no_think\", \"\").replace(\"/think\", \"\").rstrip() -%}\n{%- endif -%}\n\n{%- if \"/system_override\" in system_message -%}\n  {{- custom_instructions.replace(\"/system_override\", \"\").rstrip() -}}\n  {{- \"<|im_end|>\\n\" -}}\n{%- else -%}\n  {{- \"## Metadata\\n\\n\" -}}\n  {{- \"Knowledge Cutoff Date: June 2025\\n\" -}}\n  {%- set today = strftime_now(\"%d %B %Y\") -%}\n  {{- \"Today Date: \" ~ today ~ \"\\n\" -}}\n  {{- \"Reasoning Mode: \" + reasoning_mode + \"\\n\\n\" -}}\n  \n  {{- \"## Custom Instructions\\n\\n\" -}}\n  {%- if custom_instructions -%}\n    {{- custom_instructions + \"\\n\\n\" -}}\n  {%- elif reasoning_mode == \"/think\" -%}\n    {{- \"You are a helpful AI assistant named SmolLM, trained by Hugging Face. Your role as an assistant involves thoroughly exploring questions through a systematic thinking process before providing the final precise and accurate solutions. This requires engaging in a comprehensive cycle of analysis, summarizing, exploration, reassessment, reflection, backtracking, and iteration to develop well-considered thinking process. Please structure your response into two main sections: Thought and Solution using the specified format: <think> Thought section </think> Solution section. In the Thought section, detail your reasoning process in steps. Each step should include detailed considerations such as analysing questions, summarizing relevant findings, brainstorming new ideas, verifying the accuracy of the current steps, refining any errors, and revisiting previous steps. In the Solution section, based on various attempts, explorations, and reflections from the Thought section, systematically present the final solution that you deem correct. The Solution section should be logical, accurate, and concise and detail necessary steps needed to reach the conclusion.\\n\\n\" -}}\n  {%- else -%}\n    {{- \"You are a helpful AI assistant named SmolLM, trained by Hugging Face.\\n\\n\" -}}\n  {%- endif -%}\n  \n  {{- \"## Tools\\n\\n\" -}}\n  {{- \"### XML Tools\\n\\n\" -}}\n  {%- if tools -%}\n    {%- set ns = namespace(xml_tool_string=\"You may call one or more functions to assist with the user query.\\n\\nYou are provided with function signatures within <tools></tools> XML tags:\\n\\n<tools>\\n\") -%}\n    {%- for tool in tools -%}\n      {%- set ns.xml_tool_string = ns.xml_tool_string ~ (tool | tojson) ~ \"\\n\" -%}\n    {%- endfor -%}\n    {%- set xml_tools = ns.xml_tool_string + \"</tools>\\n\\nFor each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags.\" -%}\n  {%- endif -%}\n  {%- if xml_tools -%}\n    {{- xml_tools -}}\n  {%- else -%}\n    {{- \"None\"  -}}\n  {%- endif -%}\n  {{- \"\\n\\n\" -}}\n  {{- \"### Python Tools\\n\\n\" -}}\n  {%- if python_tools -%}\n    {{- python_tools -}}\n  {%- else -%}\n    {{- \"None\"  -}}\n  {%- endif -%}\n  {{- \"\\n\\n\" -}}\n  {{- \"<|im_end|>\\n\" -}}\n{%- endif -%}\n\n{# ───── main loop ───── #}\n{%- for message in messages -%}\n    {%- set content = message.content if message.content is string else \"\" -%}\n    {%- if message.role == \"user\" -%}\n        {{ \"<|im_start|>\" + message.role + \"\\n\"  + content + \"<|im_end|>\\n\" }}\n    {%- elif message.role == \"assistant\" -%}\n        {% generation %}\n        {%- if reasoning_mode == \"/think\" -%}\n            {{ \"<|im_start|>assistant\\n\" + content.lstrip(\"\\n\") + \"<|im_end|>\\n\" }}\n        {%- else -%}\n            {{ \"<|im_start|>assistant\\n\" + \"<think>\\n\\n</think>\\n\" + content.lstrip(\"\\n\") + \"<|im_end|>\\n\" }}\n        {%- endif -%}\n        {% endgeneration %}\n\n    {%- elif message.role == \"tool\" -%}\n    {{ \"<|im_start|>\" + \"user\\n\"  + content + \"<|im_end|>\\n\" }}\n    {%- endif -%}\n{%- endfor -%}\n\n{# ───── generation prompt ───── #}\n{%- if add_generation_prompt -%}\n    {%- if reasoning_mode == \"/think\" -%}\n        {{ \"<|im_start|>assistant\\n\" }}\n    {%- else -%}\n        {{ \"<|im_start|>assistant\\n\" + \"<think>\\n\\n</think>\\n\"  }}\n    {%- endif -%}\n{%- endif -%}"
+dataset_mixture:
+  datasets:
+    - id: HuggingFaceTB/smoltalk2
+      config: SFT
+      split: smoltalk_smollm3_everyday_conversations_no_think
+      columns:
+        - messages
+        - chat_template_kwargs
+      weight: 1.0
+    - id: HuggingFaceTB/smoltalk2
+      config: SFT
+      split: smoltalk_smollm3_systemchats_30k_no_think
+      columns:
+        - messages
+        - chat_template_kwargs
+      weight: 1.0
+    - id: HuggingFaceTB/smoltalk2
+      config: SFT
+      split: tulu_3_sft_personas_instruction_following_no_think         
+      columns:
+        - messages
+        - chat_template_kwargs
+      weight: 1.0
+    - id: HuggingFaceTB/smoltalk2
+      config: SFT
+      split: hermes_function_calling_v1_no_think     
+      columns:
+        - messages
+        - chat_template_kwargs
+      weight: 1.0
+    - id: HuggingFaceTB/smoltalk2
+      config: SFT
+      split: smoltalk_smollm3_smol_magpie_ultra_no_think       
+      columns:
+        - messages
+        - chat_template_kwargs
+      weight: 0.5
+    - id: HuggingFaceTB/smoltalk2
+      config: SFT
+      split: smoltalk_multilingual_8languages_lang_5_no_think
+      columns:
+        - messages
+        - chat_template_kwargs
+      weight: 1.0
+    - id: HuggingFaceTB/smoltalk2
+      config: SFT
+      split: table_gpt_no_think
+      columns:
+        - messages
+        - chat_template_kwargs
+      weight: 1.0
+    - id: HuggingFaceTB/smoltalk2
+      config: SFT
+      split: OpenHermes_2.5_no_think
+      columns:
+        - messages
+        - chat_template_kwargs
+      weight: 0.5
+    - id: HuggingFaceTB/smoltalk2
+      config: SFT
+      split: OpenThoughts3_1.2M_no_think_no_think
+      columns:
+        - messages
+        - chat_template_kwargs
+      weight: 0.4
+    - id: HuggingFaceTB/smoltalk2
+      config: SFT
+      split: Mixture_of_Thoughts_science_no_think
+      columns:
+        - messages
+        - chat_template_kwargs
+      weight: 1
+    - id: HuggingFaceTB/smoltalk2
+      config: SFT
+      split: smoltalk_smollm3_explore_instruct_rewriting_no_think
+      columns:
+        - messages
+        - chat_template_kwargs
+      weight: 1
+    - id: HuggingFaceTB/smoltalk2
+      config: SFT
+      split: smoltalk_smollm3_smol_rewrite_no_think
+      columns:
+        - messages
+        - chat_template_kwargs
+      weight: 1
+    - id: HuggingFaceTB/smoltalk2
+      config: SFT
+      split: smoltalk_smollm3_smol_summarize_no_think
+      columns:
+        - messages
+        - chat_template_kwargs
+      weight: 1
+    - id: HuggingFaceTB/smoltalk2
+      config: SFT
+      split: LongAlign_64k_context_lang_annotated_lang_6_no_think
+      columns:
+        - messages
+        - chat_template_kwargs
+      weight: 1
+    - id: HuggingFaceTB/smoltalk2
+      config: SFT
+      split: multi_turn_reasoning_if_think   
+      columns:
+        - messages
+        - chat_template_kwargs
+      weight: 1.0
+    - id: HuggingFaceTB/smoltalk2
+      config: SFT
+      split: smoltalk_everyday_convs_reasoning_Qwen3_32B_think
+      columns:
+        - messages
+        - chat_template_kwargs
+      weight: 1.0
+    - id: HuggingFaceTB/smoltalk2
+      config: SFT
+      split: smoltalk_systemchats_Qwen3_32B_think    
+      columns:
+        - messages
+        - chat_template_kwargs
+      weight: 1.0
+    - id: HuggingFaceTB/smoltalk2
+      config: SFT
+      split: xlam_traces_no_think
+      columns:
+        - messages
+        - chat_template_kwargs
+      weight: 1
+    - id: HuggingFaceTB/smoltalk2
+      config: SFT
+      split: smolagents_toolcalling_traces_think
+      columns:
+        - messages
+        - chat_template_kwargs
+      weight: 1
+    - id: HuggingFaceTB/smoltalk2
+      config: SFT
+      split: s1k_1.1_think
+      columns:
+        - messages
+        - chat_template_kwargs
+      weight: 1.0
+    - id: HuggingFaceTB/smoltalk2
+      config: SFT
+      split: LongAlign_64k_Qwen3_32B_yarn_131k_think     
+      columns:
+        - messages
+        - chat_template_kwargs
+      weight: 1.0
+    - id: HuggingFaceTB/smoltalk2
+      config: SFT
+      split: aya_dataset_Qwen3_32B_think            
+      columns:
+        - messages
+        - chat_template_kwargs
+      weight: 1.0
+    - id: HuggingFaceTB/smoltalk2
+      config: SFT
+      split: smoltalk_multilingual8_Qwen3_32B_think
+      columns:
+        - messages
+        - chat_template_kwargs
+      weight: 0.3
+    - id: HuggingFaceTB/smoltalk2
+      config: SFT
+      split: OpenThoughts3_1.2M_think
+      columns:
+        - messages
+        - chat_template_kwargs
+      weight: 0.02
+    - id: HuggingFaceTB/smoltalk2
+      config: SFT
+      split: table_gpt_Qwen3_32B_think
+      columns:
+        - messages
+        - chat_template_kwargs
+      weight: 1
+  seed: 0
+dataset_num_proc: 12
+eos_token: <|im_end|>
+
+# SFT trainer config
+assistant_only_loss: true
+bf16: true
+ddp_timeout: 18000 # avoid nccl errors when tokenizing large datasets
+do_eval: false
+eval_strategy: 'no'
+gradient_accumulation_steps: 2
+gradient_checkpointing: true
+gradient_checkpointing_kwargs:
+  use_reentrant: true
+hub_model_id: HuggingFaceTB/SmolLM3-SFT
+hub_model_revision: v70.00
+output_dir: data/SmolLM3-SFT-v70.00
+hub_strategy: every_save
+learning_rate: 2.0e-05
+log_level: info
+logging_steps: 1
+logging_strategy: steps
+lr_scheduler_type: cosine_with_min_lr
+lr_scheduler_kwargs:
+  min_lr_rate: 0.1
+packing: true
+packing_strategy: ffd 
+max_grad_norm: 0.2
+max_length: 65536
+max_steps: -1
+num_train_epochs: 5
+overwrite_output_dir: true
+per_device_train_batch_size: 1
+push_to_hub: true
+report_to:
+- wandb
+save_strategy: epoch
+save_total_limit: 1
+seed: 42
+use_liger_kernel: true
+warmup_ratio: 0.03
+wandb_entity: huggingface
+wandb_project: SmolLM3
+wandb_run_group: SmolLM3-SFT
+run_name: v70.00
+average_tokens_across_devices: true
