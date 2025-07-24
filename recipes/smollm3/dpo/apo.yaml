@@ -1,0 +1,71 @@
+# Config for 2 node, with GBS 32
+# Model arguments
+model_name_or_path: HuggingFaceTB/SmolLM3-SFT
+model_revision: v70.00-step-000000928
+torch_dtype: bfloat16
+attn_implementation: flash_attention_2
+trust_remote_code: true
+
+# Data training arguments
+dataset_mixture:
+  datasets:                     
+    - id: HuggingFaceTB/smoltalk2
+      config: Preference
+      split: llama_3.1_tulu_3_8b_preference_mixture_no_think     
+      columns:
+        - chosen
+        - rejected
+        - prompt
+        - chat_template_kwargs
+      weight: 0.5
+    - id: HuggingFaceTB/smoltalk2
+      config: Preference
+      split: tulu_3_8b_pref_mix_Qwen3_32B_Qwen3_0.6B_think 
+      columns:
+        - chosen
+        - rejected
+        - prompt
+        - chat_template_kwargs
+      weight: 0.25
+dataset_num_proc: 12
+# DPO trainer config
+bf16: true
+do_eval: false
+eval_strategy: 'no'
+gradient_accumulation_steps: 2
+gradient_checkpointing: true
+gradient_checkpointing_kwargs:
+  use_reentrant: true
+hub_model_id: HuggingFaceTB/SmolLM3-DPO
+hub_model_revision: v20.00
+output_dir: data/SmolLM3-DPO-v20.00
+run_name: SmolLM3-DPO-v20.00
+
+hub_strategy: every_save
+learning_rate: 1.0e-06
+log_level: info
+logging_steps: 1
+logging_strategy: steps
+lr_scheduler_type: cosine_with_min_lr
+lr_scheduler_kwargs:
+  min_lr_rate: 0.1
+max_grad_norm: 0.2
+beta: 0.05
+loss_type: apo_zero
+max_length: 24576
+num_train_epochs: 1
+overwrite_output_dir: true
+per_device_train_batch_size: 1
+push_to_hub: true
+padding_free: true
+report_to:
+- wandb
+save_strategy: steps
+save_steps: 0.5
+save_total_limit: 1
+seed: 42
+use_liger_kernel: true
+warmup_ratio: 0.1
+wandb_entity: huggingface
+wandb_project: SmolLM3
+wandb_run_group: SmolLM3-DPO

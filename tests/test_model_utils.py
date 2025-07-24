@@ -14,8 +14,6 @@
 # limitations under the License.
 import unittest
 
-import torch
-
 from alignment import (
     DataArguments,
     ModelArguments,
@@ -31,15 +29,15 @@ class GetQuantizationConfigTest(unittest.TestCase):
     def test_4bit(self):
         model_args = ModelArguments(load_in_4bit=True)
         quantization_config = get_quantization_config(model_args)
-        self.assertTrue(quantization_config.load_in_4bit)
-        self.assertEqual(quantization_config.bnb_4bit_compute_dtype, torch.float16)
-        self.assertEqual(quantization_config.bnb_4bit_quant_type, "nf4")
-        self.assertFalse(quantization_config.bnb_4bit_use_double_quant)
+        self.assertTrue(quantization_config["load_in_4bit"])
+        self.assertEqual(quantization_config["bnb_4bit_compute_dtype"], "float16")
+        self.assertEqual(quantization_config["bnb_4bit_quant_type"], "nf4")
+        self.assertFalse(quantization_config["bnb_4bit_use_double_quant"])
 
     def test_8bit(self):
         model_args = ModelArguments(load_in_8bit=True)
         quantization_config = get_quantization_config(model_args)
-        self.assertTrue(quantization_config.load_in_8bit)
+        self.assertTrue(quantization_config["load_in_8bit"])
 
     def test_no_quantization(self):
         model_args = ModelArguments()
