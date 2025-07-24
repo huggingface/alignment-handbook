@@ -16,6 +16,7 @@
 # Full training
 python scripts/orpo.py \
     --dataset_name trl-lib/ultrafeedback_binarized \
+    --max_length 2048 \
     --model_name_or_path Qwen/Qwen2-0.5B-Instruct \
     --learning_rate 5.0e-7 \
     --num_train_epochs 1 \
