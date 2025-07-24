@@ -10,7 +10,7 @@ dataset_mixer:
   argilla/distilabel-capybara-dpo-7k-binarized: 1.0
 dataset_splits:
 - train
-preprocessing_num_workers: 8
+dataset_num_proc: 8
 
 # ORPOTrainer arguments
 bf16: true

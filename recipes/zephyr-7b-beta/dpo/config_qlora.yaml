@@ -25,7 +25,7 @@ dataset_mixer:
 dataset_splits:
 - train_prefs
 - test_prefs
-preprocessing_num_workers: 12
+dataset_num_proc: 12
 
 # DPOTrainer arguments
 bf16: true

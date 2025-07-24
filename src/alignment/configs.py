@@ -79,11 +79,6 @@ class ScriptArguments(trl.ScriptArguments):
                 seed: 42
                 test_split_size: 0.1
     """
-
-    # Override the dataset_name to make it optional
-    dataset_name: Optional[str] = field(
-        default=None, metadata={"help": "Dataset name. Can be omitted if using dataset_mixture."}
-    )
     dataset_mixture: Optional[dict[str, Any]] = field(
         default=None,
         metadata={"help": "Configuration for creating dataset mixtures with advanced options like shuffling."},

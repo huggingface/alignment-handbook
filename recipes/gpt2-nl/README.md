@@ -35,7 +35,7 @@ Finally, to align the model better with feedback, we can finetune the SFT output
 ACCELERATE_LOG_LEVEL=info accelerate launch \
     --config_file recipes/accelerate_configs/multi_gpu.yaml \
     --num_processes 4 \
-    scripts/run_dpo.py recipes/gpt2-nl/dpo/config_full.yaml
+    scripts/dpo.py recipes/gpt2-nl/dpo/config_full.yaml
 ```
 
 ## Conclusion

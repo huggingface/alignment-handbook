@@ -86,7 +86,7 @@ uv pip install .
 You will also need Flash Attention 2 installed, which can be done by running:
 
 ```shell
-MAX_JOBS=4 uv pip install flash-attn --no-build-isolation
+uv pip install "flash-attn==2.7.4.post1" --no-build-isolation
 ```
 
 Next, log into your Hugging Face account as follows:

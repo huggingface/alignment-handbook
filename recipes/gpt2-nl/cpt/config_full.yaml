@@ -10,7 +10,7 @@ dataset_splits:
   - train
 dataset_configs:
   - tiny
-preprocessing_num_workers: 12
+dataset_num_proc: 12
 
 # SFT trainer config
 bf16: true

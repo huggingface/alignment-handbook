@@ -17,5 +17,5 @@ You will require 8 GPUs (80GB of VRAM) to train the full model - alternatively, 
 ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/zero3.yaml scripts/sft.py recipes/starchat2-15b/sft/config_v0.1.yaml
 
 # Step 2 - DPO
-ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/zero3.yaml scripts/run_dpo.py recipes/starchat2-15b/dpo/config_v0.1.yaml
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/zero3.yaml scripts/dpo.py recipes/starchat2-15b/dpo/config_v0.1.yaml
 ```

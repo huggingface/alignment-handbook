@@ -1,4 +1,5 @@
 # Comparing Preference Alignment Algorithms
+
 This directory contains various comparisons for three algorithms: DPO, IPO, and KTO. Each algorithm has been run in different hyperparameter configurations to study their performance. Two different models and datasets have been used to compare the performance of each algorithm:
 
 - zephyr-beta-sft and Ultrafeedback

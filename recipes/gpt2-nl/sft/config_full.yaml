@@ -10,7 +10,7 @@ dataset_mixer:
 dataset_splits:
 - train_sft
 - test_sft
-preprocessing_num_workers: 12
+dataset_num_proc: 12
 
 # SFT trainer config
 bf16: true
