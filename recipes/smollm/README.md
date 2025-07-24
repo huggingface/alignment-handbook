@@ -15,5 +15,5 @@ Follow the installation instructions in https://github.com/huggingface/alignment
 We train the models on 8 GPUs using the following command:
 
 ```shell
-ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/zero3.yaml scripts/sft.py recipes/smollm/sft/config.yaml
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/zero3.yaml scripts/sft.py --config recipes/smollm/sft/config.yaml
 ```
