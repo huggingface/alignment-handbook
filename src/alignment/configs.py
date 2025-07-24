@@ -79,6 +79,7 @@ class ScriptArguments(trl.ScriptArguments):
                 seed: 42
                 test_split_size: 0.1
     """
+
     dataset_mixture: Optional[dict[str, Any]] = field(
         default=None,
         metadata={"help": "Configuration for creating dataset mixtures with advanced options like shuffling."},

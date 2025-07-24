@@ -57,15 +57,8 @@ import transformers
 from transformers import set_seed
 from transformers.trainer_utils import get_last_checkpoint
 
-from trl import (
-    DPOTrainer,
-    ModelConfig,
-    TrlParser,
-    get_peft_config,
-)
-from alignment import ScriptArguments, DPOConfig, get_dataset, get_model, get_tokenizer
-from trl import ModelConfig, SFTTrainer, TrlParser, get_peft_config, setup_chat_format
-
+from alignment import DPOConfig, ScriptArguments, get_dataset, get_model, get_tokenizer
+from trl import DPOTrainer, ModelConfig, TrlParser, get_peft_config
 
 
 logger = logging.getLogger(__name__)
