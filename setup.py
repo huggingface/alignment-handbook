@@ -52,7 +52,7 @@ _deps = [
     "hf-doc-builder>=0.4.0",
     "huggingface-hub>=0.33.4,<1.0",
     "isort>=5.12.0",
-    "ninja>=1.11.1",
+    "liger-kernel>=0.6.0" "ninja>=1.11.1",
     "numpy>=1.24.2",
     "packaging>=23.0",
     "parameterized>=0.9.0",
@@ -68,6 +68,7 @@ _deps = [
     "trl>=0.19.1",
     "jinja2>=3.0.0",
     "tqdm>=4.64.1",
+    "wandb",
 ]
 
 # this is a lookup table with items like:
@@ -100,6 +101,7 @@ install_requires = [
     deps["deepspeed"],
     deps["huggingface-hub"],
     deps["jinja2"],
+    deps["liger-kernel"],
     deps["ninja"],
     deps["numpy"],
     deps["packaging"],  # utilities from PyPA to e.g., compare versions
@@ -112,6 +114,7 @@ install_requires = [
     deps["tqdm"],  # progress bars in model download and training scripts
     deps["transformers"],
     deps["trl"],
+    deps["wandb"],
 ]
 
 setup(

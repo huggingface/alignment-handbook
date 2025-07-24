@@ -24,7 +24,7 @@ As other recipes, such as the famous zephyr-7b-beta recipe, have shown, we can t
 ACCELERATE_LOG_LEVEL=info accelerate launch \
     --config_file recipes/accelerate_configs/multi_gpu.yaml \
     --num_processes 4 \
-    scripts/run_sft.py recipes/gpt2-nl/sft/config_full.yaml
+    scripts/sft.py recipes/gpt2-nl/sft/config_full.yaml
 ```
 
 ## Direct preference optimisation

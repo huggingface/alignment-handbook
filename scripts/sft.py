@@ -18,9 +18,9 @@ Supervised fine-tuning script for decoder language models.
 Usage:
 
 # One 1 node of 8 x H100s
-accelerate launch --config_file=recipes/accelerate_configs/zero3.yaml examples/smollm3/scripts/sft.py \
+accelerate launch --config_file recipes/accelerate_configs/zero3.yaml scripts/sft.py \
     --model_name_or_path Qwen/Qwen2.5-1.5B-Instruct \
-    --dataset_name open-r1/OpenR1-Math-220k \
+    --dataset_name trl-lib/Capybara \
     --learning_rate 2.0e-5 \
     --num_train_epochs 1 \
     --packing \
@@ -28,11 +28,11 @@ accelerate launch --config_file=recipes/accelerate_configs/zero3.yaml examples/s
     --per_device_train_batch_size 2 \
     --gradient_accumulation_steps 8 \
     --gradient_checkpointing \
-    --bf16 \
+    --bf16 true \
     --logging_steps 5 \
     --eval_strategy steps \
     --eval_steps 100 \
-    --output_dir data/Qwen2.5-1.5B-Open-R1-Distill
+    --output_dir data/Qwen2.5-1.5B-SFT
 """
 
 import logging
@@ -44,20 +44,14 @@ import transformers
 from transformers import set_seed
 from transformers.trainer_utils import get_last_checkpoint
 
+from alignment import ScriptArguments, SFTConfig, get_dataset, get_model, get_tokenizer
 from trl import ModelConfig, SFTTrainer, TrlParser, get_peft_config, setup_chat_format
-from trl.internal.callbacks import get_callbacks
-from trl.internal.configs import ScriptArguments, SFTConfig
-from trl.internal.dataset_utils import get_dataset
-from trl.internal.hub import check_hub_revision_exists
-from trl.internal.model_utils import get_model, get_tokenizer
-from trl.internal.wandb_logging import init_wandb_training
 
 
 logger = logging.getLogger(__name__)
 
 
 def main(script_args, training_args, model_args):
-    check_hub_revision_exists(training_args)
     # Set seed for reproducibility
     set_seed(training_args.seed)
 
@@ -86,9 +80,6 @@ def main(script_args, training_args, model_args):
         last_checkpoint = get_last_checkpoint(training_args.output_dir)
     if last_checkpoint is not None and training_args.resume_from_checkpoint is None:
         logger.info(f"Checkpoint detected, resuming training at {last_checkpoint=}.")
-
-    if "wandb" in training_args.report_to:
-        init_wandb_training(training_args)
 
     ################
     # Load datasets
@@ -119,7 +110,6 @@ def main(script_args, training_args, model_args):
         eval_dataset=(dataset[script_args.dataset_test_split] if training_args.eval_strategy != "no" else None),
         processing_class=tokenizer,
         peft_config=get_peft_config(model_args),
-        callbacks=get_callbacks(training_args, model_args),
     )
 
     ###############
@@ -145,13 +135,15 @@ def main(script_args, training_args, model_args):
     # Align the model's generation config with the tokenizer's eos token
     # to avoid unbounded generation in the transformers `pipeline()` function
     trainer.model.generation_config.eos_token_id = tokenizer.eos_token_id
+    trainer.model.config.eos_token_id = tokenizer.eos_token_id
     trainer.save_model(training_args.output_dir)
     logger.info(f"Model saved to {training_args.output_dir}")
 
     # Save everything else on main process
     kwargs = {
+        "model_name": training_args.hub_model_id if training_args.push_to_hub else None,
         "dataset_name": script_args.dataset_name,
-        "tags": ["handbook"],
+        "tags": ["alignment-handbook"],
     }
     if trainer.accelerator.is_main_process:
         trainer.create_model_card(**kwargs)
