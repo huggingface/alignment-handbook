@@ -1,7 +1,7 @@
 # Config for 8 nodes
 # Model arguments
-model_name_or_path: HuggingFaceTB/SmolLM3-SFT
-model_revision: v14.01-step-000033664
+model_name_or_path: HuggingFaceTB/SmolLM3-3B-checkpoints
+model_revision: it-mid-training
 torch_dtype: bfloat16
 attn_implementation: flash_attention_2
 trust_remote_code: true
@@ -199,9 +199,7 @@ gradient_accumulation_steps: 2
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: true
-hub_model_id: HuggingFaceTB/SmolLM3-SFT
-hub_model_revision: v70.00
-output_dir: data/SmolLM3-SFT-v70.00
+output_dir: data/SmolLM3-SFT
 hub_strategy: every_save
 learning_rate: 2.0e-05
 log_level: info
@@ -226,8 +224,5 @@ save_total_limit: 1
 seed: 42
 use_liger_kernel: true
 warmup_ratio: 0.03
-wandb_entity: huggingface
-wandb_project: SmolLM3
-wandb_run_group: SmolLM3-SFT
-run_name: v70.00
+run_name: smollm3-sft-training
 average_tokens_across_devices: true
