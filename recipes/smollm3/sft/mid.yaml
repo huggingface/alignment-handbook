@@ -1,6 +1,6 @@
 # Config for 8 nodes, with GBS 128
 # Model arguments
-model_name_or_path: HuggingFaceTB/smollm3-3B-base-final-remote-code
+model_name_or_path: HuggingFaceTB/SmolLM3-3B-Base
 model_revision: main
 torch_dtype: bfloat16
 attn_implementation: flash_attention_2
@@ -23,7 +23,7 @@ dataset_mixture:
         - messages
       weight: 1.0
   seed: 0
-dataset_num_proc: 12
+dataset_num_proc: 48
 eos_token: <|im_end|>
 
 # SFT trainer config
@@ -35,9 +35,7 @@ gradient_accumulation_steps: 2
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: true
-hub_model_id: HuggingFaceTB/SmolLM3-SFT
-hub_model_revision: v14.00
-output_dir: data/SmolLM3-SFT-v14.00
+output_dir: data/SmolLM3-Mid
 hub_strategy: every_save
 learning_rate: 2.0e-05
 log_level: info
@@ -62,8 +60,5 @@ save_total_limit: 1
 seed: 42
 use_liger_kernel: true
 warmup_ratio: 0.03
-wandb_entity: huggingface
-wandb_project: SmolLM3
-wandb_run_group: SmolLM3-SFT
-run_name: v14.00
+run_name: smollm3-midtraining
 average_tokens_across_devices: true

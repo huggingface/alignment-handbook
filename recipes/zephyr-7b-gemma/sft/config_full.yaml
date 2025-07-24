@@ -1,17 +1,28 @@
 # Model arguments
 model_name_or_path: google/gemma-7b
 model_revision: main
-tokenizer_name_or_path: philschmid/gemma-tokenizer-chatml # Custom tokenizer with <|im_start|> and <|im_end|> tokens
 torch_dtype: bfloat16
 attn_implementation: flash_attention_2
 
 # Data training arguments
-dataset_mixer:
-  HuggingFaceH4/deita-10k-v0-sft: 1.0
-dataset_splits:
-- train_sft
-- test_sft
-preprocessing_num_workers: 12
+chat_template: "{% if messages[0]['role'] == 'user' or messages[0]['role'] == 'system' %}{{ bos_token }}{% endif %}{% for message in messages %}{{ '<|im_start|>' + message['role'] + '\n' + message['content'] + '<|im_end|>' + '\n' }}{% endfor %}{% if add_generation_prompt %}{{ '<|im_start|>assistant\n' }}{% elif messages[-1]['role'] == 'assistant' %}{{ eos_token }}{% endif %}"
+dataset_mixture:
+  datasets:
+    - id: HuggingFaceH4/deita-10k-v0-sft
+      config: default
+      split: train_sft
+      columns:
+        - messages
+      weight: 1.0
+    - id: HuggingFaceH4/deita-10k-v0-sft
+      config: default
+      split: test_sft
+      columns:
+        - messages
+      weight: 1.0
+  test_split_size: 1000
+  seed: 0
+dataset_num_proc: 12
 
 # SFT trainer config
 bf16: true

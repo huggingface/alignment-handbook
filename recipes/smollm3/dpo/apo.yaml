@@ -1,7 +1,7 @@
 # Config for 2 node, with GBS 32
 # Model arguments
-model_name_or_path: HuggingFaceTB/SmolLM3-SFT
-model_revision: v70.00-step-000000928
+model_name_or_path: HuggingFaceTB/SmolLM3-3B-checkpoints
+model_revision: it-SFT
 torch_dtype: bfloat16
 attn_implementation: flash_attention_2
 trust_remote_code: true
@@ -36,10 +36,8 @@ gradient_accumulation_steps: 2
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:
   use_reentrant: true
-hub_model_id: HuggingFaceTB/SmolLM3-DPO
-hub_model_revision: v20.00
-output_dir: data/SmolLM3-DPO-v20.00
-run_name: SmolLM3-DPO-v20.00
+output_dir: data/SmolLM3-DPO
+run_name: SmolLM3-DPO
 
 hub_strategy: every_save
 learning_rate: 1.0e-06
@@ -66,6 +64,3 @@ save_total_limit: 1
 seed: 42
 use_liger_kernel: true
 warmup_ratio: 0.1
-wandb_entity: huggingface
-wandb_project: SmolLM3
-wandb_run_group: SmolLM3-DPO

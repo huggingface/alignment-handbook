@@ -41,34 +41,35 @@ if stale_egg_info.exists():
 # IMPORTANT: all dependencies should be listed here with their version requirements, if any.
 #   * If a dependency is fast-moving (e.g. transformers), pin to the exact version
 _deps = [
-    "accelerate>=0.29.2",
-    "bitsandbytes>=0.43.0",
+    "accelerate>=1.9.0",
+    "bitsandbytes>=0.46.1",
     "black>=24.4.2",
-    "datasets>=2.18.0",
-    "deepspeed>=0.14.4",
-    "einops>=0.6.1",
+    "datasets>=4.0.0",
+    "deepspeed>=0.17.2",
+    "einops>=0.8.1",
     "evaluate==0.4.0",
     "flake8>=6.0.0",
     "hf-doc-builder>=0.4.0",
-    "hf_transfer>=0.1.4",
-    "huggingface-hub>=0.19.2,<1.0",
+    "huggingface-hub>=0.33.4,<1.0",
     "isort>=5.12.0",
+    "liger-kernel>=0.6.0",
     "ninja>=1.11.1",
     "numpy>=1.24.2",
     "packaging>=23.0",
     "parameterized>=0.9.0",
-    "peft>=0.9.0",
+    "peft>=0.16.0",
     "protobuf<=3.20.2",  # Needed to avoid conflicts with `transformers`
     "pytest",
-    "safetensors>=0.3.3",
-    "sentencepiece>=0.1.99",
+    "safetensors>=0.5.3",
+    "sentencepiece>=0.2.0",
     "scipy",
     "tensorboard",
-    "torch>=2.1.2",
-    "transformers>=4.39.3",
-    "trl>=0.9.6,<0.13.0",
+    "torch>=2.6.0",
+    "transformers>=4.53.3",
+    "trl>=0.19.1",
     "jinja2>=3.0.0",
     "tqdm>=4.64.1",
+    "wandb",
 ]
 
 # this is a lookup table with items like:
@@ -99,9 +100,9 @@ install_requires = [
     deps["evaluate"],
     deps["datasets"],
     deps["deepspeed"],
-    deps["hf_transfer"],
     deps["huggingface-hub"],
     deps["jinja2"],
+    deps["liger-kernel"],
     deps["ninja"],
     deps["numpy"],
     deps["packaging"],  # utilities from PyPA to e.g., compare versions
@@ -114,6 +115,7 @@ install_requires = [
     deps["tqdm"],  # progress bars in model download and training scripts
     deps["transformers"],
     deps["trl"],
+    deps["wandb"],
 ]
 
 setup(

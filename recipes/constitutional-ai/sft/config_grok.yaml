@@ -6,13 +6,23 @@ attn_implementation: flash_attention_2
 
 # Data training arguments
 chat_template: "{% for message in messages %}\n{% if message['role'] == 'user' %}\n{{ '<|user|>\n' + message['content'] + eos_token }}\n{% elif message['role'] == 'system' %}\n{{ '<|system|>\n' + message['content'] + eos_token }}\n{% elif message['role'] == 'assistant' %}\n{{ '<|assistant|>\n'  + message['content'] + eos_token }}\n{% endif %}\n{% if loop.last and add_generation_prompt %}\n{{ '<|assistant|>' }}\n{% endif %}\n{% endfor %}"
-dataset_mixer:
-  HuggingFaceH4/grok-conversation-harmless: 0.15
-  HuggingFaceH4/ultrachat_200k: 1.0
-dataset_splits:
-- train_sft
-- test_sft
-preprocessing_num_workers: 12
+dataset_mixture:
+  datasets:
+    - id: HuggingFaceH4/grok-conversation-harmless
+      config: default
+      split: train_sft            
+      columns:
+        - messages
+      weight: 1.0
+    - id: HuggingFaceH4/ultrachat_200k
+      config: default
+      split: test_sft            
+      columns:
+        - messages
+      weight: 1.0
+  test_split_size: 1000
+  seed: 0
+dataset_num_proc: 12
 
 # SFT trainer config
 bf16: true

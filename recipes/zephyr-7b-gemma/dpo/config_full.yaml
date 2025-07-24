@@ -3,13 +3,25 @@ model_name_or_path: HuggingFaceH4/zephyr-7b-gemma-sft-v0.1
 torch_dtype: bfloat16
 
 # Data training arguments
-# For definitions, see: src/h4/training/config.py
-dataset_mixer:
-  argilla/dpo-mix-7k: 1.0
-dataset_splits:
-- train
-- test
-preprocessing_num_workers: 12
+dataset_mixture:
+  datasets:
+    - id: argilla/dpo-mix-7k
+      config: default
+      split: train
+      columns:
+        - chosen
+        - rejected
+      weight: 1.0
+    - id: argilla/dpo-mix-7k
+      config: default
+      split: test
+      columns:
+        - chosen
+        - rejected
+      weight: 1.0
+  test_split_size: 500
+  seed: 0
+dataset_num_proc: 12
 
 # DPOTrainer arguments
 bf16: true

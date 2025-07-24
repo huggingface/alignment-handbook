@@ -13,19 +13,19 @@ In practice, we find comparable performance for both full and QLoRA fine-tuning,
 
 ```shell
 # Full training with ZeRO-3 on 8 GPUs
-ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/deepspeed_zero3.yaml scripts/run_{task}.py recipes/{model_name}/{task}/config_full.yaml
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/zero3.yaml scripts/run_{task}.py --config recipes/{model_name}/{task}/config_full.yaml
 
 # QLoRA 4-bit training on a single GPU
-ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/multi_gpu.yaml --num_processes=1 scripts/run_{task}.py recipes/{model_name}/{task}/config_qlora.yaml
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/ddp.yaml --num_processes=1 scripts/run_{task}.py --config recipes/{model_name}/{task}/config_qlora.yaml
 
 # LoRA training on a single GPU
-ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/multi_gpu.yaml --num_processes=1 scripts/run_{task}.py recipes/{model_name}/{task}/config_qlora.yaml --load_in_4bit=false
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/ddp.yaml --num_processes=1 scripts/run_{task}.py --config recipes/{model_name}/{task}/config_qlora.yaml --load_in_4bit=false
 
 # LoRA training with ZeRO-3 on two or more GPUs
-ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/deepspeed_zero3.yaml --num_processes={num_gpus} scripts/run_{task}.py recipes/{model_name}/{task}/config_qlora.yaml --load_in_4bit=false
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/zero3.yaml --num_processes={num_gpus} scripts/run_{task}.py --config recipes/{model_name}/{task}/config_qlora.yaml --load_in_4bit=false
 
 # QLoRA training with FSDP on two or more GPUs
-ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/fsdp+qlora.yaml --num_processes={num_gpus} scripts/run_{task}.py recipes/{model_name}/{task}/config_qlora.yaml --torch_dtype=bfloat16 --bnb_4bit_quant_storage=bfloat16
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/fsdp+qlora.yaml --num_processes={num_gpus} scripts/run_{task}.py --config recipes/{model_name}/{task}/config_qlora.yaml --torch_dtype=bfloat16 --bnb_4bit_quant_storage=bfloat16
 ```
 
 Here `{task}` refers to the type of training you wish to run. Currently, the following tasks are supported:
@@ -38,10 +38,10 @@ Here `{task}` refers to the type of training you wish to run. Currently, the fol
 
 ```shell
 # Step 1 - train SFT policy
-ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/deepspeed_zero3.yaml scripts/run_sft.py recipes/zephyr-7b-beta/sft/config_full.yaml
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/zero3.yaml scripts/sft.py --config recipes/zephyr-7b-beta/sft/config_full.yaml
 
 # Step 2 - align with DPO
-ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/deepspeed_zero3.yaml scripts/run_dpo.py recipes/zephyr-7b-beta/dpo/config_full.yaml
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/zero3.yaml scripts/dpo.py --config recipes/zephyr-7b-beta/dpo/config_full.yaml
 ```
 
 **💡 Tip:** If you scale up/down the number of GPUs, we recommend also scaling up the per-device batch size or number of gradient accumulation steps to keep the global batch size constant (and thus replicate our results).
@@ -50,14 +50,14 @@ By default, these scripts will push each model to your Hugging Face Hub username
 
 ```shell
 # Change batch size, number of epochs etc
-ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/deepspeed_zero3.yaml scripts/run_{task}.py recipes/{model_name}/{task}/config_full.yaml --per_device_train_batch_size=42 --num_train_epochs=5
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/zero3.yaml scripts/run_{task}.py --config recipes/{model_name}/{task}/config_full.yaml --per_device_train_batch_size=42 --num_train_epochs=5
 ```
 
 ## Logging with Weights and Biases
 By default, all training metrics are logged with TensorBoard. If you have a [Weights and Biases](https://wandb.ai/site) account and are logged in, you can view the training metrics by appending `--report_to=wandb`, e.g.
 
 ```shell
-ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/deepspeed_zero3.yaml scripts/run_{task}.py recipes/{model_name}/{task}/config_full.yaml --report_to=wandb
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/zero3.yaml scripts/run_{task}.py --config recipes/{model_name}/{task}/config_full.yaml --report_to=wandb
 ```
 
 ## Launching jobs on a Slurm cluster
@@ -72,7 +72,7 @@ Here `{model_name}` and `{task}` are defined as above, while `{precision}` refer
 
 ```shell
 # Launch on Slurm and override default hyperparameters
-sbatch --job-name=handbook_sft --nodes=1 recipes/launch.slurm zephyr-7b-beta sft full deepspeed_zero3 '--per_device_train_batch_size=42 --num_train_epochs=5'
+sbatch --job-name=handbook_sft --nodes=1 recipes/launch.slurm zephyr-7b-beta sft full zero3 '--per_device_train_batch_size=42 --num_train_epochs=5'
 ```
 
 You can scale the number of nodes by increasing the `--nodes` flag.

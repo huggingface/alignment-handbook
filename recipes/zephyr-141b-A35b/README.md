@@ -19,5 +19,5 @@ Under the hood, this calls the following script which can be adapted to other mo
 
 
 ```shell
-ACCELERATE_LOG_LEVEL=info TRANSFORMERS_VERBOSITY=info accelerate launch --config_file recipes/accelerate_configs/fsdp.yaml scripts/run_orpo.py recipes/zephyr-141b-A35b/orpo/config_full.yaml
+ACCELERATE_LOG_LEVEL=info TRANSFORMERS_VERBOSITY=info accelerate launch --config_file recipes/accelerate_configs/fsdp.yaml scripts/run_orpo.py --config recipes/zephyr-141b-A35b/orpo/config_full.yaml
 ```
