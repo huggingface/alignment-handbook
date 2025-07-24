@@ -59,31 +59,34 @@ The initial release of the handbook will focus on the following techniques:
 
 ## Installation instructions
 
-To run the code in this project, first, create a Python virtual environment using e.g. Conda:
+To run the code in this project, first, create a Python virtual environment using e.g. `uv`:
 
 ```shell
-conda create -n handbook python=3.10 && conda activate handbook
+uv venv handbook --python 3.11 && source handbook/bin/activate && uv pip install --upgrade pip
 ```
 
-Next, install PyTorch `v2.1.2` - the precise version is important for reproducibility! Since this is hardware-dependent, we
-direct you to the [PyTorch Installation Page](https://pytorch.org/get-started/locally/).
+> [!TIP]
+> To install `uv`, follow the [UV Installation Guide](https://docs.astral.sh/uv/getting-started/installation/).
+
+Next, install PyTorch `v2.6.0` 
+
+```shell
+uv pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cu126
+```
+
+Note that the precise version is important for reproducibility! Since this is hardware-dependent, we also direct you to the [PyTorch Installation Page](https://pytorch.org/get-started/locally/).
 
 You can then install the remaining package dependencies as follows:
 
 ```shell
-git clone https://github.com/huggingface/alignment-handbook.git
-cd ./alignment-handbook/
-python -m pip install .
+uv pip install .
 ```
 
 You will also need Flash Attention 2 installed, which can be done by running:
 
 ```shell
-python -m pip install flash-attn --no-build-isolation
+MAX_JOBS=4 uv pip install flash-attn --no-build-isolation
 ```
-
-> **Note**
-> If your machine has less than 96GB of RAM and many CPU cores, reduce the `MAX_JOBS` arguments, e.g. `MAX_JOBS=4 pip install flash-attn --no-build-isolation`
 
 Next, log into your Hugging Face account as follows:
 

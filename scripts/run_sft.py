@@ -1,6 +1,4 @@
-#!/usr/bin/env python
-# coding=utf-8
-# Copyright 2023 The HuggingFace Inc. team. All rights reserved.
+# Copyright 2020-2025 The HuggingFace Team. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,43 +11,53 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """
 Supervised fine-tuning script for decoder language models.
+
+Usage:
+
+# One 1 node of 8 x H100s
+accelerate launch --config_file=recipes/accelerate_configs/zero3.yaml examples/smollm3/scripts/sft.py \
+    --model_name_or_path Qwen/Qwen2.5-1.5B-Instruct \
+    --dataset_name open-r1/OpenR1-Math-220k \
+    --learning_rate 2.0e-5 \
+    --num_train_epochs 1 \
+    --packing \
+    --max_seq_length 4096 \
+    --per_device_train_batch_size 2 \
+    --gradient_accumulation_steps 8 \
+    --gradient_checkpointing \
+    --bf16 \
+    --logging_steps 5 \
+    --eval_strategy steps \
+    --eval_steps 100 \
+    --output_dir data/Qwen2.5-1.5B-Open-R1-Distill
 """
 
 import logging
-import random
+import os
 import sys
 
 import datasets
-import torch
 import transformers
-from transformers import AutoModelForCausalLM, set_seed
+from transformers import set_seed
+from transformers.trainer_utils import get_last_checkpoint
 
-from alignment import (
-    DataArguments,
-    H4ArgumentParser,
-    ModelArguments,
-    SFTConfig,
-    apply_chat_template,
-    decontaminate_humaneval,
-    get_checkpoint,
-    get_datasets,
-    get_kbit_device_map,
-    get_peft_config,
-    get_quantization_config,
-    get_tokenizer,
-)
-from trl import SFTTrainer, setup_chat_format
+from trl import ModelConfig, SFTTrainer, TrlParser, get_peft_config, setup_chat_format
+from trl.internal.callbacks import get_callbacks
+from trl.internal.configs import ScriptArguments, SFTConfig
+from trl.internal.dataset_utils import get_dataset
+from trl.internal.hub import check_hub_revision_exists
+from trl.internal.model_utils import get_model, get_tokenizer
+from trl.internal.wandb_logging import init_wandb_training
 
 
 logger = logging.getLogger(__name__)
 
 
-def main():
-    parser = H4ArgumentParser((ModelArguments, DataArguments, SFTConfig))
-    model_args, data_args, training_args = parser.parse()
-
+def main(script_args, training_args, model_args):
+    check_hub_revision_exists(training_args)
     # Set seed for reproducibility
     set_seed(training_args.seed)
 
@@ -68,112 +76,50 @@ def main():
     transformers.utils.logging.enable_default_handler()
     transformers.utils.logging.enable_explicit_format()
 
-    # Log on each process a small summary
-    logger.warning(
-        f"Process rank: {training_args.local_rank}, device: {training_args.device}, n_gpu: {training_args.n_gpu}"
-        + f" distributed training: {bool(training_args.local_rank != -1)}, 16-bits training: {training_args.fp16}"
-    )
     logger.info(f"Model parameters {model_args}")
-    logger.info(f"Data parameters {data_args}")
-    logger.info(f"Training/evaluation parameters {training_args}")
+    logger.info(f"Script parameters {script_args}")
+    logger.info(f"Training parameters {training_args}")
 
     # Check for last checkpoint
-    last_checkpoint = get_checkpoint(training_args)
+    last_checkpoint = None
+    if os.path.isdir(training_args.output_dir):
+        last_checkpoint = get_last_checkpoint(training_args.output_dir)
     if last_checkpoint is not None and training_args.resume_from_checkpoint is None:
         logger.info(f"Checkpoint detected, resuming training at {last_checkpoint=}.")
 
-    ###############
-    # Load datasets
-    ###############
-    raw_datasets = get_datasets(
-        data_args,
-        splits=data_args.dataset_splits,
-        configs=data_args.dataset_configs,
-        columns_to_keep=["messages", "chosen", "rejected", "prompt", "completion", "label"],
-    )
-    logger.info(
-        f"Training on the following datasets and their proportions: {[split + ' : ' + str(dset.num_rows) for split, dset in raw_datasets.items()]}"
-    )
-    column_names = list(raw_datasets["train"].features)
+    if "wandb" in training_args.report_to:
+        init_wandb_training(training_args)
 
+    ################
+    # Load datasets
+    ################
+    dataset = get_dataset(script_args)
     ################
     # Load tokenizer
     ################
-    tokenizer = get_tokenizer(model_args, data_args)
+    tokenizer = get_tokenizer(model_args, training_args)
 
-    #######################
-    # Load pretrained model
-    #######################
-    logger.info("*** Load pretrained model ***")
-    torch_dtype = (
-        model_args.torch_dtype if model_args.torch_dtype in ["auto", None] else getattr(torch, model_args.torch_dtype)
-    )
-    quantization_config = get_quantization_config(model_args)
+    ###################
+    # Load model
+    ###################
+    logger.info("*** Loading model ***")
+    model = get_model(model_args, training_args)
 
-    model_kwargs = dict(
-        revision=model_args.model_revision,
-        trust_remote_code=model_args.trust_remote_code,
-        attn_implementation=model_args.attn_implementation,
-        torch_dtype=torch_dtype,
-        use_cache=False if training_args.gradient_checkpointing else True,
-        device_map=get_kbit_device_map() if quantization_config is not None else None,
-        quantization_config=quantization_config,
-    )
+    if tokenizer.chat_template is None:
+        logger.info("No chat template provided, using ChatML.")
+        model, tokenizer = setup_chat_format(model, tokenizer, format="chatml")
 
-    model = model_args.model_name_or_path
-    # For ChatML we need to add special tokens and resize the embedding layer
-    if "<|im_start|>" in tokenizer.chat_template and "gemma-tokenizer-chatml" not in tokenizer.name_or_path:
-        model = AutoModelForCausalLM.from_pretrained(model_args.model_name_or_path, **model_kwargs)
-        model, tokenizer = setup_chat_format(model, tokenizer)
-        model_kwargs = None
-
-    #####################
-    # Apply chat template
-    #####################
-    raw_datasets = raw_datasets.map(
-        apply_chat_template,
-        fn_kwargs={
-            "tokenizer": tokenizer,
-            "task": "sft",
-            "auto_insert_empty_system_msg": data_args.auto_insert_empty_system_msg,
-        },
-        num_proc=data_args.preprocessing_num_workers,
-        remove_columns=column_names,
-        desc="Applying chat template",
-    )
-
-    ##########################
-    # Decontaminate benchmarks
-    ##########################
-    num_raw_train_samples = len(raw_datasets["train"])
-    raw_datasets = raw_datasets.filter(decontaminate_humaneval, batched=True, batch_size=10_000, num_proc=1)
-    num_filtered_train_samples = num_raw_train_samples - len(raw_datasets["train"])
-    logger.info(
-        f"Decontaminated {num_filtered_train_samples} ({num_filtered_train_samples/num_raw_train_samples * 100:.2f}%) samples from the training set."
-    )
-
-    train_dataset = raw_datasets["train"]
-    eval_dataset = raw_datasets["test"]
-
-    with training_args.main_process_first(desc="Log a few random samples from the processed training set"):
-        for index in random.sample(range(len(raw_datasets["train"])), 3):
-            logger.info(f"Sample {index} of the processed training set:\n\n{raw_datasets['train'][index]['text']}")
-
-    ########################
-    # Initialize the Trainer
-    ########################
+    ############################
+    # Initialize the SFT Trainer
+    ############################
     trainer = SFTTrainer(
         model=model,
-        model_init_kwargs=model_kwargs,
         args=training_args,
-        train_dataset=train_dataset,
-        eval_dataset=eval_dataset,
-        dataset_text_field="text",
-        max_seq_length=training_args.max_seq_length,
-        tokenizer=tokenizer,
-        packing=True,
+        train_dataset=dataset[script_args.dataset_train_split],
+        eval_dataset=(dataset[script_args.dataset_test_split] if training_args.eval_strategy != "no" else None),
+        processing_class=tokenizer,
         peft_config=get_peft_config(model_args),
-        dataset_kwargs=training_args.dataset_kwargs,
+        callbacks=get_callbacks(training_args, model_args),
     )
 
     ###############
@@ -187,7 +133,7 @@ def main():
         checkpoint = last_checkpoint
     train_result = trainer.train(resume_from_checkpoint=checkpoint)
     metrics = train_result.metrics
-    metrics["train_samples"] = len(train_dataset)
+    metrics["train_samples"] = len(dataset[script_args.dataset_train_split])
     trainer.log_metrics("train", metrics)
     trainer.save_metrics("train", metrics)
     trainer.save_state()
@@ -196,15 +142,16 @@ def main():
     # Save model and create model card
     ##################################
     logger.info("*** Save model ***")
+    # Align the model's generation config with the tokenizer's eos token
+    # to avoid unbounded generation in the transformers `pipeline()` function
+    trainer.model.generation_config.eos_token_id = tokenizer.eos_token_id
     trainer.save_model(training_args.output_dir)
     logger.info(f"Model saved to {training_args.output_dir}")
 
     # Save everything else on main process
     kwargs = {
-        "finetuned_from": model_args.model_name_or_path,
-        "dataset": list(data_args.dataset_mixer.keys()),
-        "dataset_tags": list(data_args.dataset_mixer.keys()),
-        "tags": ["alignment-handbook"],
+        "dataset_name": script_args.dataset_name,
+        "tags": ["handbook"],
     }
     if trainer.accelerator.is_main_process:
         trainer.create_model_card(**kwargs)
@@ -218,16 +165,19 @@ def main():
     if training_args.do_eval:
         logger.info("*** Evaluate ***")
         metrics = trainer.evaluate()
-        metrics["eval_samples"] = len(eval_dataset)
+        metrics["eval_samples"] = len(dataset[script_args.dataset_test_split])
         trainer.log_metrics("eval", metrics)
         trainer.save_metrics("eval", metrics)
 
-    if training_args.push_to_hub is True:
+    #############
+    # push to hub
+    #############
+    if training_args.push_to_hub:
         logger.info("Pushing to hub...")
         trainer.push_to_hub(**kwargs)
 
-    logger.info("*** Training complete ***")
-
 
 if __name__ == "__main__":
-    main()
+    parser = TrlParser((ScriptArguments, SFTConfig, ModelConfig))
+    script_args, training_args, model_args = parser.parse_args_and_config()
+    main(script_args, training_args, model_args)
