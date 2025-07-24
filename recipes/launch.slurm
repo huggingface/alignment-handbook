@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=smollm3-posttrain
+#SBATCH --job-name=handbook
 #SBATCH --ntasks-per-node=1
 #SBATCH --exclusive
 #SBATCH --gres=gpu:8
@@ -8,11 +8,9 @@
 #SBATCH --error=./logs/%x-%j.err
 #SBATCH --requeue
 #SBATCH --time=3-00:00:00
-#SBATCH --mail-type=ALL 
-#SBATCH --mail-user=$USER+hfc@huggingface.co
 
 if [[ "$*" == *"--help"* ]]; then
-  echo "Usage: sbatch examples/smollm3/slurm/train.slurm [options]"
+  echo "Usage: sbatch recipes/launch.slurm [options]"
   echo "Options:"
   echo "  --model MODEL            Model name"
   echo "  --task TASK              Task name (e.g. sft, grpo)"
@@ -25,17 +23,13 @@ if [[ "$*" == *"--help"* ]]; then
 fi
 
 # Specific configuration optimized for the Hugging Face Compute Cluster
-module load cuda/12.4
+module load cuda/12.9
 set -x -e
 
 source ~/.bashrc
-source trl-internal/bin/activate
+source handbook/bin/activate
 START_TIME=$(date +%s)
 echo "START TIME: $(date)"
-
-# Refresh Weka on h4 cache
-# echo "Refreshing Weka filesystem..."
-# find -L /fsx/h4/ -type f | xargs -d '\n' -r -n512 -P64 weka fs tier fetch
 
 # Default values
 MODEL=""
@@ -93,7 +87,7 @@ if [[ -z "$MODEL" || -z "$TASK" || -z "$CONFIG_SUFFIX" || -z "$ACCELERATOR" ]]; 
 fi
 
 
-CONFIG_FILE=examples/smollm3/recipes/$MODEL/$TASK/config_$CONFIG_SUFFIX.yaml
+CONFIG_FILE=recipes/$MODEL/$TASK/config_$CONFIG_SUFFIX.yaml
 GRAD_ACC_STEPS=$(grep 'gradient_accumulation_steps' $CONFIG_FILE | awk '{print $2}')
 
 # Split the string into individual arguments
@@ -145,10 +139,10 @@ export NCCL_ASYNC_ERROR_HANDLING=1
 # export CUDA_LAUNCH_BLOCKING=1
 
 export CMD=" \
-    examples/smollm3/scripts/$TASK.py --config $CONFIG_FILE $OPTIONAL_ARGS
+    scripts/$TASK.py --config $CONFIG_FILE $OPTIONAL_ARGS
     "
 export LAUNCHER="ACCELERATE_LOG_LEVEL=info TRANSFORMERS_VERBOSITY=info accelerate launch \
-    --config_file examples/accelerate_configs/$ACCELERATOR.yaml  \
+    --config_file recipes/accelerate_configs/$ACCELERATOR.yaml  \
     --gradient_accumulation_steps $GRAD_ACC_STEPS \
     --num_machines $NUM_NODES \
     --num_processes $WORLD_SIZE \
