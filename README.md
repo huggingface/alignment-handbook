@@ -19,7 +19,7 @@ However, we know from the [InstructGPT](https://huggingface.co/papers/2203.02155
 The Alignment Handbook aims to fill that gap by providing the community with a series of robust training recipes that span the whole pipeline.
 
 ## News 🗞️
-* **July 24, 2025**: We release the full [post-training recipe](recipes/smollm2/README.md) behind SmolLM3-3B: a state-of-the-art hybrid reasoning model 💭
+* **July 24, 2025**: We release the full [post-training recipe](recipes/smollm3/README.md) behind SmolLM3-3B: a state-of-the-art hybrid reasoning model 💭
 * **November 21, 2024**: We release the [recipe](recipes/smollm2/README.md) for fine-tuning SmolLM2-Instruct.
 * **August 18, 2024**: We release SmolLM-Instruct v0.2, along with the [recipe](recipes/smollm/README.md)  to fine-tuning small LLMs 💻
 * **April 12, 2024**: We release Zephyr 141B (A35B), in collaboration with Argilla and Kaist AI, along with the recipe to fine-tune Mixtral 8x22B with ORPO 🪁
@@ -124,7 +124,7 @@ If you find the content of this repo useful in your work, please cite it as foll
 
 ```bibtex
 @software{Tunstall_The_Alignment_Handbook,
-  author = {Tunstall, Lewis and Beeching, Edward and Lambert, Nathan and Rajani, Nazneen and Huang, Shengyi and Rasul, Kashif and Bartolome, Alvaro, and Patiño, M. Carlos and M. Rush, Alexander and Wolf, Thomas},
+  author = {Tunstall, Lewis and Beeching, Edward and Lambert, Nathan and Rajani, Nazneen and Huang, Shengyi and Rasul, Kashif and Bartolome, Alvaro, and M. Patiño, Carlos and M. Rush, Alexander and Wolf, Thomas},
   license = {Apache-2.0},
   title = {{The Alignment Handbook}},
   url = {https://github.com/huggingface/alignment-handbook},
