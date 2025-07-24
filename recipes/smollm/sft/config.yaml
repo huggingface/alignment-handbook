@@ -1,22 +1,76 @@
 # Model arguments
 model_name_or_path: HuggingFaceTB/SmolLM-360M
 model_revision: main
-tokenizer_name_or_path: HuggingFaceTB/SmolLM-360M-Instruct # Custom tokenizer with <|im_start|> and <|im_end|> tokens
 torch_dtype: bfloat16
-use_flash_attention_2: true
+attn_implementation: flash_attention_2
 
 # Data training arguments
-dataset_mixer:
-  HuggingFaceTB/Magpie-Pro-300K-Filtered-H4: 1.0 
-  HuggingFaceTB/self-oss-instruct-sc2-H4: 1.0 
-  HuggingFaceTB/OpenHermes-2.5-H4: 0.001 
-  HuggingFaceTB/everyday-conversations-llama3.1-2k: 1.0 
-  HuggingFaceTB/instruct-data-basics-smollm-H4: 1.0 
-
-dataset_splits:
-- train_sft
-- test_sft
-dataset_num_proc: 36
+chat_template: "{% for message in messages %}{{'<|im_start|>' + message['role'] + '\n' + message['content'] + '<|im_end|>' + '\n'}}{% endfor %}{% if add_generation_prompt %}{{ '<|im_start|>assistant\n' }}{% endif %}"
+dataset_mixture:
+  datasets:
+    - id: HuggingFaceTB/Magpie-Pro-300K-Filtered-H4
+      config: default
+      split: train_sft            
+      columns:
+        - messages
+      weight: 1.0
+    - id: HuggingFaceTB/Magpie-Pro-300K-Filtered-H4
+      config: default
+      split: test_sft            
+      columns:
+        - messages
+      weight: 1.0
+    - id: HuggingFaceTB/self-oss-instruct-sc2-H4
+      config: default
+      split: train_sft            
+      columns:
+        - messages
+      weight: 1.0
+    - id: HuggingFaceTB/self-oss-instruct-sc2-H4
+      config: default
+      split: test_sft            
+      columns:
+        - messages
+      weight: 1.0
+    - id: HuggingFaceTB/OpenHermes-2.5-H4
+      config: default
+      split: train_sft            
+      columns:
+        - messages
+      weight: 0.001 
+    - id: HuggingFaceTB/OpenHermes-2.5-H4
+      config: default
+      split: test_sft            
+      columns:
+        - messages
+      weight: 0.001 
+    - id: HuggingFaceTB/everyday-conversations-llama3.1-2k
+      config: default
+      split: train_sft            
+      columns:
+        - messages
+      weight: 1.0
+    - id: HuggingFaceTB/everyday-conversations-llama3.1-2k
+      config: default
+      split: test_sft            
+      columns:
+        - messages
+      weight: 1.0
+    - id: HuggingFaceTB/instruct-data-basics-smollm-H4
+      config: default
+      split: train_sft            
+      columns:
+        - messages
+      weight: 1.0
+    - id: HuggingFaceTB/instruct-data-basics-smollm-H4
+      config: default
+      split: test_sft            
+      columns:
+        - messages
+      weight: 1.0
+  test_split_size: 0.05
+  seed: 0
+dataset_num_proc: 24
 
 # SFT trainer config
 bf16: true
@@ -24,7 +78,7 @@ dataset_kwargs:
   add_special_tokens: false  # We already wrap <bos> and <eos> in the chat template
   append_concat_token: false # No need to add <eos> across samples
 do_eval: true
-evaluation_strategy: epoch
+eval_strategy: epoch
 gradient_accumulation_steps: 4
 gradient_checkpointing: true
 gradient_checkpointing_kwargs:

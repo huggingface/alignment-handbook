@@ -4,12 +4,38 @@ torch_dtype: null
 
 # Data training arguments
 # For definitions, see: src/h4/training/config.py
-dataset_mixer:
-  HuggingFaceH4/ultrafeedback_binarized: 1.0
-  HuggingFaceH4/cai-conversation-harmless: 1.0
-dataset_splits:
-- train_prefs
-- test_prefs
+dataset_mixture:
+  datasets:
+    - id: HuggingFaceH4/ultrafeedback_binarized
+      config: default
+      split: train_prefs           
+      columns:
+        - chosen
+        - rejected
+      weight: 1.0
+    - id: HuggingFaceH4/ultrafeedback_binarized
+      config: default
+      split: test_prefs
+      columns:
+        - chosen
+        - rejected
+      weight: 1.0
+    - id: HuggingFaceH4/cai-conversation-harmless
+      config: default
+      split: train_prefs           
+      columns:
+        - chosen
+        - rejected
+      weight: 1.0
+    - id: HuggingFaceH4/cai-conversation-harmless
+      config: default
+      split: test_prefs
+      columns:
+        - chosen
+        - rejected
+      weight: 1.0
+  test_split_size: 3000
+  seed: 0
 dataset_num_proc: 12
 
 # DPOTrainer arguments

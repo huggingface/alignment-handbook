@@ -16,10 +16,10 @@ In practice, we find comparable performance for both full and QLoRA fine-tuning,
 ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/zero3.yaml scripts/run_{task}.py --config recipes/{model_name}/{task}/config_full.yaml
 
 # QLoRA 4-bit training on a single GPU
-ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/multi_gpu.yaml --num_processes=1 scripts/run_{task}.py --config recipes/{model_name}/{task}/config_qlora.yaml
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/ddp.yaml --num_processes=1 scripts/run_{task}.py --config recipes/{model_name}/{task}/config_qlora.yaml
 
 # LoRA training on a single GPU
-ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/multi_gpu.yaml --num_processes=1 scripts/run_{task}.py --config recipes/{model_name}/{task}/config_qlora.yaml --load_in_4bit=false
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/ddp.yaml --num_processes=1 scripts/run_{task}.py --config recipes/{model_name}/{task}/config_qlora.yaml --load_in_4bit=false
 
 # LoRA training with ZeRO-3 on two or more GPUs
 ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/zero3.yaml --num_processes={num_gpus} scripts/run_{task}.py --config recipes/{model_name}/{task}/config_qlora.yaml --load_in_4bit=false
@@ -72,7 +72,7 @@ Here `{model_name}` and `{task}` are defined as above, while `{precision}` refer
 
 ```shell
 # Launch on Slurm and override default hyperparameters
-sbatch --job-name=handbook_sft --nodes=1 recipes/launch.slurm zephyr-7b-beta sft full deepspeed_zero3 '--per_device_train_batch_size=42 --num_train_epochs=5'
+sbatch --job-name=handbook_sft --nodes=1 recipes/launch.slurm zephyr-7b-beta sft full zero3 '--per_device_train_batch_size=42 --num_train_epochs=5'
 ```
 
 You can scale the number of nodes by increasing the `--nodes` flag.

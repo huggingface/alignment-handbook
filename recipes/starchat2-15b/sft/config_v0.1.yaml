@@ -6,15 +6,70 @@ attn_implementation: flash_attention_2
 
 # Data training arguments
 chat_template: "{% if not add_generation_prompt is defined %}{% set add_generation_prompt = false %}{% endif %}{% for message in messages %}{{'<|im_start|>' + message['role'] + '\n' + message['content'] + '<|im_end|>' + '\n'}}{% endfor %}{% if add_generation_prompt %}{{ '<|im_start|>assistant\n' }}{% endif %}"
-dataset_mixer:
-  HuggingFaceH4/airoboros-3.2: 1.0
-  HuggingFaceH4/Code-Feedback: 1.0
-  HuggingFaceH4/orca-math-word-problems-200k: 1.0
-  HuggingFaceH4/SystemChat: 1.0
-  HuggingFaceH4/capybara: 1.0
-dataset_splits:
-- train_sft
-- test_sft
+dataset_mixture:
+  datasets:
+    - id: HuggingFaceH4/airoboros-3.2
+      config: default
+      split: train_sft
+      columns:
+        - messages
+      weight: 1.0
+    - id: HuggingFaceH4/Code-Feedback
+      config: default
+      split: train_sft
+      columns:
+        - messages
+      weight: 1.0
+    - id: HuggingFaceH4/orca-math-word-problems-200k
+      config: default
+      split: train_sft
+      columns:
+        - messages
+      weight: 1.0
+    - id: HuggingFaceH4/SystemChat
+      config: default
+      split: train_sft
+      columns:
+        - messages
+      weight: 1.0
+    - id: HuggingFaceH4/capybara
+      config: default
+      split: train_sft
+      columns:
+        - messages
+      weight: 1.0
+    - id: HuggingFaceH4/airoboros-3.2
+      config: default
+      split: test_sft
+      columns:
+        - messages
+      weight: 1.0
+    - id: HuggingFaceH4/Code-Feedback
+      config: default
+      split: test_sft
+      columns:
+        - messages
+      weight: 1.0
+    - id: HuggingFaceH4/orca-math-word-problems-200k
+      config: default
+      split: test_sft
+      columns:
+        - messages
+      weight: 1.0
+    - id: HuggingFaceH4/SystemChat
+      config: default
+      split: test_sft
+      columns:
+        - messages
+      weight: 1.0
+    - id: HuggingFaceH4/capybara
+      config: default
+      split: test_sft
+      columns:
+        - messages
+      weight: 1.0
+  test_split_size: 1000
+  seed: 0
 dataset_num_proc: 24
 
 # SFT trainer config
