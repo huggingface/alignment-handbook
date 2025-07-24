@@ -3,11 +3,24 @@ model_name_or_path: teknium/OpenHermes-2.5-Mistral-7B
 torch_dtype: null
 
 # Data training arguments
-dataset_mixer:
-  HuggingFaceH4/orca_dpo_pairs: 1.0
-dataset_splits:
-- train_prefs
-- test_prefs
+dataset_mixture:
+  datasets:
+    - id: HuggingFaceH4/orca_dpo_pairs
+      config: default
+      split: train_prefs           
+      columns:
+        - chosen
+        - rejected
+      weight: 1.0
+    - id: HuggingFaceH4/orca_dpo_pairs
+      config: default
+      split: test_prefs
+      columns:
+        - chosen
+        - rejected
+      weight: 1.0
+  test_split_size: 500
+  seed: 0
 dataset_num_proc: 12
 
 # Training arguments with sensible defaults
