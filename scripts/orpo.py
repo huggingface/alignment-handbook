@@ -14,7 +14,7 @@
 
 """
 # Full training
-python scripts/dpo.py \
+python scripts/orpo.py \
     --dataset_name trl-lib/ultrafeedback_binarized \
     --model_name_or_path Qwen/Qwen2-0.5B-Instruct \
     --learning_rate 5.0e-7 \
@@ -25,11 +25,11 @@ python scripts/dpo.py \
     --logging_steps 25 \
     --eval_strategy steps \
     --eval_steps 50 \
-    --output_dir Qwen2-0.5B-DPO \
+    --output_dir Qwen2-0.5B-ORPO \
     --no_remove_unused_columns
 
 # LoRA:
-python scripts/dpo.py \
+python scripts/orpo.py \
     --dataset_name trl-lib/ultrafeedback_binarized \
     --model_name_or_path Qwen/Qwen2-0.5B-Instruct \
     --learning_rate 5.0e-6 \
@@ -40,7 +40,7 @@ python scripts/dpo.py \
     --logging_steps 25 \
     --eval_strategy steps \
     --eval_steps 50 \
-    --output_dir Qwen2-0.5B-DPO \
+    --output_dir Qwen2-0.5B-ORPO \
     --no_remove_unused_columns \
     --use_peft \
     --lora_r 32 \
@@ -57,8 +57,8 @@ import transformers
 from transformers import set_seed
 from transformers.trainer_utils import get_last_checkpoint
 
-from alignment import DPOConfig, ScriptArguments, get_dataset, get_model, get_tokenizer
-from trl import DPOTrainer, ModelConfig, TrlParser, get_peft_config
+from alignment import ORPOConfig, ScriptArguments, get_dataset, get_model, get_tokenizer
+from trl import ModelConfig, ORPOTrainer, TrlParser, get_peft_config
 
 
 logger = logging.getLogger(__name__)
@@ -98,7 +98,6 @@ def main(script_args, training_args, model_args):
     # Model & Tokenizer
     ###################
     model = get_model(model_args, training_args)
-    ref_model = get_model(model_args, training_args)
     tokenizer = get_tokenizer(model_args, training_args)
     if tokenizer.pad_token is None:
         tokenizer.pad_token = tokenizer.eos_token
@@ -119,9 +118,8 @@ def main(script_args, training_args, model_args):
     ##########
     # Training
     ##########
-    trainer = DPOTrainer(
+    trainer = ORPOTrainer(
         model,
-        ref_model,
         args=training_args,
         train_dataset=dataset[script_args.dataset_train_split],
         eval_dataset=dataset[script_args.dataset_test_split] if training_args.eval_strategy != "no" else None,
@@ -154,6 +152,6 @@ def main(script_args, training_args, model_args):
 
 
 if __name__ == "__main__":
-    parser = TrlParser((ScriptArguments, DPOConfig, ModelConfig))
+    parser = TrlParser((ScriptArguments, ORPOConfig, ModelConfig))
     script_args, training_args, model_args = parser.parse_args_and_config()
     main(script_args, training_args, model_args)

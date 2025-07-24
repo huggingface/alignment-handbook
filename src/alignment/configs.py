@@ -146,3 +146,12 @@ class DPOConfig(trl.DPOConfig):
     """
 
     chat_template: Optional[str] = field(default=None, metadata={"help": "The chat template to use."})
+
+
+@dataclass
+class ORPOConfig(trl.ORPOConfig):
+    """
+    args for callbacks, benchmarks etc
+    """
+
+    chat_template: Optional[str] = field(default=None, metadata={"help": "The chat template to use."})

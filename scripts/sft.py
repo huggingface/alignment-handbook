@@ -89,10 +89,9 @@ def main(script_args, training_args, model_args):
     # Load tokenizer
     ################
     tokenizer = get_tokenizer(model_args, training_args)
-
-    ###################
+    ############
     # Load model
-    ###################
+    ############
     logger.info("*** Loading model ***")
     model = get_model(model_args, training_args)
 
