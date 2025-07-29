@@ -10,11 +10,11 @@ Make sure you followed the installation instructions in the [README.md](README.m
 
 ```shell
 # Step 1 - Mid-Training
-ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/zero3.yaml scripts/sft.py --config recipes/smollm3/sft/mid.yaml
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/zero3.yaml scripts/sft.py --config recipes/smollm3/sft/mid.yaml --gradient_accumulation_steps 16
 
 # Step 2 - SFT
-ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/zero3.yaml scripts/sft.py --config recipes/smollm3/sft/sft.yaml
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/zero3.yaml scripts/sft.py --config recipes/smollm3/sft/sft.yaml --gradient_accumulation_steps 16
 
 # Step 2 - DPO
-ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/zero3.yaml scripts/dpo.py --config recipes/smollm3/dpo/apo.yaml
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/zero3.yaml scripts/dpo.py --config recipes/smollm3/dpo/apo.yaml --gradient_accumulation_steps 4
 ```

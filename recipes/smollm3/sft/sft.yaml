@@ -1,4 +1,4 @@
-# Config for 8 nodes
+# Config for 8 nodes with GBS 128
 # Model arguments
 model_name_or_path: HuggingFaceTB/SmolLM3-3B-checkpoints
 model_revision: it-mid-training
