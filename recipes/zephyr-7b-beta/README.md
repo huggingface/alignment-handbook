@@ -29,7 +29,7 @@ Train faster with flash-attention 2 (GPU supporting FA2: A100, H100, etc)
 ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/ddp.yaml --num_processes=1 scripts/sft.py --config recipes/zephyr-7b-beta/sft/config_qlora.yaml --load_in_4bit=true
 
 # Step 2 - DPO
-ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/ddp.yaml --num_processes=1 scripts/dpo.py recipes/zephyr-7b-beta/dpo/config_qlora.yaml
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/ddp.yaml --num_processes=1 scripts/dpo.py --config recipes/zephyr-7b-beta/dpo/config_qlora.yaml
 ```````
 
 P.S. Using Flash Attention also allows you to drastically increase the batch size (x2 in my case)
@@ -37,8 +37,8 @@ P.S. Using Flash Attention also allows you to drastically increase the batch siz
 Train without flash-attention (i.e. via PyTorch's scaled dot product attention):
 ```````shell
 # Step 1 - SFT
-ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/ddp.yaml --num_processes=1 scripts/sft.py recipes/zephyr-7b-beta/sft/config_qlora.yaml --load_in_4bit=true --attn_implementation=sdpa
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/ddp.yaml --num_processes=1 scripts/sft.py --config recipes/zephyr-7b-beta/sft/config_qlora.yaml --load_in_4bit=true --attn_implementation=sdpa
 
 # Step 2 - DPO
-ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/ddp.yaml --num_processes=1 scripts/dpo.py recipes/zephyr-7b-beta/dpo/config_qlora.yaml --attn_implementation=sdpa
+ACCELERATE_LOG_LEVEL=info accelerate launch --config_file recipes/accelerate_configs/ddp.yaml --num_processes=1 scripts/dpo.py --config recipes/zephyr-7b-beta/dpo/config_qlora.yaml --attn_implementation=sdpa
 ```````
