@@ -9,9 +9,13 @@ on:
     branches:
       - main
 
+permissions: {}
+
 jobs:
 
   unit-tests:
+    permissions:
+      contents: read
     name: Run unit tests
     env:
       HF_TOKEN: ${{ secrets.HF_TOKEN }}
