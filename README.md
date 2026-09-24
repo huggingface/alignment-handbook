@@ -1,4 +1,8 @@
 <p align="center">
+  <b>English</b> · <a href="README.zh.md">简体中文</a>
+</p>
+
+<p align="center">
   <img src="https://raw.githubusercontent.com/huggingface/alignment-handbook/main/assets/handbook.png">
 </p>
 
