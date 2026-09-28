@@ -81,16 +81,25 @@ You can scale the number of nodes by increasing the `--nodes` flag.
 
 ## Fine-tuning on your datasets
 
-Under the hood, each training script uses the `get_datasets()` function which allows one to easily combine multiple datasets with varying proportions. For instance, this is how one can specify multiple datasets and which splits to combine in one of the YAML configs:
+Under the hood, each training script uses the `get_dataset()` function which allows one to easily combine multiple datasets with varying proportions. For instance, this is how one can specify multiple datasets and which splits to combine in one of the YAML configs:
 
 ```yaml
-datasets_mixer:
-    dataset_1: 0.5  # Use 50% of the training examples
-    dataset_2: 0.66 # Use 66% of the training examples
-    dataset_3: 0.10 # Use 10% of the training examples
-dataset_splits:
-- train_xxx         # The training splits to mix
-- test_xxx          # The test splits to mix
+dataset_mixture:
+  datasets:
+    - id: dataset_1
+      config: config_name
+      split: train
+      weight: 0.5  # Use 50% of the training examples
+    - id: dataset_2
+      config: config_name
+      split: train
+      weight: 0.66 # Use 66% of the training examples
+    - id: dataset_3
+      config: config_name
+      split: train
+      weight: 0.10 # Use 10% of the training examples
+  seed: 42
+  test_split_size: 0.1  # Optional: fraction of the mixture to use as test split
 ```
 
 If you want to fine-tune on your datasets, the main thing to keep in mind is how the chat templates are applied to the dataset blend. Since each task (SFT, DPO, ORPO, etc), requires a different format, we assume the datasets have the following columns:
