@@ -87,7 +87,7 @@ log_level: info
 logging_steps: 5
 logging_strategy: steps
 lr_scheduler_type: cosine
-max_seq_length: 2048
+max_length: 2048
 max_steps: -1
 num_train_epochs: 3
 output_dir: data/starchat2-15b-v0.1

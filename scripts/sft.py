@@ -24,7 +24,7 @@ accelerate launch --config_file recipes/accelerate_configs/zero3.yaml scripts/sf
     --learning_rate 2.0e-5 \
     --num_train_epochs 1 \
     --packing \
-    --max_seq_length 4096 \
+    --max_length 4096 \
     --per_device_train_batch_size 2 \
     --gradient_accumulation_steps 8 \
     --gradient_checkpointing \
